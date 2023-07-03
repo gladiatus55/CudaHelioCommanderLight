@@ -52,7 +52,7 @@ namespace CudaHelioCommanderLight.Config
             IntensityMetric = IntensityMetrics.npm2ssrGeV;
 
             // Default Gevs
-            ErrorFromGev = 0.1;
+            ErrorFromGev = 0.5;
             ErrorToGev = 100;
 
             if (!WasInitialized)
@@ -149,6 +149,10 @@ namespace CudaHelioCommanderLight.Config
                 {
                     Console.WriteLine("Cannot parse config info xml");
                 }
+            }
+            else
+            {
+                SaveConfigurationInfo();
             }
 
             WasInitialized = true;
