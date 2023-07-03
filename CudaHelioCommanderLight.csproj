@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Cancel_32x32px_96dpi.png" />
+    <None Remove="Resources\chart.png" />
+    <None Remove="Resources\check-status.png" />
+    <None Remove="Resources\explorer.png" />
+    <None Remove="Resources\sav-slov.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\chart.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
+    <PackageReference Include="ScottPlot" Version="4.0.48" />
+    <PackageReference Include="ScottPlot.WPF" Version="4.0.48" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Cancel_32x32px_96dpi.png" />
+    <Resource Include="Resources\check-status.png" />
+    <Resource Include="Resources\explorer.png" />
+    <Resource Include="Resources\sav-slov.jpg" />
+  </ItemGroup>
+
+</Project>

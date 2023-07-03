@@ -1,0 +1,33 @@
+﻿<Window x:Class="CudaHelioCommanderLight.HeatMapGraph"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CudaHelioCommanderLight"
+        mc:Ignorable="d"
+        Title="HeatMapGraph" WindowStartupLocation="CenterScreen" Height="750" Width="1200">
+    <ScrollViewer VerticalScrollBarVisibility="Visible">
+        <Grid>
+            <Canvas x:Name="GraphCanvas" HorizontalAlignment="Left" Height="2000" VerticalAlignment="Top" Width="400" Margin="235,100,0,0"/>
+            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,400,0,0" Width="150" >
+                <Rectangle x:Name="GradientRect" Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="257" Margin="91,72,0,0" Stroke="Black" VerticalAlignment="Top" Width="28"/>
+                <TextBlock x:Name="MinTb" HorizontalAlignment="Left" Margin="81,334,0,0" TextWrapping="Wrap" Text="min" VerticalAlignment="Top" RenderTransformOrigin="2.948,-0.337"/>
+                <TextBlock x:Name="MaxTb" HorizontalAlignment="Left" TextWrapping="Wrap" Text="max" VerticalAlignment="Top" Margin="91,51,0,0"/>
+                <CheckBox x:Name="Mark5LowestCb" Content="Mark first 10 lowest" HorizontalAlignment="Center" VerticalAlignment="Top" Checked="Mark5LowestHighestCb_Checked" Unchecked="Mark5LowestHighestCb_Checked"/>
+                <CheckBox x:Name="Mark5HighestCb" Content="Mark first 10 highest" HorizontalAlignment="Center" VerticalAlignment="Top" Checked="Mark5LowestHighestCb_Checked" Unchecked="Mark5LowestHighestCb_Checked" Margin="0,20,0,0"/>
+
+            </Grid>
+            <TextBlock x:Name="HeatmapTitle" HorizontalAlignment="Center" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Margin="0,80,0,0" FontWeight="Bold" FontSize="24" Visibility="Hidden"/>
+            <TextBlock HorizontalAlignment="Left" Margin="10,240,0,0" TextWrapping="Wrap" Text="SetMin" VerticalAlignment="Top"/>
+            <TextBlock HorizontalAlignment="Left" Margin="10,290,0,0" TextWrapping="Wrap" Text="SetMax" VerticalAlignment="Top"/>
+            <TextBox x:Name="MinColorValueTb" HorizontalAlignment="Left" Height="24" Margin="10,260,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+            <TextBox x:Name="MaxColorValueTb" HorizontalAlignment="Left" Height="23" Margin="10,310,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+            <Button x:Name="RerenderBtn" Content="Re-Render" HorizontalAlignment="Left" Margin="28,340,0,0" VerticalAlignment="Top" Width="74" Click="RerenderBtn_Click"/>
+            <Button x:Name="SetMax100Btn" Content="Set Max 100%" HorizontalAlignment="Left" Margin="28,148,0,0" VerticalAlignment="Top" Width="75" Click="SetMax100Btn_Click"/>
+            <Button x:Name="SetMin0Btn" Content="Set Min 0%" HorizontalAlignment="Left" Margin="28,123,0,0" VerticalAlignment="Top" Width="75" Click="SetMin0Btn_Click"/>
+            <Button x:Name="SetMaxToMaxBtn" Content="Set Max to max" HorizontalAlignment="Left" Margin="18,96,0,0" VerticalAlignment="Top" Width="95" Click="SetMaxToMaxBtn_Click"/>
+            <Button x:Name="SetMinToMinBtn" Content="Set Min to min" HorizontalAlignment="Left" Margin="18,71,0,0" VerticalAlignment="Top" Width="95" Click="SetMinToMinBtn_Click"/>
+            <Button x:Name="ExportAsCsvBtn" Content="Export as CSV" HorizontalAlignment="Left" Margin="18,45,0,0" VerticalAlignment="Top" Width="95" Click="ExportAsCsvBtn_Click"/>
+        </Grid>
+    </ScrollViewer>
+</Window>

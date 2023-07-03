@@ -1,0 +1,543 @@
+﻿<Window x:Class="CudaHelioCommanderLight.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CudaHelioCommanderLight.ViewModels"
+        x:Name="TheMainWindow" Title="MainWindow" Width="1820" Height="980" WindowStartupLocation="CenterScreen" WindowState="Maximized" Background="#E4E3E3"
+        mc:Ignorable="d">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="352"/>
+                <ColumnDefinition Width="*" MinWidth="1080"/>
+                <ColumnDefinition Width="352"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="1040" />
+            </Grid.RowDefinitions>
+            <Grid Grid.ColumnSpan="3" Grid.Row="0" x:Name="AppHeader" Height="40" VerticalAlignment="Top" Margin="0,0,0,0" Background="White">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48"/>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" HorizontalAlignment="Center" Height="40" Source="Resources/sav-slov.jpg" VerticalAlignment="Center" Width="100"/>
+                <TextBlock Grid.Column="1" HorizontalAlignment="Left" Text="SLOVENSKÁ AKADÉMIA VIED" VerticalAlignment="Center" FontSize="16" FontWeight="Light"/>
+                <TextBlock x:Name="versionTb" Grid.Column="2" Text="Version: x.x.x" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,2,0,0" />
+                <Button x:Name="aboutUsButton" Grid.Column="2" Width="40" Height="15" FontSize="8" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,21,0,0" Click="AboutUsButton_Click">About us</Button>
+            </Grid>
+            <Grid Grid.Column="0" Grid.Row="1"  x:Name="PanelLeft" Width="352" HorizontalAlignment="Left" Background="#E4E3E3" Grid.ColumnSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="59"></RowDefinition>
+                    <RowDefinition Height="150"></RowDefinition>
+                    <RowDefinition Height="2*"></RowDefinition>
+                    <RowDefinition Height="3*"></RowDefinition>
+                    <RowDefinition Height="60"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="ToolsHeading" Grid.Row="0" Height="30" Width="320" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Tools" VerticalAlignment="Top" FontSize="16" FontWeight="Bold" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+                <Grid x:Name="ToolButtonWrapper" Grid.Row="1" Margin="6,0.143,0,0.429" Grid.ColumnSpan="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="64" />
+                        <RowDefinition Height="64" />
+                        <RowDefinition Height="64" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="64"/>
+                        <ColumnDefinition Width="64"/>
+                        <ColumnDefinition Width="64"/>
+                        <ColumnDefinition Width="64"/>
+                        <ColumnDefinition Width="64"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="openExplorerBtn" Grid.Row="0" Grid.Column="1" Style="{StaticResource ToolButtonStyle}" IsEnabled="True" Click="OpenExplorerButton_Click">
+                        <StackPanel>
+                            <Image Source="Resources/explorer.png" Stretch="Fill" Height="32" Width="32"/>
+                            <TextBlock Height="32" Width="64" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center">Open explorer</TextBlock>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="rmsComputeModeBtn" Grid.Row="0" Grid.Column="0" Style="{StaticResource ToolButtonStyle}" IsEnabled="True" Click="RmsComputeModeBtn_Click">
+                        <StackPanel>
+                            <Image Source="Resources/chart.png" Stretch="Fill" Height="32" Width="32"/>
+                            <TextBlock Height="32" Width="64" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center">RMS Compute</TextBlock>
+                        </StackPanel>
+                    </Button>
+
+                </Grid>
+
+
+                    <Grid Grid.Row="2" Grid.RowSpan="2" x:Name="ExplorerLeftPanel" Visibility="Visible">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0" Margin="20, 0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20"/>
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Execution parameters" VerticalAlignment="Top"/>
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,5,0" TextWrapping="Wrap" Text="Method Type:" VerticalAlignment="Center" />
+                                <TextBlock x:Name="explorerDetailMethodTB" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="Unknown" VerticalAlignment="Center"/>
+                                <!--<TextBlock x:Name="explorerDetailMethodUnitTB" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="Unknown" VerticalAlignment="Center"/>-->
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,5,0" TextWrapping="Wrap" Text="V:" VerticalAlignment="Center" />
+                                <TextBlock x:Name="explorerDetailVTB" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="Unknown" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="explorerDetailVUnitTB" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="[km/s]" VerticalAlignment="Center"/>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,5,0" TextWrapping="Wrap" Text="K0:" VerticalAlignment="Center" />
+                                <TextBlock x:Name="explorerDetailK0TB" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="Unknown" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="explorerDetailK0UnitTB" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="[cm^2/s]" VerticalAlignment="Center"/>
+
+                                <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,5,0" TextWrapping="Wrap" Text="Dt:" VerticalAlignment="Center" />
+                                <TextBlock x:Name="explorerDetailDtTB" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="Unknown" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="explorerDetailDtUnitTB" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="[s]" VerticalAlignment="Center"/>
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,5,0" TextWrapping="Wrap" Text="N:" VerticalAlignment="Center" />
+                                <TextBlock x:Name="explorerDetailNTB" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="Unknown" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="explorerDetailNUnitTB" Grid.Row="4" Grid.Column="2" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="[billion inj. part.]" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+            </Grid>
+
+            <Grid Grid.Column="1" Grid.Row="1" x:Name="StatusCheckerMainPanel" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition />
+                    <RowDefinition Height="50" />
+
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Grid.RowSpan="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Active calculations" VerticalAlignment="Top"/>
+                    <Button Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Click="CloseMainPanelButton_Click" />
+                    <DataGrid x:Name="ActiveCalculationsDataGrid" Grid.Row="1" ItemsSource="{Binding}"
+                          AutoGenerateColumns="False"
+                    CanUserReorderColumns="False" CanUserResizeColumns="True" ColumnWidth="100"
+                    CanUserResizeRows="False" CanUserSortColumns="False" CanUserAddRows="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Select">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Checked="DgItemCheckboxClicked" Unchecked="DgItemCheckboxClicked" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding IsSelected, Mode=OneWay}">
+                                            <CheckBox.LayoutTransform>
+                                                <ScaleTransform ScaleX="1.5" ScaleY="1.5" />
+                                            </CheckBox.LayoutTransform>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header = "Folder Name" Binding = "{Binding FolderName, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "Method Type" Binding = "{Binding MethodType, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "K0 Params" Binding = "{Binding K0Params, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "Dt Params" Binding = "{Binding DtParams, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "V Params" Binding = "{Binding VParams, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "N" Binding = "{Binding NParams, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "GridComputation" Binding = "{Binding IsGrid, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "Executions" Binding = "{Binding Executions, Mode=OneWay}" Visibility="Hidden" />
+                            <DataGridTemplateColumn Header="Detail">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Click="CalculationDetailButton_Click">Detail</Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+
+                <Button x:Name="CreateErrorGraphBtn" Content="Create Error Graph" HorizontalAlignment="Right" Grid.Row="2" VerticalAlignment="Center" Width="105" Margin="20,0,38,0" Click="CreateErrorGraphBtn_Click"/>
+
+            </Grid>
+
+            <Grid x:Name="StatusCheckerGridPanelDetail" Grid.Column="1" Grid.Row="1" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition />
+                    <RowDefinition Height="50" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Calculation detail" VerticalAlignment="Top"/>
+                <Button Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Click="CloseMainPanelButton_Click" />
+                <!--ItemsSource="{Binding Path=Executions}"-->
+                <DataGrid x:Name="dgInner" Grid.Row="1" CanUserAddRows="False" IsReadOnly="True" SelectedItem="{Binding MySelectedItem, Mode=TwoWay}" ColumnWidth="100" PreviewMouseRightButtonDown="ActiveCalculationsDataGrid_PreviewMouseDown">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Status">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <ProgressBar Value="{Binding Path=Percentage}" Minimum="0" Maximum="100" />
+                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Percentage, StringFormat={}{0}%}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+
+                    <DataGrid.RowDetailsTemplate>
+                        <DataTemplate>
+                            <DockPanel Background="GhostWhite" Height="500">
+                                <Image DockPanel.Dock="Left" Source="{Binding LocalThumbUrl}" Tag="{Binding LocalThumbUrl}" Height="350" Width="500" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" MouseRightButtonUp="ImageTeplateRightMouseButtonUp" />
+                                <Grid Margin="0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="40" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="Informations: " FontWeight="Bold" Grid.Row="0" />
+                                    <TextBlock Text="K0: " FontWeight="Bold" Grid.Row="1" />
+                                    <TextBlock Text="{Binding K0}" Grid.Column="1" Grid.Row="1" />
+                                    <TextBlock Text="cm2/s" Grid.Column="2" Grid.Row="1" />
+                                    <TextBlock Text="V: " FontWeight="Bold" Grid.Row="2" />
+                                    <TextBlock Text="{Binding V}" Grid.Column="1" Grid.Row="2" />
+                                    <TextBlock Text="km/s" Grid.Column="2" Grid.Row="2" />
+                                    <TextBlock Text="dt: " FontWeight="Bold" Grid.Row="3" />
+                                    <TextBlock Text="{Binding dt}" Grid.Column="1" Grid.Row="3" />
+                                    <TextBlock Text="s" Grid.Column="2" Grid.Row="3" />
+                                    <TextBlock Text="N: " FontWeight="Bold" Grid.Row="4" />
+                                    <TextBlock Text="{Binding N}" Grid.Column="1" Grid.Row="4" />
+                                    <TextBlock Text="mld inj. part." Grid.Column="2" Grid.Row="4" />
+                                    <TextBlock Text="Actual progress: " FontWeight="Bold" Grid.Row="5" />
+                                    <ProgressBar Value="{Binding Path=Percentage}" Minimum="0" Maximum="100" Grid.Column="1" Grid.Row="5"/>
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="5" Text="{Binding Percentage, StringFormat={}{0}%}" />
+                                    <!--<Button Grid.Row="6" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Width="50" Tag="{Binding Path=OnlineUrl}" Click="DetailBtn_Click">Details</Button>-->
+                                    <Button Grid.Row="6" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Width="50" Tag="{Binding Path=OnlineDirPath}" Click="DetailBtn_Click">Details</Button>
+                                </Grid>
+                            </DockPanel>
+                        </DataTemplate>
+                    </DataGrid.RowDetailsTemplate>
+                </DataGrid>
+
+                <Button x:Name="ConfigureMetricsBtn" Content="Configure" HorizontalAlignment="Left" Margin="10,15,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="ConfigureMetricsBtn_Click"/>
+                <TextBlock x:Name="MetricsUsedTB"  HorizontalAlignment="Left" Margin="90,15,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Metrics used: K0 (cm^2/s) | dt (s) | V (km/s)" VerticalAlignment="Top"/>
+
+                <Button x:Name="ExportJsonBtn" Content="Export JSON" HorizontalAlignment="Right" Grid.Row="2" VerticalAlignment="Center" Width="105" Margin="0,16,280,14" Click="ExportJsonBtn_Click"/>
+                <Button x:Name="ComputeErrorBtn" Content="Compute error" HorizontalAlignment="Right" Grid.Row="2" VerticalAlignment="Center" Width="105" Margin="20,0,38,0" Click="ComputeErrorBtn_Click"/>
+                <Button x:Name="DrawHeatmapBtn" Content="Draw heatmap" HorizontalAlignment="Right" Grid.Row="2" VerticalAlignment="Center" Width="105" Margin="20,0,158,0" Click="DrawHeatmapBtn_Click"/>
+
+
+            </Grid>
+
+            <Grid Grid.Column="1" Grid.Row="1" x:Name="ExplorerMainpanel" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition />
+                    <RowDefinition Height="120" />
+                </Grid.RowDefinitions>
+                <Button Grid.Row="0" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Click="CloseMainPanelButton_Click" />
+
+                <Canvas Grid.Row="1" x:Name="mainCanvas" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="1080" Height="768" Background="White"/>
+
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Information" VerticalAlignment="Top" FontSize="18"/>
+                    <TextBox Grid.Row="1" x:Name="informationTextBox" HorizontalAlignment="Center" Height="90" TextWrapping="Wrap" VerticalAlignment="Top" Width="1050"/>
+
+                </Grid>
+            </Grid>
+
+            <!--<Grid Grid.Column="1" Grid.Row="1" x:Name="ExplorerMainpanel" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition />
+                    <RowDefinition Height="120" />
+                </Grid.RowDefinitions>
+                <Button Grid.Row="0" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Click="CloseMainPanelButton_Click" />
+
+                <Canvas Grid.Row="1" x:Name="mainCanvas" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="1080" Height="768" Background="White"/>
+
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Information" VerticalAlignment="Top" FontSize="18"/>
+                    <TextBox Grid.Row="1" x:Name="informationTextBox" HorizontalAlignment="Center" Height="90" TextWrapping="Wrap" VerticalAlignment="Top" Width="1050"/>
+
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Column="1" Grid.Row="1" x:Name="StatusCheckerMainPanel" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition />
+                    <RowDefinition Height="50" />
+
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Grid.RowSpan="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Active calculations" VerticalAlignment="Top"/>
+                    <Button Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Click="CloseMainPanelButton_Click" />
+                    <DataGrid x:Name="ActiveCalculationsDataGrid" Grid.Row="1" ItemsSource="{Binding}"
+                          AutoGenerateColumns="False"
+                    CanUserReorderColumns="False" CanUserResizeColumns="True" ColumnWidth="100"
+                    CanUserResizeRows="False" CanUserSortColumns="False" CanUserAddRows="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Select">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Checked="DgItemCheckboxClicked" Unchecked="DgItemCheckboxClicked" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding IsSelected, Mode=OneWay}">
+                                            <CheckBox.LayoutTransform>
+                                                <ScaleTransform ScaleX="1.5" ScaleY="1.5" />
+                                            </CheckBox.LayoutTransform>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header = "Folder Name" Binding = "{Binding FolderName, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "Method Type" Binding = "{Binding MethodType, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "K0 Params" Binding = "{Binding K0Params, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "Dt Params" Binding = "{Binding DtParams, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "V Params" Binding = "{Binding VParams, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "N" Binding = "{Binding NParams, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "GridComputation" Binding = "{Binding IsGrid, Mode=OneWay}" />
+                            <DataGridTextColumn Header = "Executions" Binding = "{Binding Executions, Mode=OneWay}" Visibility="Hidden" />
+                            <DataGridTemplateColumn Header="Detail">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Click="CalculationDetailButton_Click">Detail</Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+
+                <Button x:Name="CreateErrorGraphBtn" Content="Create Error Graph" HorizontalAlignment="Right" Grid.Row="2" VerticalAlignment="Center" Width="105" Margin="20,0,38,0" Click="CreateErrorGraphBtn_Click"/>
+
+            </Grid>
+
+            <Grid x:Name="StatusCheckerGridPanelDetail" Grid.Column="1" Grid.Row="1" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition />
+                    <RowDefinition Height="50" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Calculation detail" VerticalAlignment="Top"/>
+                <Button Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Click="CloseMainPanelButton_Click" />
+                -->
+            <!--ItemsSource="{Binding Path=Executions}"-->
+            <!--
+                <DataGrid x:Name="dgInner" Grid.Row="1" CanUserAddRows="False" IsReadOnly="True" SelectedItem="{Binding MySelectedItem, Mode=TwoWay}" ColumnWidth="100" PreviewMouseRightButtonDown="ActiveCalculationsDataGrid_PreviewMouseDown">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Status">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <ProgressBar Value="{Binding Path=Percentage}" Minimum="0" Maximum="100" />
+                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Percentage, StringFormat={}{0}%}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+
+                    <DataGrid.RowDetailsTemplate>
+                        <DataTemplate>
+                            <DockPanel Background="GhostWhite" Height="500">
+                                <Image DockPanel.Dock="Left" Source="{Binding LocalThumbUrl}" Tag="{Binding LocalThumbUrl}" Height="350" Width="500" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" MouseRightButtonUp="ImageTeplateRightMouseButtonUp" />
+                                <Grid Margin="0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="40" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="Informations: " FontWeight="Bold" Grid.Row="0" />
+                                    <TextBlock Text="K0: " FontWeight="Bold" Grid.Row="1" />
+                                    <TextBlock Text="{Binding K0}" Grid.Column="1" Grid.Row="1" />
+                                    <TextBlock Text="cm2/s" Grid.Column="2" Grid.Row="1" />
+                                    <TextBlock Text="V: " FontWeight="Bold" Grid.Row="2" />
+                                    <TextBlock Text="{Binding V}" Grid.Column="1" Grid.Row="2" />
+                                    <TextBlock Text="km/s" Grid.Column="2" Grid.Row="2" />
+                                    <TextBlock Text="dt: " FontWeight="Bold" Grid.Row="3" />
+                                    <TextBlock Text="{Binding dt}" Grid.Column="1" Grid.Row="3" />
+                                    <TextBlock Text="s" Grid.Column="2" Grid.Row="3" />
+                                    <TextBlock Text="N: " FontWeight="Bold" Grid.Row="4" />
+                                    <TextBlock Text="{Binding N}" Grid.Column="1" Grid.Row="4" />
+                                    <TextBlock Text="mld inj. part." Grid.Column="2" Grid.Row="4" />
+                                    <TextBlock Text="Actual progress: " FontWeight="Bold" Grid.Row="5" />
+                                    <ProgressBar Value="{Binding Path=Percentage}" Minimum="0" Maximum="100" Grid.Column="1" Grid.Row="5"/>
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="5" Text="{Binding Percentage, StringFormat={}{0}%}" />
+                                    -->
+            <!--<Button Grid.Row="6" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Width="50" Tag="{Binding Path=OnlineUrl}" Click="DetailBtn_Click">Details</Button>-->
+            <!--
+                                    <Button Grid.Row="6" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Width="50" Tag="{Binding Path=OnlineDirPath}" Click="DetailBtn_Click">Details</Button>
+                                </Grid>
+                            </DockPanel>
+                        </DataTemplate>
+                    </DataGrid.RowDetailsTemplate>
+                </DataGrid>
+
+                <Button x:Name="ConfigureMetricsBtn" Content="Configure" HorizontalAlignment="Left" Margin="10,15,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="ConfigureMetricsBtn_Click"/>
+                <TextBlock x:Name="MetricsUsedTB"  HorizontalAlignment="Left" Margin="90,15,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Metrics used: K0 (cm^2/s) | dt (s) | V (km/s)" VerticalAlignment="Top"/>
+
+                <Button x:Name="ExportJsonBtn" Content="Export JSON" HorizontalAlignment="Right" Grid.Row="2" VerticalAlignment="Center" Width="105" Margin="0,16,280,14" Click="ExportJsonBtn_Click"/>
+                <Button x:Name="ComputeErrorBtn" Content="Compute error" HorizontalAlignment="Right" Grid.Row="2" VerticalAlignment="Center" Width="105" Margin="20,0,38,0" Click="ComputeErrorBtn_Click"/>
+                <Button x:Name="DrawHeatmapBtn" Content="Draw heatmap" HorizontalAlignment="Right" Grid.Row="2" VerticalAlignment="Center" Width="105" Margin="20,0,158,0" Click="DrawHeatmapBtn_Click"/>
+
+
+            </Grid>-->
+
+            <Grid x:Name="AmsInvestigationPanel" Grid.Column="1" Grid.Row="1" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="700"/>
+                    <RowDefinition Height="50" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" HorizontalAlignment="Left" TextWrapping="Wrap" Text="RMS Compute" VerticalAlignment="Top"/>
+                <Button Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Click="CloseMainPanelButton_Click" />
+                <DataGrid x:Name="dataGridAmsInner" Grid.Row="1" CanUserAddRows="False" IsReadOnly="True" ColumnWidth="100" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header = "AMS Data file" Width="250" Binding = "{Binding FileName, Mode=OneWay}" Visibility="Visible" />
+                        <DataGridTextColumn Header = "Lowest RMS" Width="250" Binding = "{Binding LowRMSError, Mode=OneWay}" Visibility="Visible" />
+                        <DataGridTextColumn Header = "Lowest max Error" Width="250" Binding = "{Binding MinError, Mode=OneWay}" Visibility="Visible" />
+                        <DataGridTextColumn Header = "FileName" Binding = "{Binding FileName, Mode=OneWay}" Visibility="Hidden"/>
+                        <DataGridTextColumn Header = "FilePath" Binding = "{Binding FilePath, Mode=OneWay}" Visibility="Hidden"/>
+                        <DataGridTextColumn Header = "TKin" Binding = "{Binding TKin, Mode=OneWay}" Visibility="Hidden"/>
+                        <DataGridTextColumn Header = "Spe1e3" Binding = "{Binding Spe1e3, Mode=OneWay}" Visibility="Hidden"/>
+                        <DataGridTemplateColumn Header="Detail">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="AmsSelectDetailButton_Click">Detail</Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button x:Name="compareAllWithLibBtn" Content="Compare all with p+ library" HorizontalAlignment="Left" Margin="36,0,0,0"  Grid.Row="2" VerticalAlignment="Top" Width="155" Click="CompareAllLoadedWithLibBtn_Click"/>
+                <Button x:Name="compareAllWithHeLibBtn" Content="Compare all with He library" HorizontalAlignment="Left" Margin="36,30,0,0"  Grid.Row="2" VerticalAlignment="Top" Width="155" Click="CompareAllLoadedWithHeLibBtn_Click"/>
+                <Button x:Name="compareAllWithSolarpropLibBtn" Content="Compare all with SOLARPROP library" HorizontalAlignment="Left" Margin="36,60,0,0"  Grid.Row="2" VerticalAlignment="Top" Width="155" Click="CompareAllLoadedWithSolarpropLibBtn_Click"/>
+                <Button x:Name="ConfigureAmsPanelMetricsBtn" Content="Configure" HorizontalAlignment="Left" Margin="212,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="ConfigureMetricsBtn_Click"/>
+            </Grid>
+
+            <Grid Grid.Column="1" Grid.Row="1" x:Name="AmsInvestigationDetailPanel" Visibility="Visible">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Button Grid.Row="0" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Click="CloseMainPanelButton_Click" />
+
+                <WpfPlot x:Name="AmsGraphWpfPlot" HorizontalAlignment="Left" Height="339" Margin="36,12,0,0" Grid.Row="1" VerticalAlignment="Top" Width="550"/>
+                <WpfPlot x:Name="AmsGraphRatioWpfPlot" HorizontalAlignment="Left" Height="339" Margin="36,373,0,0" Grid.Row="1" VerticalAlignment="Top" Width="550"/>
+
+                <Button x:Name="compareWithLibBtn" Content="Compare with p+ library" HorizontalAlignment="Left" Margin="195,745,0,0" Grid.Row="1" VerticalAlignment="Top" Width="155" Click="CompareWithLibBtn_Click"/>
+                <Button x:Name="compareWithHeliumLibBtn" Content="Compare with He library" HorizontalAlignment="Left" Margin="195,770,0,0" Grid.Row="1" VerticalAlignment="Top" Width="155" Click="CompareWithHeliumLibBtn_Click"/>
+
+                <Button x:Name="compareWithForceFieldLibBtn_Copy" Content="Compare with ForceField lib" HorizontalAlignment="Left" Margin="195,795,0,0" Grid.Row="1" VerticalAlignment="Top" Width="155" Click="CompareWithForceFieldLibBtn_Copy_Click"/>
+
+                <ComboBox x:Name="geliosphereLibType" HorizontalAlignment="Left" Margin="43,720,0,0" Grid.Row="1" VerticalAlignment="Top" Width="81" SelectionChanged="geliosphereLibType_SelectionChanged"/>
+                <ComboBox x:Name="geliosphereLibRatio" HorizontalAlignment="Left" Margin="129,720,0,0" Grid.Row="1" VerticalAlignment="Top" Width="57"/>
+                <Button x:Name="compareWithGeliosphereLibBtn" Content="Compare with Geliosphere" HorizontalAlignment="Left" Margin="195,720,0,0" Grid.Row="1" VerticalAlignment="Top" Width="155" Click="CompareWithGeliosphereLibBtn_Click"/>
+
+
+                <Button x:Name="ConfigureAmsMetricsBtn" Content="Configure" HorizontalAlignment="Center" Margin="0,795,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="ConfigureMetricsBtn_Click"/>
+                <Button x:Name="DrawAmsHeatmapRmsBtn" Content="Draw RMS heatmap" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="154" Margin="432,745,0,0" Tag="RMS" Click="DrawAmsHeatmapBtn_Click"/>
+                <Button x:Name="DrawAmsHeatmapLowMaxBtn" Content="Draw low max err heatmap" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="154" Margin="432,720,0,0" Tag="LowMaxError" Click="DrawAmsHeatmapBtn_Click"/>
+                <Button x:Name="DrawForceField2023RmsBtn" Content="Draw ForceField rms" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="154" Margin="432,770,0,0" Click="DrawForceField2023RmsBtn_Click"/>
+
+
+                <ListBox x:Name="amsErrorsListBox" HorizontalAlignment="Left" Height="600" Margin="636,20,0,0" Grid.Row="1" VerticalAlignment="Top" Width="450" SelectionChanged="AmsErrorsListBox_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ErrorStr}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Button x:Name="amsApplySortByErrorBtn" Content="Sort Asc By error" HorizontalAlignment="Left" Margin="678,625,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Tag="error" Click="AmsApplyFilterBtn_Click"/>
+                <Button x:Name="amsApplySortByMaxErrorBtn" Content="Sort Asc By max error" HorizontalAlignment="Left" Margin="804,625,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Tag="maxError" Click="AmsApplyFilterBtn_Click"/>
+                <Button x:Name="exportAsCsvBtn" Content="Export as CSV" HorizontalAlignment="Left" Margin="930,625,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Click="ExportAsCsvBtn_Click"/>
+                <TextBlock HorizontalAlignment="Left" Margin="855,665,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Filter" VerticalAlignment="Top" FontSize="18" FontWeight="Bold"/>
+                <TextBox x:Name="amsFilterVTb"  HorizontalAlignment="Left" Height="23" Margin="751,694,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                <TextBox x:Name="amsFilterK0Tb"  HorizontalAlignment="Left" Height="23" Margin="904,694,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                <Button x:Name="amsApplyFilterBtn" Content="Filter" HorizontalAlignment="Left" Margin="841,727,0,0" Grid.Row="1" VerticalAlignment="Top" Width="76" Click="AmsApplyFilterBtn_Click"/>
+                <TextBlock HorizontalAlignment="Left" Margin="732,696,0,0" Grid.Row="1" TextWrapping="Wrap" Text="V:" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" Margin="882,696,0,0" Grid.Row="1" TextWrapping="Wrap" Text="K0:" VerticalAlignment="Top"/>
+                <TextBlock x:Name="openedLibraryNameTb" HorizontalAlignment="Center" Margin="0,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Center" FontWeight="Bold" FontSize="24"/>
+            </Grid>
+
+            
+
+        <Grid Grid.Column="2" Grid.RowSpan="4" x:Name="ExplorerRightPanel" Visibility="Visible">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100" />
+                    <RowDefinition />
+                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="250"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Canvas Grid.Row="0" Grid.Column="0" x:Name="spe1e3Canvas" HorizontalAlignment="Center" VerticalAlignment="Top" Width="162" Height="121" Background="Orange" PreviewMouseRightButtonUp="Spe1e3Canvas_PreviewMouseRightButtonUp" PreviewMouseLeftButtonUp="Spe1e3Canvas_PreviewMouseLeftButtonUp"/>
+                    <Canvas Grid.Row="0" Grid.Column="1" x:Name="spe1e3nCanvas" HorizontalAlignment="Center" VerticalAlignment="Top" Width="170" Height="121" Background="Red" PreviewMouseRightButtonUp="Spe1e3nCanvas_PreviewMouseRightButtonUp" PreviewMouseLeftButtonUp="Spe1e3nCanvas_PreviewMouseLeftButtonUp"/>
+                    <Canvas Grid.Row="1" Grid.Column="0" x:Name="spe1e3Fit30gevCanvas" HorizontalAlignment="Center" VerticalAlignment="Top" Width="162" Height="121" Background="Green" PreviewMouseRightButtonUp="Spe1e3CanvasFit30gevCanvas_PreviewMouseRightButtonUp" PreviewMouseLeftButtonUp="Spe1e3Fit30gevCanvas_PreviewMouseLeftButtonUp"/>
+                    <Canvas Grid.Row="1" Grid.Column="1" x:Name="spe1e3FitCanvas" HorizontalAlignment="Center" VerticalAlignment="Top" Width="170" Height="121" Background="Tomato" PreviewMouseRightButtonUp="Spe1e3CanvasFitCanvas_PreviewMouseRightButtonUp" PreviewMouseLeftButtonUp="Spe1e3FitCanvas_PreviewMouseLeftButtonUp"/>
+                </Grid>
+
+            </Grid>
+        </Grid>
+        
+    </ScrollViewer>
+</Window>

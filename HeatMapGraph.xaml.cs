@@ -1,0 +1,366 @@
+﻿using CudaHelioCommanderLight.Helpers;
+using CudaHelioCommanderLight.Operations;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace CudaHelioCommanderLight
+{
+    /// <summary>
+    /// Interaction logic for HeatMapGraph.xaml
+    /// </summary>
+    public partial class HeatMapGraph : Window
+    {
+        public class HeatPoint
+        {
+            public double X;
+            public double Y;
+            public double Intensity;
+            public Color color;
+            public HeatPoint(double iX, double iY, double bIntensity)
+            {
+                X = iX;
+                Y = iY;
+                Intensity = bIntensity;
+            }
+        }
+
+        public string GraphTitle { get; set; }
+
+        private int width = 400;
+        private int height = 400;
+
+        //private List<HeatPoint> HeatPoints = new List<HeatPoint>();
+        private HeatPoint[,] HeatPoints;
+        private int xCount;
+        private int yCount;
+
+        private ArrayList drawnObjects;
+        private bool mark5Lowest = false;
+        private bool mark5Highest = false;
+
+        private List<Color> ColorsOfMap = new List<Color>();
+        private byte Alpha = 0xff;
+
+        private bool isMinMaxColorValueExternal;
+        private double minColorValue;
+        private double maxColorValue;
+
+        public HeatMapGraph()
+        {
+            InitializeComponent();
+            drawnObjects = new ArrayList();
+            GraphTitle = string.Empty;
+
+            ColorsOfMap.AddRange(new Color[]{
+                Color.FromArgb(Alpha, 0, 0, 0xFF) ,//Blue
+                Color.FromArgb(Alpha, 0, 0xFF, 0xFF) ,//Cyan
+                Color.FromArgb(Alpha, 0, 0xFF, 0) ,//Green
+                Color.FromArgb(Alpha, 0xFF, 0xFF, 0) ,//Yellow
+                Color.FromArgb(Alpha, 0xFF, 0, 0) ,//Red
+            });
+
+            isMinMaxColorValueExternal = false;
+        }
+
+        public HeatMapGraph(double minColorValue, double maxColorValue) : this()
+        {
+            isMinMaxColorValueExternal = true;
+            this.minColorValue = minColorValue;
+            this.maxColorValue = maxColorValue;
+        }
+
+        public Color ComputeColor(double minVal, double maxVal, double val)
+        {
+            if (val > maxVal)
+            {
+                val = maxVal;
+            }
+
+            double valPerc = (val - minVal) / (maxVal - minVal);
+            double colorPerc = 1d / (ColorsOfMap.Count - 1);// % of each block of color. the last is the "100% Color"
+            double blockOfColor = valPerc / colorPerc;// the integer part repersents how many block to skip
+            int blockIdx = (int)Math.Truncate(blockOfColor);// Idx of 
+            double valPercResidual = valPerc - (blockIdx * colorPerc);//remove the part represented of block 
+            double percOfColor = valPercResidual / colorPerc;// % of color of this block that will be filled
+
+            Color cTarget = ColorsOfMap[blockIdx];
+            Color cNext = val == maxVal ? ColorsOfMap[blockIdx] : ColorsOfMap[blockIdx + 1];
+
+            var deltaR = cNext.R - cTarget.R;
+            var deltaG = cNext.G - cTarget.G;
+            var deltaB = cNext.B - cTarget.B;
+
+            var R = cTarget.R + (deltaR * percOfColor);
+            var G = cTarget.G + (deltaG * percOfColor);
+            var B = cTarget.B + (deltaB * percOfColor);
+
+            Color c = ColorsOfMap[0];
+            try
+            {
+                c = Color.FromArgb(Alpha, (byte)R, (byte)G, (byte)B);
+            }
+            catch (Exception ex)
+            {
+            }
+            return c;
+        }
+
+        public void SetPoints(HeatPoint[,] heatPoints, int xCount, int yCount)
+        {
+            this.HeatPoints = heatPoints;
+            this.xCount = xCount;
+            this.yCount = yCount;
+        }
+
+        public void Render()
+        {
+            //int xCount = HeatPoints.Select(x => x.X).Distinct().Count();
+            //int yCount = HeatPoints.Select(x => x.Y).Distinct().Count();
+
+            //double min = HeatPoints.Select(x => x.Intensity).Distinct().Min();
+            //double max = HeatPoints.Select(x => x.Intensity).Distinct().Max();
+
+            List<double> intensities = new List<double>();
+
+            for (int i = 0; i < xCount; i++)
+            {
+                for (int j = 0; j < yCount; j++)
+                {
+                    intensities.Add(HeatPoints[i, j].Intensity);
+                }
+            }
+
+            // Todo change from 5 to 10
+            List<double> first10Lowest = intensities.Where(x => x != double.NaN).OrderBy(x => x).Take(10).ToList();
+            List<double> first10Highest = intensities.Where(x => x != double.NaN).OrderByDescending(x => x).Take(10).ToList();
+
+            double min = 999;
+            double max = -999;
+
+            for (int i = 0; i < xCount; i++)
+            {
+                for (int j = 0; j < yCount; j++)
+                {
+                    double intensity = HeatPoints[i, j].Intensity;
+
+                    if (double.IsNaN(intensity))
+                    {
+                        continue;
+                    }
+
+                    if (intensity > max)
+                    {
+                        max = intensity;
+                    }
+
+                    if (intensity < min)
+                    {
+                        min = intensity;
+                    }
+                }
+            }
+
+            // Set UI of min/max values and validate
+            if (!isMinMaxColorValueExternal)
+            {
+                MinColorValueTb.Text = min.ToString();
+                MaxColorValueTb.Text = max.ToString();
+
+                MaxTb.Text = string.Format("{0:F2}%", max);
+                MinTb.Text = string.Format("{0:F2}%", min);
+            }
+            else
+            {
+                MaxTb.Text = string.Format("{0:F2}%", maxColorValue);
+                MinTb.Text = string.Format("{0:F2}%", minColorValue);
+
+                //if(maxColorValue < max)
+                //{
+                //    MessageBox.Show($"Sorry but your entered max value {maxColorValue} are below minimum of {max}");
+                //    return;
+                //}
+            }
+
+            //int tileWidth = width / xCount;
+            //int tileHeight = height / yCount;
+
+            int tileWidth = 25;
+            int tileHeight = 25;
+            int k = 0;
+
+            for (int i = 0; i < xCount; i++)
+            {
+                HeatPoint point = HeatPoints[i, 0];
+                int top = 0 + i * tileWidth;
+                int left = 0 + yCount * tileHeight;
+                string text = point.X.ToString();
+
+                ShapeDrawing.DrawText(GraphCanvas, text, top, left, Brushes.Black, drawnObjects);
+            }
+
+            for (int i = 0; i < yCount; i++)
+            {
+                HeatPoint point = HeatPoints[0, i];
+                int top = 0 + xCount * tileWidth;
+                int left = 0 + i * tileHeight;
+                string text = point.Y.ToString();
+
+                ShapeDrawing.DrawText(GraphCanvas, text, top, left, Brushes.Black, drawnObjects);
+            }
+
+            for (int i = 0; i < xCount; i++)
+            {
+                for (int j = 0; j < yCount; j++)
+                {
+                    HeatPoint point = HeatPoints[i, j];
+
+                    int top = 0 + i * tileWidth;
+                    int left = 0 + j * tileHeight;
+
+                    Brush fillBrush;
+
+
+                    if (double.IsNaN(point.Intensity))
+                    {
+                        fillBrush = new SolidColorBrush(Colors.White);
+                    }
+                    else
+                    {
+                        //fillBrush = new SolidColorBrush(Color.FromRgb((byte)ComputeColor(min, max, point.Intensity), 0, 0));
+                        if (!isMinMaxColorValueExternal)
+                        {
+                            fillBrush = new SolidColorBrush(ComputeColor(min, max, point.Intensity));
+                        }
+                        else
+                        {
+                            fillBrush = new SolidColorBrush(ComputeColor(minColorValue, maxColorValue, point.Intensity));
+                        }
+                    }
+
+                    ShapeDrawing.DrawSolidRectangle(GraphCanvas, top, left, tileWidth, tileHeight, fillBrush, drawnObjects);
+
+                    if (mark5Lowest && first10Lowest.Contains(point.Intensity))
+                    {
+                        double centerX = left + (tileWidth / 2);
+                        double centerY = top + (tileHeight / 2);
+                        double radius = 5;
+
+                        ShapeDrawing.DrawCircle(GraphCanvas, centerX, centerY, radius, Brushes.Yellow, drawnObjects);
+                    }
+
+                    if (mark5Highest && first10Highest.Contains(point.Intensity))
+                    {
+                        double centerX = left + (tileWidth / 2);
+                        double centerY = top + (tileHeight / 2);
+                        double radius = 5;
+                        ShapeDrawing.DrawCircle(GraphCanvas, centerX, centerY, radius, Brushes.Cyan, drawnObjects);
+                    }
+                }
+            }
+
+            LinearGradientBrush brush = new LinearGradientBrush();
+
+            for (int i = 0; i < ColorsOfMap.Count; i++)
+            {
+                brush.GradientStops.Add(new GradientStop(ColorsOfMap[i], 1.0 - (double)i / (ColorsOfMap.Count - 1)));
+            }
+            //brush.GradientStops.Add(new GradientStop(Color.FromRgb(255, 0, 0), 0.0));
+            //brush.GradientStops.Add(new GradientStop(Color.FromRgb(0, 0, 0), 1.0));
+            GradientRect.Fill = brush;
+        }
+
+        private void UndrawHistogram()
+        {
+            foreach (UIElement element in drawnObjects)
+            {
+                GraphCanvas.Children.Remove(element);
+            }
+
+            drawnObjects = new ArrayList();
+        }
+
+        private void Mark5LowestHighestCb_Checked(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("ASD");
+            mark5Lowest = Mark5LowestCb.IsChecked == true;
+            mark5Highest = Mark5HighestCb.IsChecked == true;
+            UndrawHistogram();
+            Render();
+        }
+
+        private void RerenderBtn_Click(object sender, RoutedEventArgs e)
+        {
+            isMinMaxColorValueExternal = true;
+            MainHelper.TryConvertToDouble(MinColorValueTb.Text, out double minColorValue);
+            MainHelper.TryConvertToDouble(MaxColorValueTb.Text, out double maxColorValue);
+
+            this.minColorValue = minColorValue;
+            this.maxColorValue = maxColorValue;
+
+            Render();
+        }
+
+        private void SetMax100Btn_Click(object sender, RoutedEventArgs e)
+        {
+            MaxColorValueTb.Text = "100";
+            RerenderBtn_Click(null, null);
+        }
+
+        private void SetMin0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            MinColorValueTb.Text = "0";
+            RerenderBtn_Click(null, null);
+        }
+
+        private void SetMaxToMaxBtn_Click(object sender, RoutedEventArgs e)
+        {
+            List<double> intensities = new List<double>();
+
+            for (int i = 0; i < xCount; i++)
+            {
+                for (int j = 0; j < yCount; j++)
+                {
+                    intensities.Add(HeatPoints[i, j].Intensity);
+                }
+            }
+
+            var max = intensities.Where(x => x != double.NaN).OrderByDescending(x => x).FirstOrDefault();
+            MaxColorValueTb.Text = max.ToString();
+            RerenderBtn_Click(null, null);
+        }
+
+        private void SetMinToMinBtn_Click(object sender, RoutedEventArgs e)
+        {
+            List<double> intensities = new List<double>();
+
+            for (int i = 0; i < xCount; i++)
+            {
+                for (int j = 0; j < yCount; j++)
+                {
+                    intensities.Add(HeatPoints[i, j].Intensity);
+                }
+            }
+
+            var min = intensities.Where(x => x != double.NaN).OrderBy(x => x).FirstOrDefault();
+            MinColorValueTb.Text = min.ToString();
+            RerenderBtn_Click(null, null);
+        }
+
+        private void ExportAsCsvBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ExportAsCsvOperation.Operate(HeatPoints);
+        }
+    }
+}
