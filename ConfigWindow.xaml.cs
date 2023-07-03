@@ -22,6 +22,7 @@ namespace CudaHelioCommanderLight
     public partial class ConfigWindow : Window
     {
         public MetricsConfig MetricsConfig { get; set; }
+        public bool HasChanged { get; private set; }
 
         public ConfigWindow(MetricsConfig metricsConfig)
         {
@@ -57,6 +58,7 @@ namespace CudaHelioCommanderLight
 
             MetricsConfig.SaveConfigurationInfo();
 
+            this.HasChanged = true;
             this.Close();
         }
     }
