@@ -28,9 +28,10 @@ namespace CudaHelioCommanderLight
         private MetricsConfig metricsConfig;
         private PanelType currentlyDisplayedPanelType;
         private int executionDetailSelectedIdx = -1;
-        private List<string> GeliosphereLibTypes = new List<string>() { "Burger", "JGR" };
-        private List<decimal> GeliosphereLibBurgerRatios = new List<decimal>();// { 0.05m, 0.1m, 0.15m, 0.2m, 0.3m};
-        private List<decimal> GeliosphereLibJGRRatios = new List<decimal>();// { 0.05m, 0.1m, 0.15m, 0.3m };
+        private List<ErrorStructure> amsComputedErrors;
+        private List<string> GeliosphereLibTypes;
+        private List<decimal> GeliosphereLibBurgerRatios;
+        private List<decimal> GeliosphereLibJGRRatios;
         public MainWindow()
         {
             InitializeComponent();
@@ -46,8 +47,11 @@ namespace CudaHelioCommanderLight
 
         private void InitializeAvailableGeliosphereLibs()
         {
-            GeliosphereLibBurgerRatios = GetAvailableGeliosphereLibRatiosOperation.Operate("Burger");
-            GeliosphereLibJGRRatios = GetAvailableGeliosphereLibRatiosOperation.Operate("JGR");
+            var burgerTypeName = "Burger";
+            var jgrTypeName = "JGR";
+            GeliosphereLibTypes = new List<string>() { burgerTypeName, jgrTypeName };
+            GeliosphereLibBurgerRatios = GetAvailableGeliosphereLibRatiosOperation.Operate(burgerTypeName);
+            GeliosphereLibJGRRatios = GetAvailableGeliosphereLibRatiosOperation.Operate(jgrTypeName);
 
             geliosphereLibType.ItemsSource = GeliosphereLibTypes;
             geliosphereLibType.SelectedIndex = 0;
@@ -60,221 +64,37 @@ namespace CudaHelioCommanderLight
         private void AboutUsButton_Click(object sender, RoutedEventArgs e)
         {
             string message = "Slovak Academy of Sciences\n\nDeveloped by: Martin Nguyen, Pavol Bobik\n\nCopyright 2023";
-
             MessageBox.Show(message, "About Us", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         #region AMS
-        // TODO: move
-        private void RenderAmsGraph(AmsExecution amsExecution, ErrorStructure errorStructure = null)
+        private void RenderAmsGraph(AmsExecution amsExecution, ErrorStructure? errorStructure = null)
         {
             AmsGraphWpfPlot.Reset();
-            var plt = AmsGraphWpfPlot.plt;
-
-            bool firstRun = true;
-            double minY = 0.0;
-            double maxY = 0.0;
-
-
-            double[] x = amsExecution.TKin.ToArray();
-            double[] y = amsExecution.Spe1e3.ToArray();
-
-            double[] xLog = ScottPlot.Tools.Log10(x);
-            double[] yLog = ScottPlot.Tools.Log10(y);
-
-            var amsLegend = Path.GetFileNameWithoutExtension(amsExecution.FileName) + ": reference spectrum";
-            plt.PlotScatter(xLog, yLog, markerSize: 1, color: System.Drawing.Color.Orange, label: amsLegend);
-
-            // Temporary X ticks
-            double min = x[0];
-            double max = x[x.Length - 1];
-
-            List<double> tickPositionsList = new List<double>();
-            List<string> tickNamesList = new List<string>();
-
-            for (double z = min; z <= max; z *= 10)
+            var amsExecutionErrorModel = new AmsExecutionPltErrorModel()
             {
-                tickPositionsList.Add(z);
-                tickNamesList.Add(z.ToString());
-            }
+                AmsExecution = amsExecution,
+                ErrorStructure = errorStructure,
+                Plt = AmsGraphWpfPlot.plt,
+                MetricsConfig = metricsConfig
+            };
 
-            tickPositionsList.Add(max);
-            tickNamesList.Add(max.ToString());
-
-            double[] tickPositions = ScottPlot.Tools.Log10(tickPositionsList.ToArray());
-            string[] tickLabels = tickNamesList.ToArray();
-            plt.XTicks(tickPositions, tickLabels);
-
-
-            // Temporary Y ticks
-            if (firstRun)
-            {
-                minY = y.Min();
-                maxY = y.Max();
-            }
-            else
-            {
-                minY = minY < y.Min() ? minY : y.Min();
-                maxY = maxY > y.Max() ? maxY : y.Max();
-            }
-
-            firstRun = false;
-
-            //
-            if (errorStructure != null)
-            {
-                double[] x2 = errorStructure.TKinList.ToArray();
-                double[] y2 = errorStructure.Spe1e3binList.ToArray();
-
-                double[] xLog2 = ScottPlot.Tools.Log10(x2);
-                double[] yLog2 = ScottPlot.Tools.Log10(y2);
-
-                var legend = Path.GetFileName(Path.GetDirectoryName(errorStructure.FilePath)) + ": library spectrum";
-                plt.PlotScatter(xLog2, yLog2, markerSize: 1, color: System.Drawing.Color.Green, label: legend);
-
-                // Temporary X ticks
-                double min2 = x2[0];
-                double max2 = x2[x2.Length - 1];
-
-                List<double> tickPositionsList2 = new List<double>();
-                List<string> tickNamesList2 = new List<string>();
-
-                for (double z = min2; z <= max2; z *= 10)
-                {
-                    tickPositionsList2.Add(z);
-                    tickNamesList2.Add(z.ToString());
-                }
-
-                tickPositionsList2.Add(max2);
-                tickNamesList2.Add(max2.ToString());
-
-                double[] tickPositions2 = ScottPlot.Tools.Log10(tickPositionsList2.ToArray());
-                string[] tickLabels2 = tickNamesList2.ToArray();
-                plt.XTicks(tickPositions2, tickLabels2);
-
-
-                minY = minY < y2.Min() ? minY : y2.Min();
-                maxY = maxY > y2.Max() ? maxY : y2.Max();
-
-                firstRun = false;
-            }
-            //
-
-
-            List<double> tickPositionsListY = new List<double>();
-            List<string> tickNamesListY = new List<string>();
-
-            for (double z = minY; z <= maxY; z *= 10)
-            {
-                if (Math.Abs(z) < 1)
-                {
-                    z = 1;
-                }
-
-                tickPositionsListY.Add(z);
-                tickNamesListY.Add(z.ToString("E2"));
-            }
-
-            tickPositionsListY.Add(maxY);
-            tickNamesListY.Add(maxY.ToString("E2"));
-
-            double[] tickPositionsY = ScottPlot.Tools.Log10(tickPositionsListY.ToArray());
-            string[] tickLabelsY = tickNamesListY.ToArray();
-            plt.YTicks(tickPositionsY, tickLabelsY);
-
-            plt.PlotHSpan(
-                x1: ScottPlot.Tools.Log10(new double[] { metricsConfig.ErrorFromGev }).First(),
-                x2: ScottPlot.Tools.Log10(new double[] { metricsConfig.ErrorToGev }).First(),
-                draggable: false,
-                color: System.Drawing.Color.FromArgb(0, 255, 0, 0),
-                alpha: 0.1
-                );
-
-
-            plt.Ticks(useExponentialNotation: true);
-            plt.Ticks(logScaleX: true);
-            plt.Ticks(logScaleY: true);
-            plt.Title("Spectra");
-            plt.YLabel("Spe1e3 [proton_flux m^-2sr^-1s^-1GeV^-1]");
-            plt.XLabel("Kinetic Energy [GeV]");
-            plt.Legend();
-
+            RenderAmsErrorGraphOperation.Operate(amsExecutionErrorModel);
             AmsGraphWpfPlot.Render();
         }
 
         private void RenderAmsRatioGraph(AmsExecution amsExecution, ErrorStructure errorStructure = null)
         {
             AmsGraphRatioWpfPlot.Reset();
-            var plt = AmsGraphRatioWpfPlot.plt;
-
-            if (errorStructure == null)
+            var amsExecutionErrorModel = new AmsExecutionPltErrorModel()
             {
-                return;
-            }
+                AmsExecution = amsExecution,
+                ErrorStructure = errorStructure,
+                Plt = AmsGraphRatioWpfPlot.plt,
+                MetricsConfig = metricsConfig
+            };
 
-            double[] x = amsExecution.TKin.ToArray();
-            double[] y = amsExecution.Spe1e3.ToArray();
-            double[] x2 = errorStructure.TKinList.ToArray();
-            double[] y2 = errorStructure.Spe1e3binList.ToArray();
-
-            var ratioX = x.Length < x2.Length ? x : x2;
-            double[] ratioY = y.Length < y2.Length ? y : y2;
-
-            var biggerX = x.Length > x2.Length ? x.Length : x2.Length;
-
-            int x1Idx = 0;
-            int x2Idx = 0;
-            int ratioIdx = 0;
-
-            for (int idx = 0; idx < biggerX; idx++)
-            {
-                if (ratioIdx >= ratioX.Length)
-                {
-                    break;
-                }
-
-
-                if ((x.Length > x1Idx && x[x1Idx] == ratioX[ratioIdx]) && (x2.Length > x2Idx && x2[x2Idx] == ratioX[ratioIdx]))
-                {
-                    ratioY[ratioIdx] = y[x1Idx] / y2[x2Idx];
-                    x1Idx++;
-                    x2Idx++;
-                    ratioIdx++;
-                    continue;
-                }
-
-                if ((x.Length > x1Idx && x[x1Idx] != ratioX[ratioIdx]))
-                {
-                    x1Idx++;
-                    continue;
-                }
-
-                if ((x2.Length > x2Idx && x2[x2Idx] != ratioX[ratioIdx]))
-                {
-                    x2Idx++;
-                    continue;
-                }
-            }
-
-            //var errorName = Path.GetDirectoryName(Path.GetFileName(errorStructure.FilePath));
-            var amsLegend = Path.GetFileNameWithoutExtension(amsExecution.FileName);
-            var errorName = Path.GetFileName(Path.GetDirectoryName(errorStructure.FilePath));
-            plt.PlotScatter(ratioX, ratioY, markerSize: 1, color: System.Drawing.Color.Red, label: $"Ratio {amsLegend}/ {errorName}");
-
-
-            plt.PlotHSpan(
-                x1: metricsConfig.ErrorFromGev,
-                x2: metricsConfig.ErrorToGev,
-                draggable: false,
-                color: System.Drawing.Color.FromArgb(0, 255, 0, 0),
-                alpha: 0.1
-                );
-
-            plt.Title("Ratio graph");
-            plt.YLabel("Ratio");
-            plt.XLabel("Kinetic Energy [GeV]");
-            plt.Legend();
-
+            RenderAmsErrorRatioGraphOperation.Operate(amsExecutionErrorModel);
             AmsGraphRatioWpfPlot.Render();
         }
 
@@ -286,59 +106,12 @@ namespace CudaHelioCommanderLight
                 return;
             }
 
-            HeatMapGraph heatMap = new HeatMapGraph();
-            heatMap.Show();
-
-            var sortedErrors = amsComputedErrors.OrderBy(err => err.K0).ThenBy(err => err.V).ToList();
-
-            var k0List = amsComputedErrors.Select(err => err.K0).Distinct().OrderBy(k => k);
-            var vList = amsComputedErrors.Select(err => err.V).Distinct().OrderBy(v => v);
-            int xSize = amsComputedErrors.Select(err => err.K0).Distinct().Count();
-            int ySize = amsComputedErrors.Select(err => err.V).Distinct().Count();
-
-            if (xSize < 2 || ySize < 2)
+            DisplayAmsHeatmapWindowOperation.Operate(new DisplayAmsHeatmapModel
             {
-                MessageBox.Show("Cannot make map");
-                return;
-            }
-
-            HeatMapGraph.HeatPoint[,] heatPoints = new HeatMapGraph.HeatPoint[xSize, ySize];
-
-            for (int i = 0; i < xSize; i++)
-            {
-                var currK0 = k0List.ElementAt(i);
-                for (int j = 0; j < ySize; j++)
-                {
-                    var currV = vList.ElementAt(j);
-                    var computedError = sortedErrors.Where(err => err.K0 == currK0 && err.V == currV).FirstOrDefault();
-
-                    //if (computedError == null)
-                    //{
-                    //    Console.WriteLine("Error NotFound on K0:" + currK0 + " V:" + currV);
-                    //    heatPoints[i, j] = new HeatMapGraph.HeatPoint(currK0, currV, 0);
-                    //    continue;
-                    //}
-
-                    var tag = ((Button)sender).Tag;
-
-                    if (tag.Equals("RMS"))
-                    {
-                        heatPoints[i, j] = new HeatMapGraph.HeatPoint(computedError.K0, computedError.V, computedError.Error);
-                    }
-                    else if ((tag.Equals("LowMaxError")))
-                    {
-                        heatPoints[i, j] = new HeatMapGraph.HeatPoint(computedError.K0, computedError.V, computedError.MaxError);
-                    }
-                }
-            }
-
-            heatMap.SetPoints(heatPoints, xSize, ySize);
-            heatMap.Render();
-
-            return;
+                Errors = amsComputedErrors,
+                Tag = (string) ((Button)sender).Tag
+            });
         }
-
-        private List<ErrorStructure> amsComputedErrors;
 
         private void CompareWithLibrary(string libPath, LibStructureType libStructureType)
         {
@@ -626,7 +399,6 @@ namespace CudaHelioCommanderLight
         private void CompareWithLibBtn_Click(object sender, RoutedEventArgs e)
         {
             var libPath = @"libFiles\lib-proton";
-            //var libPath = @"C:\Users\marti\Desktop\temp\Sat_Jul_24_09_01_02_2021\dt=50.000000K0=1.5e+22V=300.000000\output_1e3bin.dat";
             CompareWithLibrary(libPath, LibStructureType.DIRECTORY_SEPARATED);
         }
 
@@ -649,14 +421,12 @@ namespace CudaHelioCommanderLight
         private async void CompareAllLoadedWithLibBtn_Click(object sender, RoutedEventArgs e)
         {
             var libPath = @"libFiles\lib-proton";
-            //var libPath = @"C:\Users\marti\Desktop\temp\Sat_Jul_24_09_01_02_2021\dt=50.000000K0=1.5e+22V=300.000000\output_1e3bin.dat";
             CompareAllLoadedWithLib(libPath, LibStructureType.DIRECTORY_SEPARATED);
         }
 
         private async void CompareAllLoadedWithSolarpropLibBtn_Click(object sender, RoutedEventArgs e)
         {
             var libPath = @"libFiles\lib-solarprop";
-            //var libPath = @"C:\Users\marti\Desktop\temp\Sat_Jul_24_09_01_02_2021\dt=50.000000K0=1.5e+22V=300.000000\output_1e3bin.dat";
             CompareAllLoadedWithLib(libPath, LibStructureType.FILES_SOLARPROP_LIB);
         }
 

@@ -9,6 +9,8 @@ using System.Xml.Linq;
 
 namespace CudaHelioCommanderLight.Config
 {
+
+    // TODO: make as singleton
     public class MetricsConfig
     {
 
