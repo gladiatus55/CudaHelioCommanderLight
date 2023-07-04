@@ -55,9 +55,13 @@ namespace CudaHelioCommanderLight
 
             geliosphereLibType.ItemsSource = GeliosphereLibTypes;
             geliosphereLibType.SelectedIndex = 0;
-
             geliosphereLibRatio.ItemsSource = GeliosphereLibBurgerRatios;
             geliosphereLibRatio.SelectedIndex = 0;
+
+            geliosphereAllLibType.ItemsSource = GeliosphereLibTypes;
+            geliosphereAllLibType.SelectedIndex = 0;
+            geliosphereAllLibRatio.ItemsSource = GeliosphereLibBurgerRatios;
+            geliosphereAllLibRatio.SelectedIndex = 0;
         }
 
 
@@ -124,8 +128,6 @@ namespace CudaHelioCommanderLight
                 }
 
                 AmsExecution exD = currentDisplayedAmsInvestigation;
-                var loadedLib = new List<OutputFileContent>();
-
                 amsComputedErrors = new List<ErrorStructure>();
 
                 if (libStructureType == LibStructureType.DIRECTORY_SEPARATED)
@@ -195,106 +197,70 @@ namespace CudaHelioCommanderLight
         private void CompareAllLoadedWithLib(string libPath, LibStructureType libStructureType)
         {
             try {
-            if (!Directory.Exists(libPath))
-            {
-                MessageBox.Show("Library not found", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            if (libStructureType == LibStructureType.DIRECTORY_SEPARATED)
-            {
-                foreach (var exD in AmsExecutionList)
+                if (!Directory.Exists(libPath))
                 {
-                    var loadedLib = new List<OutputFileContent>();
-
-                    amsComputedErrors = new List<ErrorStructure>();
-
-                    foreach (var a in Directory.GetDirectories(libPath))
-                    {
-                        //var libFile = Path.Combine(libPath, a, "output_1e3bin.dat");
-                        var libFile = Path.Combine(a, "output_1e3bin.dat");
-
-                        bool dataExtractSuccess = MainHelper.ExtractOutputDataFile(libFile, out OutputFileContent outputFileContent);
-
-                        if (!dataExtractSuccess)
-                        {
-                            MessageBox.Show("Cannot read data values from the input file.");
-                            return;
-                        }
-
-                        // ...
-                        var dividedList = new List<double>();
-                        for (int idx = 0; idx < outputFileContent.TKinList.Count(); idx++)
-                        {
-                            dividedList.Add(outputFileContent.Spe1e3List[idx] / outputFileContent.Spe1e3NList[idx]);
-                        }
-                        outputFileContent.Spe1e3List = dividedList;
-
-                        //var error = ComputeError(exD, outputFileContent);
-
-                        var error = new ErrorStructure();
-                        ComputeError(exD, outputFileContent, out double errVal, out double maxErrVal);
-                        error.Error = errVal;
-                        error.MaxError = maxErrVal;
-                        error.FilePath = outputFileContent.FilePath;
-                        error.DirName = Path.GetFileName(Path.GetDirectoryName(outputFileContent.FilePath));
-                        error.TKinList = outputFileContent.TKinList;
-                        error.Spe1e3binList = outputFileContent.Spe1e3List;
-                        error.TrySetVAndK0(error.DirName, libStructureType);
-
-                        amsComputedErrors.Add(error);
-                    }
-
-                    // Assign lowest values
-                    exD.LowRMSError = amsComputedErrors.OrderBy(er => er.Error).FirstOrDefault().Error.ToString("0.##") + "%";
-                    exD.MinError = amsComputedErrors.OrderBy(er => er.MaxError).FirstOrDefault().MaxError.ToString("0.##") + "%";
-                    dataGridAmsInner.Items.Refresh();
+                    MessageBox.Show("Library not found", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
                 }
-            }
-            else if (libStructureType == LibStructureType.FILES_SOLARPROP_LIB)
-            {
-                foreach (var exD in AmsExecutionList)
+
+                if (libStructureType == LibStructureType.DIRECTORY_SEPARATED)
                 {
-                    var loadedLib = new List<OutputFileContent>();
-
-                    amsComputedErrors = new List<ErrorStructure>();
-
-                    foreach (var libFile in Directory.GetFiles(libPath))
+                    foreach (var exD in AmsExecutionList)
                     {
-                        bool dataExtractSuccess = MainHelper.ExtractOutputDataFile(libFile, out OutputFileContent outputFileContent);
-
-                        if (!dataExtractSuccess)
+                        amsComputedErrors = new List<ErrorStructure>();
+                        var computedErrors = CompareDirectorySeparatedLibraryOperation.Operate(new CompareLibraryModel()
                         {
-                            MessageBox.Show("Cannot read data values from the input file.");
-                            return;
-                        }
+                            LibPath = libPath,
+                            AmsExecution = exD,
+                            MetricsConfig = metricsConfig
+                        });
 
-                        var dividedList = new List<double>();
-                        for (int idx = 0; idx < outputFileContent.TKinList.Count(); idx++)
-                        {
-                            dividedList.Add(outputFileContent.Spe1e3List[idx]);
-                        }
-                        outputFileContent.Spe1e3List = dividedList;
+                        amsComputedErrors.AddRange(computedErrors);
 
-                        var error = new ErrorStructure();
-                        ComputeError(exD, outputFileContent, out double errVal, out double maxErrVal);
-                        error.Error = errVal;
-                        error.MaxError = maxErrVal;
-                        error.FilePath = outputFileContent.FilePath;
-                        error.DirName = Path.GetFileName(outputFileContent.FilePath);
-                        error.TKinList = outputFileContent.TKinList;
-                        error.Spe1e3binList = outputFileContent.Spe1e3List;
-                        error.TrySetVAndK0(Path.GetFileName(outputFileContent.FilePath), libStructureType);
-
-                        amsComputedErrors.Add(error);
+                        // Assign lowest values
+                        exD.LowRMSError = amsComputedErrors.OrderBy(er => er.Error).FirstOrDefault()?.Error.ToString("0.##") + "%";
+                        exD.MinError = amsComputedErrors.OrderBy(er => er.MaxError).FirstOrDefault()?.MaxError.ToString("0.##") + "%";
+                        dataGridAmsInner.Items.Refresh();
                     }
-
-                    // Assign lowest values
-                    exD.LowRMSError = amsComputedErrors.OrderBy(er => er.Error).FirstOrDefault().Error.ToString("0.##") + "%";
-                    exD.MinError = amsComputedErrors.OrderBy(er => er.MaxError).FirstOrDefault().MaxError.ToString("0.##") + "%";
-                    dataGridAmsInner.Items.Refresh();
                 }
-            }
+                else if (libStructureType == LibStructureType.FILES_SOLARPROP_LIB)
+                {
+                    foreach (var exD in AmsExecutionList)
+                    {
+                        amsComputedErrors = new List<ErrorStructure>();
+                        var computedErrors = CompareGeliosphereLibraryOperation.Operate(new CompareLibraryModel()
+                        {
+                            LibPath = libPath,
+                            AmsExecution = exD,
+                            MetricsConfig = metricsConfig
+                        });
+
+                        amsComputedErrors.AddRange(computedErrors);
+
+                        // Assign lowest values
+                        exD.LowRMSError = amsComputedErrors.OrderBy(er => er.Error).FirstOrDefault()?.Error.ToString("0.##") + "%";
+                        exD.MinError = amsComputedErrors.OrderBy(er => er.MaxError).FirstOrDefault()?.MaxError.ToString("0.##") + "%";
+                        dataGridAmsInner.Items.Refresh();
+                    }
+                }
+                else if (libStructureType == LibStructureType.FILES_FORCEFIELD2023_COMPARISION)
+                {
+                    foreach (var exD in AmsExecutionList)
+                    {
+                        amsComputedErrors = new List<ErrorStructure>();
+                        var forceFieldErrors = CompareForceField2023LibraryOperation.Operate(new CompareLibraryModel()
+                        {
+                            LibPath = libPath,
+                            AmsExecution = exD,
+                            MetricsConfig = metricsConfig
+                        });
+
+                        amsComputedErrors.AddRange(forceFieldErrors);
+                        exD.LowRMSError = amsComputedErrors.OrderBy(er => er.Error).FirstOrDefault()?.Error.ToString("0.##") + "%";
+                        exD.MinError = amsComputedErrors.OrderBy(er => er.MaxError).FirstOrDefault()?.MaxError.ToString("0.##") + "%";
+                        dataGridAmsInner.Items.Refresh();
+                    }
+                }
             }
             catch (WrongConfigurationException e)
             {
@@ -319,9 +285,13 @@ namespace CudaHelioCommanderLight
             var libtype = geliosphereLibType.SelectedItem.ToString();
             var libRatio = geliosphereLibRatio.SelectedItem.ToString().Replace(',', '.');
             var libPath = $"libFiles\\lib-geliosphere-{libtype}-{libRatio}";
-
-            Console.WriteLine(libPath);
             CompareWithLibrary(libPath, LibStructureType.FILES_SOLARPROP_LIB);
+        }
+
+        private void CompareWithForceFieldLibBtn_Copy_Click(object sender, RoutedEventArgs e)
+        {
+            var libPath = @"libFiles\lib-forcefield2023";
+            CompareWithLibrary(libPath, LibStructureType.FILES_FORCEFIELD2023_COMPARISION);
         }
 
         private void CompareAllLoadedWithHeLibBtn_Click(object sender, RoutedEventArgs e)
@@ -336,82 +306,18 @@ namespace CudaHelioCommanderLight
             CompareAllLoadedWithLib(libPath, LibStructureType.DIRECTORY_SEPARATED);
         }
 
-        private async void CompareAllLoadedWithSolarpropLibBtn_Click(object sender, RoutedEventArgs e)
+        private async void CompareAllLoadedWitGeliosphereLibBtn_Click(object sender, RoutedEventArgs e)
         {
-            var libPath = @"libFiles\lib-solarprop";
+            var libtype = geliosphereAllLibType.SelectedItem.ToString();
+            var libRatio = geliosphereAllLibRatio.SelectedItem.ToString().Replace(',', '.');
+            var libPath = $"libFiles\\lib-geliosphere-{libtype}-{libRatio}";
             CompareAllLoadedWithLib(libPath, LibStructureType.FILES_SOLARPROP_LIB);
         }
 
-
-        private void ComputeError(AmsExecution amsExecution, OutputFileContent libraryItem, out double error, out double maxError)
+        private void CompareAllLoadedWithForceFieldLibBtn_Click(object sender, RoutedEventArgs e)
         {
-            List<double> referenceTi = libraryItem.Spe1e3List;
-            List<double> eta = new List<double>();
-
-            error = double.NaN;
-            maxError = double.NaN;
-
-            if (referenceTi == null || referenceTi.Count == 0)
-            {
-                return;
-            }
-
-            if (referenceTi == null || referenceTi.Count == 0)
-            {
-                return;
-            }
-
-            List<double> computedTi = new List<double>();
-
-            computedTi = amsExecution.Spe1e3.ToList();
-
-            for (int i = 0; i < amsExecution.Spe1e3.Count; i++)
-            {
-                eta.Add(0);
-            }
-
-            maxError = 0;
-
-            double sumUp = 0;
-            double sumDown = 0;
-
-            int etaIdx = 0;
-
-            var firstRequiredValue = (double)((int)(metricsConfig.ErrorFromGev * 10) / 10.0);
-            var lastRequiredValue = (double)((int)(metricsConfig.ErrorFromGev * 10) / 10.0);
-            if (amsExecution.TKin.IndexOf(firstRequiredValue) == -1 || libraryItem.TKinList.IndexOf(firstRequiredValue) == -1)
-            {
-                throw new WrongConfigurationException($"Starting GeV value {firstRequiredValue} from configuration file is not found in library. Adjust configuration file first.");
-            }
-            else if (amsExecution.TKin.IndexOf(lastRequiredValue) == -1 || libraryItem.TKinList.IndexOf(lastRequiredValue) == -1)
-            {
-                throw new WrongConfigurationException($"Ending GeV value {lastRequiredValue} from configuration file is not found in library. Adjust configuration file first.");
-            }
-
-            for (double T = metricsConfig.ErrorFromGev; T <= metricsConfig.ErrorToGev; T += 0.1)
-            //for (double T = 0.5; T <= 2; T += 0.1)
-            {
-                double TValue = (double)((int)(T * 10) / 10.0);
-                int idx1 = amsExecution.TKin.IndexOf(TValue);
-                int idx2 = libraryItem.TKinList.IndexOf(TValue);
-                eta[etaIdx] = (computedTi[idx1] - referenceTi[idx2]) / referenceTi[idx2];
-
-                sumUp += eta[etaIdx] * eta[etaIdx];
-                sumDown++;
-
-                etaIdx++;
-
-
-
-                var ratio = Math.Abs(100 - ((computedTi[idx1] / referenceTi[idx2]) * 100));
-                if (ratio > maxError)
-                {
-                    maxError = ratio;
-                }
-            }
-
-            error = Math.Sqrt(sumUp / sumDown);
-            error *= 100.0;
+            var libPath = @"libFiles\lib-forcefield2023";
+            CompareAllLoadedWithLib(libPath, LibStructureType.FILES_FORCEFIELD2023_COMPARISION);
         }
 
         private void AmsErrorsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -479,7 +385,7 @@ namespace CudaHelioCommanderLight
             return Math.Abs(d1 - d2) < 0.0000001;
         }
 
-        private void geliosphereLibType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void GeliosphereLibType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch (geliosphereLibType.SelectedIndex)
             {
@@ -494,11 +400,19 @@ namespace CudaHelioCommanderLight
             }
         }
 
-        private void CompareWithForceFieldLibBtn_Copy_Click(object sender, RoutedEventArgs e)
+        private void GeliosphereAllLibType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var libPath = @"libFiles\lib-forcefield2023";
-            //var libPath = @"C:\Users\marti\Desktop\temp\Sat_Jul_24_09_01_02_2021\dt=50.000000K0=1.5e+22V=300.000000\output_1e3bin.dat";
-            CompareWithLibrary(libPath, LibStructureType.FILES_FORCEFIELD2023_COMPARISION);
+            switch (geliosphereAllLibType.SelectedIndex)
+            {
+                case 0: // burger
+                    geliosphereAllLibRatio.ItemsSource = GeliosphereLibBurgerRatios;
+                    geliosphereAllLibRatio.SelectedIndex = 0;
+                    break;
+                case 1: // JGR
+                    geliosphereAllLibRatio.ItemsSource = GeliosphereLibJGRRatios;
+                    geliosphereAllLibRatio.SelectedIndex = 0;
+                    break;
+            }
         }
 
         private void ExportAsCsvBtn_Click(object sender, RoutedEventArgs e)
