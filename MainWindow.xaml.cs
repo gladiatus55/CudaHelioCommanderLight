@@ -46,35 +46,8 @@ namespace CudaHelioCommanderLight
 
         private void InitializeAvailableGeliosphereLibs()
         {
-            GeliosphereLibBurgerRatios = new List<decimal>();
-            GeliosphereLibJGRRatios = new List<decimal>();
-
-            var libFilesPath = @"libFiles\";
-
-            List<string> directories = Directory.GetDirectories(libFilesPath)
-            .Select(Path.GetFileName)
-            .ToList();
-
-            foreach (string directoryName in directories)
-            {
-                if (directoryName.Contains("Burger"))
-                {
-                    var numberStr = directoryName.Split('-').Last();
-                    if (MainHelper.TryConvertToDecimal(numberStr, out decimal number))
-                    {
-                        GeliosphereLibBurgerRatios.Add(number);
-                    }
-
-                }
-                else if (directoryName.Contains("JGR"))
-                {
-                    var numberStr = directoryName.Split('-').Last();
-                    if (MainHelper.TryConvertToDecimal(numberStr, out decimal number))
-                    {
-                        GeliosphereLibJGRRatios.Add(number);
-                    }
-                }
-            }
+            GeliosphereLibBurgerRatios = GetAvailableGeliosphereLibRatiosOperation.Operate("Burger");
+            GeliosphereLibJGRRatios = GetAvailableGeliosphereLibRatiosOperation.Operate("JGR");
 
             geliosphereLibType.ItemsSource = GeliosphereLibTypes;
             geliosphereLibType.SelectedIndex = 0;
