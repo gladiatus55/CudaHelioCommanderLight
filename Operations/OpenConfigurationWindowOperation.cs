@@ -2,9 +2,9 @@
 
 namespace CudaHelioCommanderLight.Operations
 {
-    public static class OpenConfigurationWindowOperation
+    public class OpenConfigurationWindowOperation : Operation<MetricsConfig, ConfigWindow>
     {
-        public static ConfigWindow Operate(MetricsConfig metricsConfig)
+        public static new ConfigWindow Operate(MetricsConfig metricsConfig)
         {
             var configWindow = new ConfigWindow(metricsConfig);
             configWindow.ShowDialog();

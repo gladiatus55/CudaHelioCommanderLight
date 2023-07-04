@@ -11,9 +11,9 @@ using static CudaHelioCommanderLight.HeatMapGraph;
 
 namespace CudaHelioCommanderLight.Operations
 {
-    public static class ExportAsCsvOperation
+    public class ExportAsCsvOperation : Operation<HeatPoint[,], object>
     {
-        public static void Operate(HeatPoint[,] HeatPoints)
+        public static new void Operate(HeatPoint[,] HeatPoints)
         {
             // Show a save file dialog for the user to select the output file
             SaveFileDialog saveFileDialog = new SaveFileDialog();
