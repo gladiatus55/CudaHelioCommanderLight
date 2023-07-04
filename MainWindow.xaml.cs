@@ -1234,7 +1234,12 @@ namespace CudaHelioCommanderLight
             // If the file name is not an empty string open it for saving.
             if (fileDialog.FileName != "")
             {
-                ExportAsJsonOperation.Operate(executionDetail.Executions, fileDialog.FileName);
+                var exportModel = new ExecutionListExportModel
+                {
+                    Executions = executionDetail.Executions,
+                    FilePath = fileDialog.FileName
+                };
+                ExportAsJsonOperation.Operate(exportModel);
             }
         }
 

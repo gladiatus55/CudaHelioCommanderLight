@@ -1,20 +1,18 @@
 ﻿using CudaHelioCommanderLight.Dtos;
 using CudaHelioCommanderLight.Models;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Newtonsoft.Json;
 
 namespace CudaHelioCommanderLight.Operations
 {
-    public static class ExportAsJsonOperation
+    public class ExportAsJsonOperation : Operation<ExecutionListExportModel, object>
     {
-        public static void Operate(List<Execution> executions, string filePath)
+        public static new void Operate(ExecutionListExportModel executionModel)
         {
             List<ExecutionDto> executionDTOs = new List<ExecutionDto>();
 
-            foreach (Execution execution in executions)
+            foreach (Execution execution in executionModel.Executions)
             {
                 executionDTOs.Add(new ExecutionDto()
                 {
@@ -28,7 +26,7 @@ namespace CudaHelioCommanderLight.Operations
                 });
             }
 
-            using (StreamWriter file = File.CreateText(filePath))
+            using (StreamWriter file = File.CreateText(executionModel.FilePath))
             {
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Formatting = Formatting.Indented;

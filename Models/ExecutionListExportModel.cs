@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace CudaHelioCommanderLight.Models
 {
-    internal class JsonExportModel
+    public class ExecutionListExportModel
     {
+        public List<Execution> Executions { get; set; }
+        public string FilePath { get; set; }
     }
 }
