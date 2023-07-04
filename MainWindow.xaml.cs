@@ -762,6 +762,10 @@ namespace CudaHelioCommanderLight
         private void AmsErrorsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var error = (ErrorStructure)amsErrorsListBox.SelectedItem;
+            if (error == null)
+            {
+                return;
+            }
             AmsExecution exD = (AmsExecution)dataGridAmsInner.SelectedItem;
 
             RenderAmsGraph(exD, error);
@@ -1190,9 +1194,14 @@ namespace CudaHelioCommanderLight
                 return;
             }
 
-            var windowExplorer = new WindowExplorer(this, openedExecution);
+            var windowExecutionModel = new WindowExecutionModel
+            {
+                MainWindow = this,
+                Execution = openedExecution
+            };
 
-            windowExplorer.LoadDataToUI();
+            LoadExplorerDataOperation.Operate(windowExecutionModel);
+            LoadSpectraImagesToCanvas.Operate(windowExecutionModel);
 
             SwitchPanels(PanelType.EXPLORER);
         }
