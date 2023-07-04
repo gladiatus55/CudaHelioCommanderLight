@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CudaHelioCommanderLight.Operations
+﻿namespace CudaHelioCommanderLight.Operations
 {
     public abstract class Operation<TRequest, TResponse>
     {
@@ -12,6 +6,13 @@ namespace CudaHelioCommanderLight.Operations
         {
             var response = default(TResponse);
             return response;
+        }
+    }
+
+    public abstract class Operation<TRequest>
+    {
+        public virtual void Operate(TRequest request = default)
+        {
         }
     }
 }
