@@ -123,7 +123,6 @@ namespace CudaHelioCommanderLight
                     return;
                 }
 
-                //AmsExecution exD = (AmsExecution)dataGridAmsInner.SelectedItem;
                 AmsExecution exD = currentDisplayedAmsInvestigation;
                 var loadedLib = new List<OutputFileContent>();
 
@@ -131,120 +130,34 @@ namespace CudaHelioCommanderLight
 
                 if (libStructureType == LibStructureType.DIRECTORY_SEPARATED)
                 {
-
-                    foreach (var a in Directory.GetDirectories(libPath))
+                    var computedErrors = CompareDirectorySeparatedLibraryOperation.Operate(new CompareLibraryModel()
                     {
-                        //var libFile = Path.Combine(libPath, a, "output_1e3bin.dat");
-                        var libFile = Path.Combine(a, "output_1e3bin.dat");
+                        LibPath = libPath,
+                        AmsExecution = exD,
+                        MetricsConfig = metricsConfig
+                    });
 
-                        bool dataExtractSuccess = MainHelper.ExtractOutputDataFile(libFile, out OutputFileContent outputFileContent);
-
-                        if (!dataExtractSuccess)
-                        {
-                            MessageBox.Show("Cannot read data values from the input file.");
-                            return;
-                        }
-
-                        // ...
-                        var dividedList = new List<double>();
-                        for (int idx = 0; idx < outputFileContent.TKinList.Count(); idx++)
-                        {
-                            dividedList.Add(outputFileContent.Spe1e3List[idx] / outputFileContent.Spe1e3NList[idx]);
-                        }
-                        outputFileContent.Spe1e3List = dividedList;
-
-                        //var error = ComputeError(exD, outputFileContent);
-
-                        var error = new ErrorStructure();
-                        ComputeError(exD, outputFileContent, out double errVal, out double maxErrVal);
-                        error.Error = errVal;
-                        error.MaxError = maxErrVal;
-                        error.FilePath = outputFileContent.FilePath;
-                        error.DirName = Path.GetFileName(Path.GetDirectoryName(outputFileContent.FilePath));
-                        error.TKinList = outputFileContent.TKinList;
-                        error.Spe1e3binList = outputFileContent.Spe1e3List;
-                        error.TrySetVAndK0(error.DirName, libStructureType);
-
-                        amsComputedErrors.Add(error);
-                    }
+                    amsComputedErrors.AddRange(computedErrors);
                 }
                 else if (libStructureType == LibStructureType.FILES_SOLARPROP_LIB)
                 {
-                    foreach (var libFile in Directory.GetFiles(libPath))
+                    var computedErrors = CompareGeliosphereLibraryOperation.Operate(new CompareLibraryModel()
                     {
-                        bool dataExtractSuccess = MainHelper.ExtractOutputDataFile(libFile, out OutputFileContent outputFileContent);
+                        LibPath = libPath,
+                        AmsExecution = exD,
+                        MetricsConfig = metricsConfig
+                    });
 
-                        if (!dataExtractSuccess)
-                        {
-                            MessageBox.Show("Cannot read data values from the input file.");
-                            return;
-                        }
-
-                        var dividedList = new List<double>();
-                        for (int idx = 0; idx < outputFileContent.TKinList.Count(); idx++)
-                        {
-                            dividedList.Add(outputFileContent.Spe1e3List[idx]);
-                        }
-                        outputFileContent.Spe1e3List = dividedList;
-
-                        //var error = ComputeError(exD, outputFileContent);
-
-                        var error = new ErrorStructure();
-                        ComputeError(exD, outputFileContent, out double errVal, out double maxErrVal);
-                        error.Error = errVal;
-                        error.MaxError = maxErrVal;
-                        error.FilePath = outputFileContent.FilePath;
-                        error.DirName = Path.GetFileName(outputFileContent.FilePath);
-                        error.TKinList = outputFileContent.TKinList;
-                        error.Spe1e3binList = outputFileContent.Spe1e3List;
-                        error.TrySetVAndK0(Path.GetFileName(outputFileContent.FilePath), libStructureType);
-
-                        amsComputedErrors.Add(error);
-                    }
+                    amsComputedErrors.AddRange(computedErrors);
                 }
                 else if (libStructureType == LibStructureType.FILES_FORCEFIELD2023 || libStructureType == LibStructureType.FILES_FORCEFIELD2023_COMPARISION)
                 {
-                    // TODO: Violation, temp, prerobit nejak
-                    var forceFieldErrors = new List<ErrorStructure>();
-
-                    foreach (var libFile in Directory.GetFiles(libPath))
+                    var forceFieldErrors = CompareForceField2023LibraryOperation.Operate(new CompareLibraryModel()
                     {
-                        bool dataExtractSuccess = MainHelper.ExtractForceFieldOutputDataFile(libFile, out OutputFileContent outputFileContent);
-
-                        if (!dataExtractSuccess)
-                        {
-                            MessageBox.Show("Cannot read data values from the input file.");
-                            return;
-                        }
-
-                        var dividedList = new List<double>();
-                        for (int idx = 0; idx < outputFileContent.TKinList.Count(); idx++)
-                        {
-                            dividedList.Add(outputFileContent.Spe1e3List[idx]);
-                        }
-                        outputFileContent.Spe1e3List = dividedList;
-
-                        //var error = ComputeError(exD, outputFileContent);
-
-                        var error = new ErrorStructure();
-                        ComputeError(exD, outputFileContent, out double errVal, out double maxErrVal);
-                        error.Error = errVal;
-                        error.MaxError = maxErrVal;
-                        error.FilePath = outputFileContent.FilePath;
-                        error.DirName = Path.GetFileName(outputFileContent.FilePath);
-                        error.TKinList = outputFileContent.TKinList;
-                        error.Spe1e3binList = outputFileContent.Spe1e3List;
-
-                        // tmp - FILES_FORCEFIELD2023_COMPARISION
-                        string fileName = Path.GetFileNameWithoutExtension(error.FilePath);
-                        int xval = int.Parse(fileName);
-                        error.V = xval;
-                        error.K0 = 0;
-                        // end tmp
-
-                        forceFieldErrors.Add(error);
-                    }
-
+                        LibPath = libPath,
+                        AmsExecution = exD,
+                        MetricsConfig = metricsConfig
+                    });
 
                     if (libStructureType == LibStructureType.FILES_FORCEFIELD2023_COMPARISION)
                     {
@@ -258,7 +171,6 @@ namespace CudaHelioCommanderLight
                     }
                 }
 
-                //amsErrorsListBox.Items.Clear();
                 if (sortByError)
                 {
                     amsErrorsListBox.ItemsSource = amsComputedErrors.OrderBy(er => er.Error).ToList();
@@ -269,8 +181,8 @@ namespace CudaHelioCommanderLight
                 }
 
                 // Assign lowest values
-                currentDisplayedAmsInvestigation.LowRMSError = amsComputedErrors.OrderBy(er => er.Error).FirstOrDefault().Error.ToString("0.##") + "%";
-                currentDisplayedAmsInvestigation.MinError = amsComputedErrors.OrderBy(er => er.MaxError).FirstOrDefault().MaxError.ToString("0.##") + "%";
+                currentDisplayedAmsInvestigation.LowRMSError = amsComputedErrors.OrderBy(er => er.Error).FirstOrDefault()?.Error.ToString("0.##") + "%";
+                currentDisplayedAmsInvestigation.MinError = amsComputedErrors.OrderBy(er => er.MaxError).FirstOrDefault()?.MaxError.ToString("0.##") + "%";
                 dataGridAmsInner.Items.Refresh();
             }
             catch(WrongConfigurationException e)
