@@ -261,11 +261,19 @@ namespace CudaHelioCommanderLight
                         dataGridAmsInner.Items.Refresh();
                     }
                 }
+
+                ToggleExportAllAsCsvButton(true);
             }
             catch (WrongConfigurationException e)
             {
                 MessageBox.Show(e.Message);
+                ToggleExportAllAsCsvButton(false);
             }
+        }
+
+        private void ToggleExportAllAsCsvButton(bool value)
+        {
+            exportListAsCsvBtn.IsEnabled = value;
         }
 
         private void CompareWithHeliumLibBtn_Click(object sender, RoutedEventArgs e)
@@ -952,6 +960,11 @@ namespace CudaHelioCommanderLight
             heatMap.Render();
 
             return;
+        }
+
+        private void ExportListAsCsvBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ExportListAsCsvOperation.Operate(AmsExecutionList);
         }
     }
 }
