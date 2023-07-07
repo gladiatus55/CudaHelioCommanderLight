@@ -15,8 +15,10 @@ namespace CudaHelioCommanderLight.Extensions
             var lowRmsErrorStr = lowRmsErrorStructure?.Error.ToString("0.##");
             var minimalMaxErrorStr = minimalMaxErrorStructure?.Error.ToString("0.##");
 
-            amsExecution.LowRMSError = $"{lowRmsErrorStr}% ({lowRmsErrorStructure?.DisplayName})";
-            amsExecution.MinError = $"{minimalMaxErrorStr}% ({minimalMaxErrorStructure?.DisplayName})";
+            amsExecution.LowestRMSError = lowRmsErrorStr;
+            amsExecution.LowestRMSErrorFile = lowRmsErrorStructure?.DisplayName;
+            amsExecution.MinimalMaxError = minimalMaxErrorStr;
+            amsExecution.MinimalMaxErrorFile = minimalMaxErrorStructure?.DisplayName;
         }
     }
 }
