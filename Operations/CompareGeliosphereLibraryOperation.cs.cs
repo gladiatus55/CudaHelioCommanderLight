@@ -44,7 +44,7 @@ namespace CudaHelioCommanderLight.Operations
                 error.Error = computedError.Error;
                 error.MaxError = computedError.MaxError;
                 error.FilePath = outputFileContent.FilePath;
-                error.DirName = Path.GetFileName(outputFileContent.FilePath);
+                error.DisplayName = Path.GetFileName(outputFileContent.FilePath);
                 error.TKinList = outputFileContent.TKinList;
                 error.Spe1e3binList = outputFileContent.Spe1e3List;
                 error.TrySetVAndK0(Path.GetFileName(outputFileContent.FilePath), LibStructureType.FILES_SOLARPROP_LIB);

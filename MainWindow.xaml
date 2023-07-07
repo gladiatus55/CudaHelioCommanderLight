@@ -71,7 +71,7 @@
                 </Grid>
 
 
-                <Grid Grid.Row="2" Grid.RowSpan="2" x:Name="ExplorerLeftPanel" Visibility="Visible">
+                <Grid Grid.Row="2" Grid.RowSpan="2" x:Name="ExplorerLeftPanel" Visibility="Hidden">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
@@ -274,7 +274,7 @@
                 </Grid>
             </Grid>
 
-            <Grid x:Name="AmsInvestigationPanel" Grid.Column="1" Grid.Row="1" Visibility="Hidden">
+            <Grid x:Name="AmsInvestigationPanel" Grid.Column="1" Grid.Row="1" Visibility="Visible">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="20"/>
                     <RowDefinition Height="700"/>
@@ -307,9 +307,11 @@
                 <Button x:Name="compareAllWithGeliosphereLibBtn" Content="Compare all with Geliosphere" HorizontalAlignment="Left" Margin="149,6,0,0"  Grid.Row="2" VerticalAlignment="Top" Width="160" Click="CompareAllLoadedWitGeliosphereLibBtn_Click"/>
                 <Button x:Name="compareAllWithForceFieldLibBtn" Content="Compare all with ForceField" HorizontalAlignment="Left" Margin="149,80,0,0"  Grid.Row="2" VerticalAlignment="Top" Width="160" Click="CompareAllLoadedWithForceFieldLibBtn_Click"/>
                 <Button x:Name="ConfigureAmsPanelMetricsBtn" Content="Configure" HorizontalAlignment="Left" Margin="149,105,0,0" Grid.Row="2" VerticalAlignment="Top" Width="74" Click="ConfigureMetricsBtn_Click"/>
+                <TextBlock x:Name="ConfiguredMetricsTb" HorizontalAlignment="Left" Margin="228,107,0,0" Grid.Row="2" TextWrapping="Wrap" Text="{Binding ConfiguredMetrics, Mode=TwoWay}" VerticalAlignment="Top"/>
+
             </Grid>
 
-            <Grid Grid.Column="1" Grid.Row="1" x:Name="AmsInvestigationDetailPanel" Visibility="Visible">
+            <Grid Grid.Column="1" Grid.Row="1" x:Name="AmsInvestigationDetailPanel" Visibility="Hidden">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="20" />
                     <RowDefinition />
@@ -328,7 +330,7 @@
                 <ComboBox x:Name="geliosphereLibRatio" HorizontalAlignment="Left" Margin="129,720,0,0" Grid.Row="1" VerticalAlignment="Top" Width="57"/>
                 <Button x:Name="compareWithGeliosphereLibBtn" Content="Compare with Geliosphere" HorizontalAlignment="Left" Margin="195,720,0,0" Grid.Row="1" VerticalAlignment="Top" Width="155" Click="CompareWithGeliosphereLibBtn_Click"/>
 
-                <Button x:Name="ConfigureAmsMetricsBtn" Content="Configure" HorizontalAlignment="Center" Margin="0,795,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="ConfigureMetricsBtn_Click"/>
+                <Button x:Name="ConfigureAmsMetricsBtn" Content="Configure" HorizontalAlignment="Left" Margin="432,795,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="ConfigureMetricsBtn_Click"/>
                 <Button x:Name="DrawAmsHeatmapRmsBtn" Content="Draw RMS heatmap" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="154" Margin="432,745,0,0" Tag="RMS" Click="DrawAmsHeatmapBtn_Click"/>
                 <Button x:Name="DrawAmsHeatmapLowMaxBtn" Content="Draw low max err heatmap" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="154" Margin="432,720,0,0" Tag="LowMaxError" Click="DrawAmsHeatmapBtn_Click"/>
                 <Button x:Name="DrawForceField2023RmsBtn" Content="Draw ForceField rms" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="154" Margin="432,770,0,0" Click="DrawForceField2023RmsBtn_Click"/>
@@ -350,9 +352,11 @@
                 <TextBlock HorizontalAlignment="Left" Margin="732,696,0,0" Grid.Row="1" TextWrapping="Wrap" Text="V:" VerticalAlignment="Top"/>
                 <TextBlock HorizontalAlignment="Left" Margin="882,696,0,0" Grid.Row="1" TextWrapping="Wrap" Text="K0:" VerticalAlignment="Top"/>
                 <TextBlock x:Name="openedLibraryNameTb" HorizontalAlignment="Center" Margin="0,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Center" FontWeight="Bold" FontSize="24"/>
+                <TextBlock HorizontalAlignment="Left" Margin="512,797,0,0" Grid.Row="1" TextWrapping="Wrap" Text="{Binding ConfiguredMetrics, Mode=TwoWay}" VerticalAlignment="Top"/>
+
             </Grid>
 
-            <Grid Grid.Column="2" Grid.RowSpan="4" x:Name="ExplorerRightPanel" Visibility="Visible">
+            <Grid Grid.Column="2" Grid.RowSpan="4" x:Name="ExplorerRightPanel" Visibility="Hidden">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="100" />
                     <RowDefinition />

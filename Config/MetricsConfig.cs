@@ -1,4 +1,5 @@
 ﻿using CudaHelioCommanderLight.Helpers;
+using CudaHelioCommanderLight.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,10 +42,34 @@ namespace CudaHelioCommanderLight.Config
         public VMetrics VMetric { get; set; }
         public DtMetrics DtMetric { get; set; }
         public IntensityMetrics IntensityMetric { get; set; }
-
-        public double ErrorFromGev { get; set; }
-        public double ErrorToGev { get; set; }
+        public double ErrorFromGev
+        {
+            get { return _errorFromGev; }
+            set
+            {
+                if (_errorFromGev != value)
+                {
+                    _errorFromGev = value;
+                    NotifyObservers();
+                }
+            }
+        }
+        public double ErrorToGev
+        {
+            get { return _errorToGev; }
+            set
+            {
+                if (_errorToGev != value)
+                {
+                    _errorToGev = value;
+                    NotifyObservers();
+                }
+            }
+        }
         public bool WasInitialized { get; set; }
+        private double _errorFromGev;
+        private double _errorToGev;
+        private List<IMetricsConfigObserver> _observers = new List<IMetricsConfigObserver>();
 
         public MetricsConfig()
         {
@@ -61,6 +86,17 @@ namespace CudaHelioCommanderLight.Config
             {
                 LoadConfigurationinfo();
             }
+        }
+
+        public void RegisterObserver(IMetricsConfigObserver observer)
+        {
+            _observers.Add(observer);
+            NotifyObservers();
+        }
+
+        public void UnregisterObserver(IMetricsConfigObserver observer)
+        {
+            _observers.Remove(observer);
         }
 
         public override string ToString()
@@ -169,6 +205,14 @@ namespace CudaHelioCommanderLight.Config
                     );
 
             configInfo.Save(CONFIGURATION_CACHE);
+        }
+
+        private void NotifyObservers()
+        {
+            foreach (var observer in _observers)
+            {
+                observer.NotifyMetricsConfigChanged(this);
+            }
         }
     }
 }

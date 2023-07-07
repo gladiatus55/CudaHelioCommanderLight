@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace CudaHelioCommanderLight.Models
 {
@@ -10,5 +11,7 @@ namespace CudaHelioCommanderLight.Models
         public List<double> Spe1e3 { get; set; }
         public string LowRMSError { get; set; }
         public string MinError { get; set; }
+        public string LowestRMSErrorFile { get; set; }
+        public string MinErrorFile { get; set; }
     }
 }

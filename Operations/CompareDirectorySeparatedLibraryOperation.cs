@@ -43,10 +43,10 @@ namespace CudaHelioCommanderLight.Operations
                 error.Error = computedError.Error;
                 error.MaxError = computedError.MaxError;
                 error.FilePath = outputFileContent.FilePath;
-                error.DirName = Path.GetFileName(Path.GetDirectoryName(outputFileContent.FilePath));
+                error.DisplayName = Path.GetFileName(Path.GetDirectoryName(outputFileContent.FilePath));
                 error.TKinList = outputFileContent.TKinList;
                 error.Spe1e3binList = outputFileContent.Spe1e3List;
-                error.TrySetVAndK0(error.DirName, LibStructureType.DIRECTORY_SEPARATED);
+                error.TrySetVAndK0(error.DisplayName, LibStructureType.DIRECTORY_SEPARATED);
 
                 amsComputedErrors.Add(error);
             }
