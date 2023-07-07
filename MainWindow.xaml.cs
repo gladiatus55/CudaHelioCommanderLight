@@ -1,9 +1,11 @@
 ﻿using CudaHelioCommanderLight.Config;
 using CudaHelioCommanderLight.Enums;
 using CudaHelioCommanderLight.Exceptions;
+using CudaHelioCommanderLight.Extensions;
 using CudaHelioCommanderLight.Helpers;
 using CudaHelioCommanderLight.Models;
 using CudaHelioCommanderLight.Operations;
+using CudaHelioCommanderLight.ViewModels;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using System;
@@ -31,13 +33,18 @@ namespace CudaHelioCommanderLight
         private List<ErrorStructure> amsComputedErrors;
         private List<string> GeliosphereLibTypes;
         private List<decimal> GeliosphereLibBurgerRatios;
-        private List<decimal> GeliosphereLibJGRRatios;
+        private List<decimal> GeliosphereLibJGRRatios; 
+        private MainWindowVm _mainWindowVm;
         public MainWindow()
         {
             InitializeComponent();
 
             metricsConfig = new MetricsConfig();
             MetricsUsedTB.Text = metricsConfig.ToString();
+            _mainWindowVm = new MainWindowVm();
+            metricsConfig.RegisterObserver(_mainWindowVm);
+
+            DataContext = _mainWindowVm;
 
             SwitchPanels(PanelType.NONE);
             versionTb.Text = versionStr;
@@ -182,9 +189,7 @@ namespace CudaHelioCommanderLight
                     amsErrorsListBox.ItemsSource = amsComputedErrors.OrderBy(er => er.MaxError).ToList();
                 }
 
-                // Assign lowest values
-                currentDisplayedAmsInvestigation.LowRMSError = amsComputedErrors.OrderBy(er => er.Error).FirstOrDefault()?.Error.ToString("0.##") + "%";
-                currentDisplayedAmsInvestigation.MinError = amsComputedErrors.OrderBy(er => er.MaxError).FirstOrDefault()?.MaxError.ToString("0.##") + "%";
+                currentDisplayedAmsInvestigation.AssignLowestValues(amsComputedErrors);
                 dataGridAmsInner.Items.Refresh();
             }
             catch(WrongConfigurationException e)
@@ -217,9 +222,7 @@ namespace CudaHelioCommanderLight
 
                         amsComputedErrors.AddRange(computedErrors);
 
-                        // Assign lowest values
-                        exD.LowRMSError = amsComputedErrors.OrderBy(er => er.Error).FirstOrDefault()?.Error.ToString("0.##") + "%";
-                        exD.MinError = amsComputedErrors.OrderBy(er => er.MaxError).FirstOrDefault()?.MaxError.ToString("0.##") + "%";
+                        exD.AssignLowestValues(amsComputedErrors);
                         dataGridAmsInner.Items.Refresh();
                     }
                 }
@@ -237,9 +240,7 @@ namespace CudaHelioCommanderLight
 
                         amsComputedErrors.AddRange(computedErrors);
 
-                        // Assign lowest values
-                        exD.LowRMSError = amsComputedErrors.OrderBy(er => er.Error).FirstOrDefault()?.Error.ToString("0.##") + "%";
-                        exD.MinError = amsComputedErrors.OrderBy(er => er.MaxError).FirstOrDefault()?.MaxError.ToString("0.##") + "%";
+                        exD.AssignLowestValues(amsComputedErrors);
                         dataGridAmsInner.Items.Refresh();
                     }
                 }
@@ -256,8 +257,7 @@ namespace CudaHelioCommanderLight
                         });
 
                         amsComputedErrors.AddRange(forceFieldErrors);
-                        exD.LowRMSError = amsComputedErrors.OrderBy(er => er.Error).FirstOrDefault()?.Error.ToString("0.##") + "%";
-                        exD.MinError = amsComputedErrors.OrderBy(er => er.MaxError).FirstOrDefault()?.MaxError.ToString("0.##") + "%";
+                        exD.AssignLowestValues(amsComputedErrors);
                         dataGridAmsInner.Items.Refresh();
                     }
                 }
@@ -331,7 +331,7 @@ namespace CudaHelioCommanderLight
 
             RenderAmsGraph(exD, error);
             RenderAmsRatioGraph(exD, error);
-            openedLibraryNameTb.Text = error.DirName;
+            openedLibraryNameTb.Text = error.DisplayName;
         }
 
         private bool sortByError = true;

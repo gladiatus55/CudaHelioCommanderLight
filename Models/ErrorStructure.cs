@@ -11,13 +11,13 @@ namespace CudaHelioCommanderLight.Models
         {
             get
             {
-                return Error.ToString("0.##") + "% (Max: " + MaxError.ToString("0.##") + "%) " + DirName;
+                return Error.ToString("0.##") + "% (Max: " + MaxError.ToString("0.##") + "%) " + DisplayName;
             }
         }
 
         public double Error { get; set; }
         public double MaxError { get; set; }
-        public string DirName { get; set; }
+        public string DisplayName { get; set; }
         public string FilePath { get; set; }
         public List<double> TKinList { get; set; }
         public List<double> Spe1e3binList { get; set; }
