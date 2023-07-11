@@ -1,5 +1,6 @@
 ﻿using CudaHelioCommanderLight.Enums;
 using CudaHelioCommanderLight.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -57,6 +58,11 @@ namespace CudaHelioCommanderLight.Models
             else if (libStructureType == LibStructureType.FILES_SOLARPROP_LIB)
             {
                 var split = str.Split('_');
+                if (split.Length < 3)
+                {
+                    Console.WriteLine($"Incorrect file {str} in library");
+                    return;
+                }
                 // outfil_0.0001_0_Burger2000LIS_spectrum_interpolated.dat
                 var success = MainHelper.TryConvertToDouble(split[1], out double K0);
                 if (success)

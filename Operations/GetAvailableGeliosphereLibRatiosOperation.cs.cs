@@ -5,12 +5,12 @@ using System.Linq;
 
 namespace CudaHelioCommanderLight.Operations
 {
-    public class GetAvailableGeliosphereLibRatiosOperation : Operation<string, List<decimal>>
+    public class GetAvailableGeliosphereLibRatiosOperation : Operation<string, List<string>>
     {
-        public static new List<decimal> Operate(string libTypeName)
+        public static new List<string> Operate(string libTypeName)
         {
             var libFilesPath = @"libFiles\";
-            var geliosphereRatios = new List<decimal>();
+            var geliosphereRatios = new List<string>();
             var directories = Directory.GetDirectories(libFilesPath)
                                                 .Select(Path.GetFileName)
                                                 .ToList();
@@ -20,10 +20,10 @@ namespace CudaHelioCommanderLight.Operations
                 if (directoryName.Contains(libTypeName))
                 {
                     var numberStr = directoryName.Split('-').Last();
-                    if (MainHelper.TryConvertToDecimal(numberStr, out decimal number))
-                    {
-                        geliosphereRatios.Add(number);
-                    }
+                    //if (MainHelper.TryConvertToDecimal(numberStr, out decimal number))
+                    //{
+                    geliosphereRatios.Add(numberStr);
+                    //}
                 }
             }
 

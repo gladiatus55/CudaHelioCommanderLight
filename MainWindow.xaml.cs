@@ -26,14 +26,14 @@ namespace CudaHelioCommanderLight
     public partial class MainWindow : Window
     {
         public ObservableCollection<ExecutionDetail> ExecutionDetailList { get; set; }
-        private string versionStr = "Version: 1.1.0l";
+        private string versionStr = "Version: 1.1.1l";
         private MetricsConfig metricsConfig;
         private PanelType currentlyDisplayedPanelType;
         private int executionDetailSelectedIdx = -1;
         private List<ErrorStructure> amsComputedErrors;
         private List<string> GeliosphereLibTypes;
-        private List<decimal> GeliosphereLibBurgerRatios;
-        private List<decimal> GeliosphereLibJGRRatios; 
+        private List<string> GeliosphereLibBurgerRatios;
+        private List<string> GeliosphereLibJGRRatios; 
         private MainWindowVm _mainWindowVm;
         public MainWindow()
         {
@@ -499,7 +499,7 @@ namespace CudaHelioCommanderLight
         {
             OpenFileDialog open = new OpenFileDialog();
             open.Multiselect = true;
-            open.Title = "Select AMS files";
+            open.Title = "Select files";
 
             if (open.ShowDialog() == false)
             {
