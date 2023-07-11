@@ -34,7 +34,7 @@ namespace CudaHelioCommanderLight.Operations
                 {
 
                     // Build the CSV row
-                    string csvRow = $"{heatPoint.X},{heatPoint.Y},{heatPoint.Intensity}";
+                    string csvRow = $"{ConvertToString(heatPoint.X)},{ConvertToString(heatPoint.Y)},{ConvertToString(heatPoint.Intensity)}";
 
                     // Append the row to the CSV data
                     csvData.AppendLine(csvRow);

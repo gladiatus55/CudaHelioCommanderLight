@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        x:Name="TheMainWindow" Title="MainWindow" Width="1820" Height="980" WindowStartupLocation="CenterScreen" WindowState="Maximized" Background="#E4E3E3"
+        x:Name="TheMainWindow" Title="CudaHelioCommanderLight" Width="1820" Height="980" WindowStartupLocation="CenterScreen" WindowState="Maximized" Background="#E4E3E3"
         mc:Ignorable="d">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
         <Grid>
