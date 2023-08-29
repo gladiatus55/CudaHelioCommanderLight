@@ -37,12 +37,21 @@
 
 ## Getting Started
 
+### Prerequisites
+
+The tool is built with .NET 6.0, hence .NET 6.0 SDK is necessary to build the application.  
+
 ### Installation
 
 1. Clone the repo
-2. Install .NET 6.0
-3. Build the tool
-4. Add libraries and tool is ready for use
+2. Install .NET 6.0 SDK
+3. Build the tool (dotnet build CudaHelioCommanderLight.csproj)
+4. Add libraries and tool is ready for use (place library files in libFiles folder, see attached example library files)
+5. Run the tool (CudaHelioCommanderLight.exe)
+
+### Dependencies
+
+The tool uses Microsoft.Win32 library, hence Windows OS is required to run the tool.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
