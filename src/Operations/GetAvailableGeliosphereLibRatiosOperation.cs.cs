@@ -1,4 +1,4 @@
-﻿using CudaHelioCommanderLight.Helpers;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +9,14 @@ namespace CudaHelioCommanderLight.Operations
     {
         public static new List<string> Operate(string libTypeName)
         {
-            var libFilesPath = @"libFiles\";
+            //var libFilesPath = @"libFiles\";
+            var libFilesPath = Path.Combine(Environment.CurrentDirectory, "libFiles");
+
+            if (!Directory.Exists(libFilesPath))
+            {
+                Directory.CreateDirectory(libFilesPath);
+            }
+
             var geliosphereRatios = new List<string>();
             var directories = Directory.GetDirectories(libFilesPath)
                                                 .Select(Path.GetFileName)
