@@ -290,6 +290,11 @@ namespace CudaHelioCommanderLight
 
         private void CompareWithGeliosphereLibBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (geliosphereLibRatio.SelectedItem == null)
+            {
+                MessageBox.Show("Library not found", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             var libtype = geliosphereLibType.SelectedItem.ToString();
             var libRatio = geliosphereLibRatio.SelectedItem.ToString().Replace(',', '.');
             var libPath = $"libFiles\\lib-geliosphere-{libtype}-{libRatio}";
@@ -316,6 +321,11 @@ namespace CudaHelioCommanderLight
 
         private async void CompareAllLoadedWitGeliosphereLibBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (geliosphereAllLibRatio.SelectedItem == null)
+            {
+                MessageBox.Show("Library not found", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             var libtype = geliosphereAllLibType.SelectedItem.ToString();
             var libRatio = geliosphereAllLibRatio.SelectedItem.ToString().Replace(',', '.');
             var libPath = $"libFiles\\lib-geliosphere-{libtype}-{libRatio}";

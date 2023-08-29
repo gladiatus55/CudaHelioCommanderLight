@@ -53,6 +53,15 @@ The tool is built with .NET 6.0, hence .NET 6.0 SDK is necessary to build the ap
 
 The tool uses Microsoft.Win32 library, hence Windows OS is required to run the tool.
 
+### Sample usage
+
+1. Extract library .zip files and place them in libFiles folder
+2. Run the tool
+3. Select RMS compute option from the menu
+4. Select file, f.e. AMS02_PRL2015_interpolated.dat file from exampleFiles
+5. Either use buttons under the table to compare with specified library or choose detail
+6. In the detail view, choose compare with specified library and explore graphs, RMS heatmaps..
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
