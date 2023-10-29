@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -46,11 +47,14 @@ namespace CudaHelioCommanderLight.Helpers
             drawnObjects.Add(rectangle);
         }
 
-        public static void DrawText(Canvas canvas, string text, double top, double left, Brush brush, ArrayList drawnObjects)
+        public static void DrawText(Canvas canvas, string text, double top, double left, Brush brush, ArrayList drawnObjects, bool bold = false, int rotate = 0)
         {
             TextBlock textBlock = new TextBlock();
             textBlock.Text = text;
             textBlock.Foreground = brush;
+            RotateTransform rotateTransform = new RotateTransform(rotate);
+            textBlock.RenderTransform = rotateTransform;
+            textBlock.FontWeight = bold ? FontWeights.Bold : FontWeights.Regular;
             Canvas.SetLeft(textBlock, left);
             Canvas.SetTop(textBlock, top);
             canvas.Children.Add(textBlock);
