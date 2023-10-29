@@ -4,16 +4,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CudaHelioCommanderLight
 {
@@ -37,11 +29,13 @@ namespace CudaHelioCommanderLight
         }
 
         public string GraphTitle { get; set; }
+        public string XLabel { get; set; }
+        public string YLabel { get; set; }
+        public string ColorbarLabel { get; set; }
 
         private int width = 400;
         private int height = 400;
 
-        //private List<HeatPoint> HeatPoints = new List<HeatPoint>();
         private HeatPoint[,] HeatPoints;
         private int xCount;
         private int yCount;
@@ -126,12 +120,6 @@ namespace CudaHelioCommanderLight
 
         public void Render()
         {
-            //int xCount = HeatPoints.Select(x => x.X).Distinct().Count();
-            //int yCount = HeatPoints.Select(x => x.Y).Distinct().Count();
-
-            //double min = HeatPoints.Select(x => x.Intensity).Distinct().Min();
-            //double max = HeatPoints.Select(x => x.Intensity).Distinct().Max();
-
             List<double> intensities = new List<double>();
 
             for (int i = 0; i < xCount; i++)
@@ -185,16 +173,10 @@ namespace CudaHelioCommanderLight
             {
                 MaxTb.Text = string.Format("{0:F2}%", maxColorValue);
                 MinTb.Text = string.Format("{0:F2}%", minColorValue);
-
-                //if(maxColorValue < max)
-                //{
-                //    MessageBox.Show($"Sorry but your entered max value {maxColorValue} are below minimum of {max}");
-                //    return;
-                //}
             }
 
-            //int tileWidth = width / xCount;
-            //int tileHeight = height / yCount;
+            GraphTitleLabelTb.Text = GraphTitle;
+            ColorbarLabelTb.Text = ColorbarLabel;
 
             int tileWidth = 25;
             int tileHeight = 25;
@@ -209,6 +191,14 @@ namespace CudaHelioCommanderLight
 
                 ShapeDrawing.DrawText(GraphCanvas, text, top, left, Brushes.Black, drawnObjects);
             }
+
+            int yLabelTop = 30 + xCount / 2 * tileWidth;
+            int yLabelLeft = 20 + (yCount + 1) * tileHeight;
+            ShapeDrawing.DrawText(GraphCanvas, YLabel, yLabelTop, yLabelLeft, Brushes.Black, drawnObjects, true, 270);
+
+            int xLabelTop = 0 + (xCount + 1) * tileWidth;
+            int xLabelLeft = 0 + yCount / 2 * tileHeight;
+            ShapeDrawing.DrawText(GraphCanvas, XLabel, xLabelTop, xLabelLeft, Brushes.Black, drawnObjects, true);
 
             for (int i = 0; i < yCount; i++)
             {
@@ -238,7 +228,6 @@ namespace CudaHelioCommanderLight
                     }
                     else
                     {
-                        //fillBrush = new SolidColorBrush(Color.FromRgb((byte)ComputeColor(min, max, point.Intensity), 0, 0));
                         if (!isMinMaxColorValueExternal)
                         {
                             fillBrush = new SolidColorBrush(ComputeColor(min, max, point.Intensity));
@@ -276,8 +265,7 @@ namespace CudaHelioCommanderLight
             {
                 brush.GradientStops.Add(new GradientStop(ColorsOfMap[i], 1.0 - (double)i / (ColorsOfMap.Count - 1)));
             }
-            //brush.GradientStops.Add(new GradientStop(Color.FromRgb(255, 0, 0), 0.0));
-            //brush.GradientStops.Add(new GradientStop(Color.FromRgb(0, 0, 0), 1.0));
+
             GradientRect.Fill = brush;
         }
 

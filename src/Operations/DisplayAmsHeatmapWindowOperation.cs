@@ -47,6 +47,10 @@ namespace CudaHelioCommanderLight.Operations
             }
 
             heatMap.SetPoints(heatPoints, xSize, ySize);
+            heatMap.GraphTitle = model.GraphName ?? "";
+            heatMap.XLabel = "V [km/s]";
+            heatMap.YLabel = "K0 [cm^2/s]";
+            heatMap.ColorbarLabel = "Deviation [%]";
             heatMap.Render();
         }
     }

@@ -119,6 +119,7 @@ namespace CudaHelioCommanderLight
 
             DisplayAmsHeatmapWindowOperation.Operate(new DisplayAmsHeatmapModel
             {
+                GraphName = currentDisplayedAmsInvestigation?.FileName,
                 Errors = amsComputedErrors,
                 Tag = (string) ((Button)sender).Tag
             });
