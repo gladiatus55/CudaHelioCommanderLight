@@ -1,5 +1,4 @@
-﻿
-using CudaHelioCommanderLight.Models;
+﻿using CudaHelioCommanderLight.Models;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.IO;

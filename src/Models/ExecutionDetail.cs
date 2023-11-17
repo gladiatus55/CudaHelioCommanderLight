@@ -82,14 +82,7 @@ namespace CudaHelioCommanderLight.Models
             paramDt = new List<double>();
             paramN = new List<double>();
             MethodType = MethodType.UNDEFINED;
-
-            //Execution test = new Execution();
-            //test.K0 = 10;
-            //test.V = 50;
-            //test.dt = 20;
-            //test.N = 13;
-
-            //Executions.Add(test);
+            
         }
 
         public void AddK0(double K0Value)
@@ -165,7 +158,6 @@ namespace CudaHelioCommanderLight.Models
         public List<Execution> GetLowestExecutions(int count)
         {
             List<Execution> firstNLowest = Executions.Where(x => x.ErrorValue != double.NaN).OrderBy(x => x.ErrorValue).Take(10).ToList();
-            //List<Execution> firstNHighest = Executions.Where(x => x.ErrorValue != double.NaN).OrderByDescending(x => x.ErrorValue).Take(10).ToList();
 
             return firstNLowest;
         }

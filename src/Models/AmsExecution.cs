@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-
 namespace CudaHelioCommanderLight.Models
 {
     public class AmsExecution

@@ -19,7 +19,6 @@ namespace CudaHelioCommanderLight
             public double X;
             public double Y;
             public double Intensity;
-            public Color color;
             public HeatPoint(double iX, double iY, double bIntensity)
             {
                 X = iX;

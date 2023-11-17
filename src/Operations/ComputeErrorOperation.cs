@@ -1,5 +1,4 @@
-﻿using CudaHelioCommanderLight.Config;
-using CudaHelioCommanderLight.Exceptions;
+﻿using CudaHelioCommanderLight.Exceptions;
 using CudaHelioCommanderLight.Models;
 using System.Collections.Generic;
 using System;
