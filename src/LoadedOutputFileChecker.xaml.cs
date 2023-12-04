@@ -5,16 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CudaHelioCommanderLight
 {
@@ -75,10 +67,7 @@ namespace CudaHelioCommanderLight
 
         private void UpdateList()
         {
-            //if(executionRows == null)
-            //{
             executionRows = new ObservableCollection<ExecutionRow>();
-            //}
 
             if (outputFileContent.TKinList != null)
             {
@@ -294,9 +283,6 @@ namespace CudaHelioCommanderLight
 
         private void InitializeSections()
         {
-            //var allSupportedColumns = Enum.GetValues(typeof(OutputFileColumnType))
-            //                .Cast<OutputFileColumnType>()
-            //                .ToList();
 
             columnSelectorComboBoxes = new List<ComboBox>();
             columnSelectorTextBlocks = new List<TextBlock>()
@@ -318,24 +304,6 @@ namespace CudaHelioCommanderLight
                 Col5Grid,
                 Col6Grid,
             };
-
-            //for (int idx = 0; idx < columnSelectorSections.Count; idx++)
-            //{
-            //    Grid colGrid = columnSelectorSections[idx];
-            //    ComboBox comboBox = colGrid.Children.OfType<ComboBox>().FirstOrDefault();
-            //    columnSelectorComboBoxes.Add(comboBox);
-            //    comboBox.ItemsSource = supportedColumns;
-
-            //    if (idx > outputFileContent.NumberOfColumns - 1)
-            //    {
-            //        comboBox.SelectedIndex = -1;
-            //    }
-            //    else
-            //    {
-            //        comboBox.SelectedIndex = idx;
-            //    }
-            //    comboBox.SelectionChanged += new SelectionChangedEventHandler(ColumnSelectorComboBox_SelectionChanged);
-            //}
         }
     }
 }

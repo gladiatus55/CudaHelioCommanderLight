@@ -1,5 +1,4 @@
-﻿using CudaHelioCommanderLight.Enums;
-using CudaHelioCommanderLight.Helpers;
+﻿using CudaHelioCommanderLight.Helpers;
 using CudaHelioCommanderLight.Models;
 using System.Collections.Generic;
 using System.IO;

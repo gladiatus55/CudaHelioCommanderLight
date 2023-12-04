@@ -7,7 +7,6 @@ using CudaHelioCommanderLight.Models;
 using CudaHelioCommanderLight.Operations;
 using CudaHelioCommanderLight.ViewModels;
 using Microsoft.Win32;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -544,28 +543,6 @@ namespace CudaHelioCommanderLight
             }
         }
 
-        //private void DgItemCheckboxClicked(object sender, RoutedEventArgs e)
-        //{
-        //    if (ActiveCalculationsDataGrid.SelectedIndex == -1)
-        //    {
-        //        return;
-        //    }
-
-        //    CheckBox clickedCb = (CheckBox)sender;
-        //    ExecutionDetail selectedExecutionDetail = (ExecutionDetail)ActiveCalculationsDataGrid.SelectedItem;
-
-        //    selectedExecutionDetail.IsSelected = clickedCb.IsChecked == true;
-        //}
-
-        //private void CalculationDetailButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    ExecutionDetail exD = (ExecutionDetail)ActiveCalculationsDataGrid.SelectedItem;
-        //    executionDetailSelectedIdx = ExecutionDetailList.IndexOf(exD);
-        //    SwitchPanels(PanelType.STATUS_CHECKER_DETAIL);
-
-        //    dgInner.ItemsSource = exD.Executions;
-        //}
-
         private void CreateErrorGraphBtn_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -840,10 +817,7 @@ namespace CudaHelioCommanderLight
             if (fileDialog.ShowDialog() == true)
             {
                 string filePath = fileDialog.FileName;
-
-                // extracted input reference file
-                //bool dataExtractSuccess = MainHelper.ExtractOutputDataFile(filePath, out List<double> tKinList, out List<double> spe1e3NList, out List<double> spe1e3List, out List<double> stdDeviationList);
-                // TMP!!
+                
                 bool dataExtractSuccess = MainHelper.ExtractOutputDataFile(filePath, out OutputFileContent outputFileContent);
 
                 if (!dataExtractSuccess)
@@ -856,17 +830,12 @@ namespace CudaHelioCommanderLight
 
                 dataChecker.ShowDialog();
 
-
-                // TODO: temp!
-                //StreamWriter sw = new StreamWriter(@"C:\Users\marti\Desktop\computed-error.txt");
-
                 foreach (Execution execution in executionDetail.Executions)
                 {
                     ExecutionHelper.InitializeOutput1e3BinDataFromOnlineDir(execution);
 
                     if (execution.StandardDeviatons != null)
                     {
-                        //execution.ComputeError(outputFileContent.Spe1e3List); // If error in computeError, this was changed recently
                         try
                         {
                             execution.ComputeError(outputFileContent, metricsConfig); // If error in computeError, this was changed recently
@@ -877,14 +846,7 @@ namespace CudaHelioCommanderLight
                             return;
                         }
                     }
-
-                    // TODO: temp!
-                    //sw.WriteLine($"{execution.V}\t{execution.K0}\t{execution.Error}\t");
                 }
-
-                // TODO: temp!
-                //sw.Close();
-
                 dgInner.Items.Refresh();
             }
         }
