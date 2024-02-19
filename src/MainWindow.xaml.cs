@@ -138,7 +138,7 @@ namespace CudaHelioCommanderLight
                 amsComputedErrors = new List<ErrorStructure>();
 
 
-                var computedError = CompareLibraryOperations.Operate(new CompareLibraryModel()
+                var computedError = CompareLibraryOperation.Operate(new CompareLibraryModel()
                 {
                     LibPath = libPath,
                     AmsExecution = exD,
@@ -186,7 +186,7 @@ namespace CudaHelioCommanderLight
                 foreach (var exD in AmsExecutionList)
                 {
                     amsComputedErrors = new List<ErrorStructure>();
-                    var computedErrors = CompareLibraryOperations.Operate(new CompareLibraryModel()
+                    var computedErrors = CompareLibraryOperation.Operate(new CompareLibraryModel()
                     {
                         LibPath = libPath,
                         AmsExecution = exD,

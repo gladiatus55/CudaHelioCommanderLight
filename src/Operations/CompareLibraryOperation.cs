@@ -8,14 +8,8 @@ using CudaHelioCommanderLight.Models;
 
 namespace CudaHelioCommanderLight.Operations;
 
-public class CompareLibraryOperations : Operation<CompareLibraryModel, List<ErrorStructure>>
+public class CompareLibraryOperation : Operation<CompareLibraryModel, List<ErrorStructure>>
 {
-    
-    private static bool IsDirectory(LibStructureType libStructureType)
-    {
-        return libStructureType is LibStructureType.DIRECTORY_SEPARATED;
-    }
-    
     public static List<ErrorStructure> Operate(CompareLibraryModel model, LibStructureType libStructureType)
     {
         var errors = new List<ErrorStructure>();
@@ -26,11 +20,11 @@ public class CompareLibraryOperations : Operation<CompareLibraryModel, List<Erro
             ? Directory.GetDirectories(model.LibPath)
             : Directory.GetFiles(model.LibPath);
 
-        foreach (var a in files)
+        foreach (var file in files)
         {
             var libFile = isFileDirectory
-                ? Path.Combine(a, "output_1e3bin.dat")
-                : a;
+                ? Path.Combine(file, "output_1e3bin.dat")
+                : file;
             
             var dataExtractSuccess = MainHelper.ExtractOutputDataFile(libFile, out OutputFileContent outputFileContent);
 
@@ -81,13 +75,12 @@ public class CompareLibraryOperations : Operation<CompareLibraryModel, List<Erro
                     break;
                 }
             }
-            
-           
-
             errors.Add(error);
         }
-
         return errors;
-        
+    }
+    private static bool IsDirectory(LibStructureType libStructureType)
+    {
+        return libStructureType is LibStructureType.DIRECTORY_SEPARATED;
     }
 }
