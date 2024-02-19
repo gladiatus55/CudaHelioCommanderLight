@@ -8,14 +8,8 @@ using CudaHelioCommanderLight.Models;
 
 namespace CudaHelioCommanderLight.Operations;
 
-public class CompareLibraryOperations : Operation<CompareLibraryModel, List<ErrorStructure>>
+public class CompareLibraryOperation : Operation<CompareLibraryModel, List<ErrorStructure>>
 {
-    
-    private static bool IsDirectory(LibStructureType libStructureType)
-    {
-        return libStructureType is LibStructureType.DIRECTORY_SEPARATED;
-    }
-    
     public static List<ErrorStructure> Operate(CompareLibraryModel model, LibStructureType libStructureType)
     {
         var errors = new List<ErrorStructure>();
@@ -26,11 +20,11 @@ public class CompareLibraryOperations : Operation<CompareLibraryModel, List<Erro
             ? Directory.GetDirectories(model.LibPath)
             : Directory.GetFiles(model.LibPath);
 
-        foreach (var a in files)
+        foreach (var file in files)
         {
             var libFile = isFileDirectory
-                ? Path.Combine(a, "output_1e3bin.dat")
-                : a;
+                ? Path.Combine(file, "output_1e3bin.dat")
+                : file;
             
             var dataExtractSuccess = MainHelper.ExtractOutputDataFile(libFile, out OutputFileContent outputFileContent);
 
@@ -57,7 +51,7 @@ public class CompareLibraryOperations : Operation<CompareLibraryModel, List<Erro
             error.Error = computedError.Error;
             error.MaxError = computedError.MaxError;
             error.FilePath = outputFileContent.FilePath;
-            error.DisplayName = isFileDirectory ? Path.GetFileName(Path.GetDirectoryName(outputFileContent.FilePath)) : Path.GetFileName(outputFileContent.FilePath);
+            error.DisplayName = GetDisplayName(outputFileContent.FilePath, isFileDirectory);
             error.TKinList = outputFileContent.TKinList;
             error.Spe1e3binList = outputFileContent.Spe1e3List;
 
@@ -81,13 +75,18 @@ public class CompareLibraryOperations : Operation<CompareLibraryModel, List<Erro
                     break;
                 }
             }
-            
-           
-
             errors.Add(error);
         }
-
         return errors;
-        
+    }
+    
+    private static string? GetDisplayName(string outputFilePath, bool isFileDirectory)
+    {
+        return isFileDirectory ? Path.GetFileName(Path.GetDirectoryName(outputFilePath)) : Path.GetFileName(outputFilePath);
+    }
+    
+    private static bool IsDirectory(LibStructureType libStructureType)
+    {
+        return libStructureType is LibStructureType.DIRECTORY_SEPARATED;
     }
 }
