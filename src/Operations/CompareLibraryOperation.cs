@@ -51,7 +51,7 @@ public class CompareLibraryOperation : Operation<CompareLibraryModel, List<Error
             error.Error = computedError.Error;
             error.MaxError = computedError.MaxError;
             error.FilePath = outputFileContent.FilePath;
-            error.DisplayName = isFileDirectory ? Path.GetFileName(Path.GetDirectoryName(outputFileContent.FilePath)) : Path.GetFileName(outputFileContent.FilePath);
+            error.DisplayName = GetDisplayName(outputFileContent.FilePath, isFileDirectory);
             error.TKinList = outputFileContent.TKinList;
             error.Spe1e3binList = outputFileContent.Spe1e3List;
 
@@ -79,6 +79,12 @@ public class CompareLibraryOperation : Operation<CompareLibraryModel, List<Error
         }
         return errors;
     }
+    
+    private static string? GetDisplayName(string outputFilePath, bool isFileDirectory)
+    {
+        return isFileDirectory ? Path.GetFileName(Path.GetDirectoryName(outputFilePath)) : Path.GetFileName(outputFilePath);
+    }
+    
     private static bool IsDirectory(LibStructureType libStructureType)
     {
         return libStructureType is LibStructureType.DIRECTORY_SEPARATED;
