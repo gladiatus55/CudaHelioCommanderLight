@@ -41,7 +41,7 @@ public class CompareLibraryOperations : Operation<CompareLibraryModel, List<Erro
             }
 
             var dividedList = new List<double>();
-            for (int idx = 0; idx < outputFileContent.TKinList.Count(); idx++)
+            for (int idx = 0; idx < outputFileContent.TKinList.Count; idx++)
             {
                 dividedList.Add(isFileDirectory ? outputFileContent.Spe1e3List[idx] / outputFileContent.Spe1e3NList[idx] : outputFileContent.Spe1e3List[idx]);
             }

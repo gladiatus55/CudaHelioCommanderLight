@@ -30,12 +30,12 @@ namespace CudaHelioCommanderLight.Models
             if (libStructureType == LibStructureType.DIRECTORY_SEPARATED)
             {
                 var split = splitStrFileName(str);
-                if (split.Count() % 2 != 0)
+                if (split.Count % 2 != 0)
                 {
                     return;
                 }
 
-                for (int idx = 0; idx < split.Count(); idx += 2)
+                for (int idx = 0; idx < split.Count; idx += 2)
                 {
                     if (split[idx].ToLower().Equals("k0"))
                     {

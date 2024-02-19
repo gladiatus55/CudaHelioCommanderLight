@@ -57,7 +57,6 @@ namespace CudaHelioCommanderLight.Operations
                 if ((x2.Length > x2Idx && x2[x2Idx] != ratioX[ratioIdx]))
                 {
                     x2Idx++;
-                    continue;
                 }
             }
 

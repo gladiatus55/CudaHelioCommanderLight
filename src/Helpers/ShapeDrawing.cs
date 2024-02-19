@@ -6,7 +6,7 @@ using System.Windows.Shapes;
 
 namespace CudaHelioCommanderLight.Helpers
 {
-    public class ShapeDrawing
+    public abstract class ShapeDrawing
     {
         public static void DrawCircle(Canvas canvas, double centerX, double centerY, double radius, SolidColorBrush brush, ArrayList drawnObjects)
         {

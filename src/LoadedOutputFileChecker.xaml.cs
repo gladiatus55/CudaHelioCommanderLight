@@ -275,7 +275,6 @@ namespace CudaHelioCommanderLight
                     var columnType = outputFileContent.GetColumnTypeByFirstValue(firstValue);
                     comboBox.SelectedIndex = supportedColumns.IndexOf(columnType);
 
-                    //comboBox.SelectedIndex = idx;
                 }
                 comboBox.SelectionChanged += new SelectionChangedEventHandler(ColumnSelectorComboBox_SelectionChanged);
             }
