@@ -39,18 +39,18 @@ namespace CudaHelioCommanderLight.Models
                 {
                     if (split[idx].ToLower().Equals("k0"))
                     {
-                        var success = MainHelper.TryConvertToDouble(split[idx + 1], out double K0);
+                        var success = MainHelper.TryConvertToDouble(split[idx + 1], out double outK0);
                         if (success)
                         {
-                            this.K0 = K0;
+                            K0 = outK0;
                         }
                     }
                     else if (split[idx].ToLower().Equals("v"))
                     {
-                        var success = MainHelper.TryConvertToDouble(split[idx + 1], out double V);
+                        var success = MainHelper.TryConvertToDouble(split[idx + 1], out double outV);
                         if (success)
                         {
-                            this.V = (int)V;
+                            V = (int)outV;
                         }
                     }
                 }
@@ -64,15 +64,15 @@ namespace CudaHelioCommanderLight.Models
                     return;
                 }
                 // outfil_0.0001_0_Burger2000LIS_spectrum_interpolated.dat
-                var success = MainHelper.TryConvertToDouble(split[1], out double K0);
+                var success = MainHelper.TryConvertToDouble(split[1], out double outK0);
                 if (success)
                 {
-                    this.K0 = K0;
+                    K0 = outK0;
                 }
                 success = MainHelper.TryConvertToDouble(split[2], out double theta);
                 if (success)
                 {
-                    this.V = (int)theta;
+                    V = (int)theta;
                 }
             }
         }
@@ -80,7 +80,7 @@ namespace CudaHelioCommanderLight.Models
         private List<string> splitStrFileName(string str)
         {
             List<string> splittedStr = new List<string>();
-            var split = str.ToLower().Split(new char[] { '=' });
+            var split = str.ToLower().Split('=' );
 
             for (int idx = 0; idx < split.Count(); idx++)
             {

@@ -71,98 +71,128 @@ namespace CudaHelioCommanderLight
 
             if (outputFileContent.TKinList != null)
             {
-                for (int i = 0; i < outputFileContent.TKinList.Count; i++)
-                {
-                    if (executionRows.Count > i)
-                    {
-                        executionRows[i].TKin = outputFileContent.TKinList[i];
-                    }
-                    else
-                    {
-                        executionRows.Add(new ExecutionRow() { TKin = outputFileContent.TKinList[i] });
-                    }
-                }
+                UpdateTKinList();
             }
 
             if (outputFileContent.Spe1e3NList != null)
             {
-                for (int i = 0; i < outputFileContent.Spe1e3NList.Count; i++)
-                {
-                    if (executionRows.Count > i)
-                    {
-                        executionRows[i].Count = outputFileContent.Spe1e3NList[i];
-                    }
-                    else
-                    {
-                        executionRows.Add(new ExecutionRow() { Count = outputFileContent.Spe1e3NList[i] });
-                    }
-                }
+                UpdateSpe1e3NList();
             }
 
             if (outputFileContent.Spe1e3List != null)
             {
-                for (int i = 0; i < outputFileContent.Spe1e3List.Count; i++)
-                {
-                    if (executionRows.Count > i)
-                    {
-                        executionRows[i].Spectra = outputFileContent.Spe1e3List[i];
-                    }
-                    else
-                    {
-                        executionRows.Add(new ExecutionRow() { Spectra = outputFileContent.Spe1e3List[i] });
-                    }
-                }
+                UpdateSpe1e3List();
             }
 
             if (outputFileContent.StdDevList != null)
             {
-                for (int i = 0; i < outputFileContent.StdDevList.Count; i++)
-                {
-                    if (executionRows.Count > i)
-                    {
-                        executionRows[i].StandardDeviation = outputFileContent.StdDevList[i];
-                    }
-                    else
-                    {
-                        executionRows.Add(new ExecutionRow() { StandardDeviation = outputFileContent.StdDevList[i] });
-                    }
-                }
+                UpdateStdDevList();
             }
 
             if (outputFileContent.WHLISList != null)
             {
-                for (int i = 0; i < outputFileContent.WHLISList.Count; i++)
-                {
-                    if (executionRows.Count > i)
-                    {
-                        executionRows[i].WHLIS = outputFileContent.WHLISList[i];
-                    }
-                    else
-                    {
-                        executionRows.Add(new ExecutionRow() { WHLIS = outputFileContent.WHLISList[i] });
-                    }
-                }
+                UpdateWHLISList();
             }
 
             if (outputFileContent.OtherList != null)
             {
-                for (int i = 0; i < outputFileContent.OtherList.Count; i++)
-                {
-                    if (executionRows.Count > i)
-                    {
-                        executionRows[i].Other = outputFileContent.OtherList[i];
-                    }
-                    else
-                    {
-                        executionRows.Add(new ExecutionRow() { Other = outputFileContent.OtherList[i] });
-                    }
-                }
+                UpdateOtherList();
             }
 
             ExecutionCheckDataGrid.ItemsSource = executionRows;
             ExecutionCheckDataGrid.Items.Refresh();
 
             SetupDivideSpectraCb();
+        }
+
+        private void UpdateTKinList()
+        {
+            for (int i = 0; i < outputFileContent.TKinList.Count; i++)
+            {
+                if (executionRows.Count > i)
+                {
+                    executionRows[i].TKin = outputFileContent.TKinList[i];
+                }
+                else
+                {
+                    executionRows.Add(new ExecutionRow() { TKin = outputFileContent.TKinList[i] });
+                }
+            }
+        }
+
+        private void UpdateSpe1e3NList()
+        {
+            for (int i = 0; i < outputFileContent.Spe1e3NList.Count; i++)
+            {
+                if (executionRows.Count > i)
+                {
+                    executionRows[i].Count = outputFileContent.Spe1e3NList[i];
+                }
+                else
+                {
+                    executionRows.Add(new ExecutionRow() { Count = outputFileContent.Spe1e3NList[i] });
+                }
+            }
+        }
+
+        private void UpdateSpe1e3List()
+        {
+            for (int i = 0; i < outputFileContent.Spe1e3List.Count; i++)
+            {
+                if (executionRows.Count > i)
+                {
+                    executionRows[i].Spectra = outputFileContent.Spe1e3List[i];
+                }
+                else
+                {
+                    executionRows.Add(new ExecutionRow() { Spectra = outputFileContent.Spe1e3List[i] });
+                }
+            }
+        }
+
+        private void UpdateStdDevList()
+        {
+            for (int i = 0; i < outputFileContent.StdDevList.Count; i++)
+            {
+                if (executionRows.Count > i)
+                {
+                    executionRows[i].StandardDeviation = outputFileContent.StdDevList[i];
+                }
+                else
+                {
+                    executionRows.Add(new ExecutionRow() { StandardDeviation = outputFileContent.StdDevList[i] });
+                }
+            }
+        }
+
+        private void UpdateWHLISList()
+        {
+            for (int i = 0; i < outputFileContent.WHLISList.Count; i++)
+            {
+                if (executionRows.Count > i)
+                {
+                    executionRows[i].WHLIS = outputFileContent.WHLISList[i];
+                }
+                else
+                {
+                    executionRows.Add(new ExecutionRow() { WHLIS = outputFileContent.WHLISList[i] });
+                }
+            }
+        }
+
+        private void UpdateOtherList()
+        {
+            for (int i = 0; i < outputFileContent.OtherList.Count; i++)
+            {
+                if (executionRows.Count > i)
+                {
+                    executionRows[i].Other = outputFileContent.OtherList[i];
+                }
+                else
+                {
+                    executionRows.Add(new ExecutionRow() { Other = outputFileContent.OtherList[i] });
+                }
+            }
         }
 
         private void SetupDivideSpectraCb()

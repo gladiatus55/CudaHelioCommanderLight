@@ -588,16 +588,13 @@ namespace CudaHelioCommanderLight
             DataGrid dataGrid = sender as DataGrid;
             DataGridRow row = findParentOfType<DataGridRow>(e.OriginalSource as DependencyObject);
 
-            if (dataGrid != null && row != null)
+            if (dataGrid != null && row != null && dataGrid.SelectedItems.Contains(row.DataContext))
             {
                 //the row DataContext is the selected item
-                if (dataGrid.SelectedItems.Contains(row.DataContext))
-                {
-                    dataGrid.SelectedItems.Remove(row.DataContext);
-                    //mark event as handled so that datagrid does not
-                    //just select it again on the current click.
-                    e.Handled = true;
-                }
+                dataGrid.SelectedItems.Remove(row.DataContext);
+                //mark event as handled so that datagrid does not
+                //just select it again on the current click.
+                e.Handled = true;
             }
         }
 

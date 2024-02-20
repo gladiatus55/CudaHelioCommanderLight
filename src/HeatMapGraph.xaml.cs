@@ -285,12 +285,11 @@ namespace CudaHelioCommanderLight
         private void RerenderBtn_Click(object sender, RoutedEventArgs e)
         {
             isMinMaxColorValueExternal = true;
-            MainHelper.TryConvertToDouble(MinColorValueTb.Text, out double minColorValue);
-            MainHelper.TryConvertToDouble(MaxColorValueTb.Text, out double maxColorValue);
+            MainHelper.TryConvertToDouble(MinColorValueTb.Text, out double outMinColorValue);
+            MainHelper.TryConvertToDouble(MaxColorValueTb.Text, out double outMaxColorValue);
 
-            this.minColorValue = minColorValue;
-            this.maxColorValue = maxColorValue;
-
+            minColorValue = outMinColorValue;
+            maxColorValue = outMaxColorValue;
             Render();
         }
 

@@ -120,10 +120,5 @@ namespace CudaHelioCommanderLight.Models
             ErrorValue = etaRms;
             this.Error = etaRms;
         }
-
-        public Execution()
-        {
-
-        }
     }
 }

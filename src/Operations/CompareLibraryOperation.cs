@@ -15,10 +15,8 @@ public class CompareLibraryOperation : Operation<CompareLibraryModel, List<Error
         var errors = new List<ErrorStructure>();
 
         var isFileDirectory = IsDirectory(libStructureType);
-        
-        var files = isFileDirectory
-            ? Directory.GetDirectories(model.LibPath)
-            : Directory.GetFiles(model.LibPath);
+
+        var files = GetFile(model, isFileDirectory);
 
         foreach (var file in files)
         {
@@ -78,6 +76,11 @@ public class CompareLibraryOperation : Operation<CompareLibraryModel, List<Error
             errors.Add(error);
         }
         return errors;
+    }
+
+    private static string[] GetFile(CompareLibraryModel model, bool isFileDirectory)
+    {
+        return isFileDirectory? Directory.GetDirectories(model.LibPath) : Directory.GetFiles(model.LibPath);
     }
     
     private static string? GetDisplayName(string outputFilePath, bool isFileDirectory)
