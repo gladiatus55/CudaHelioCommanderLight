@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CudaHelioCommanderLight.Config;
 using CudaHelioCommanderLight.Enums;
 using CudaHelioCommanderLight.Helpers;
 using CudaHelioCommanderLight.Models;
@@ -44,7 +45,6 @@ public class CompareLibraryOperation : Operation<CompareLibraryModel, List<Error
             {
                 AmsExecution = model.AmsExecution,
                 LibraryItem = outputFileContent,
-                MetricsConfig = model.MetricsConfig,
             });
             error.Error = computedError.Error;
             error.MaxError = computedError.MaxError;
