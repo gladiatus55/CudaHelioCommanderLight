@@ -137,47 +137,22 @@ namespace CudaHelioCommanderLight
                 AmsExecution exD = currentDisplayedAmsInvestigation;
                 amsComputedErrors = new List<ErrorStructure>();
 
-                if (libStructureType == LibStructureType.DIRECTORY_SEPARATED)
-                {
-                    var computedErrors = CompareDirectorySeparatedLibraryOperation.Operate(new CompareLibraryModel()
-                    {
-                        LibPath = libPath,
-                        AmsExecution = exD,
-                        MetricsConfig = metricsConfig
-                    });
 
-                    amsComputedErrors.AddRange(computedErrors);
+                var computedError = CompareLibraryOperation.Operate(new CompareLibraryModel()
+                {
+                    LibPath = libPath,
+                    AmsExecution = exD,
+                    MetricsConfig = metricsConfig
+                }, libStructureType);
+                if (libStructureType != LibStructureType.FILES_FORCEFIELD2023)
+                {
+                    amsComputedErrors.AddRange(computedError);
                 }
-                else if (libStructureType == LibStructureType.FILES_SOLARPROP_LIB)
+                else
                 {
-                    var computedErrors = CompareGeliosphereLibraryOperation.Operate(new CompareLibraryModel()
-                    {
-                        LibPath = libPath,
-                        AmsExecution = exD,
-                        MetricsConfig = metricsConfig
-                    });
-
-                    amsComputedErrors.AddRange(computedErrors);
-                }
-                else if (libStructureType == LibStructureType.FILES_FORCEFIELD2023 || libStructureType == LibStructureType.FILES_FORCEFIELD2023_COMPARISION)
-                {
-                    var forceFieldErrors = CompareForceField2023LibraryOperation.Operate(new CompareLibraryModel()
-                    {
-                        LibPath = libPath,
-                        AmsExecution = exD,
-                        MetricsConfig = metricsConfig
-                    });
-
-                    if (libStructureType == LibStructureType.FILES_FORCEFIELD2023_COMPARISION)
-                    {
-                        amsComputedErrors.AddRange(forceFieldErrors);
-                    }
-                    else
-                    {
-                        GraphForceFieldWindow graphForceFieldWindow = new GraphForceFieldWindow(forceFieldErrors);
-                        graphForceFieldWindow.Show();
-                        return;
-                    }
+                    GraphForceFieldWindow graphForceFieldWindow = new GraphForceFieldWindow(computedError);
+                    graphForceFieldWindow.Show();
+                    return;
                 }
 
                 if (sortByError)
@@ -208,58 +183,21 @@ namespace CudaHelioCommanderLight
                     return;
                 }
 
-                if (libStructureType == LibStructureType.DIRECTORY_SEPARATED)
+                foreach (var exD in AmsExecutionList)
                 {
-                    foreach (var exD in AmsExecutionList)
+                    amsComputedErrors = new List<ErrorStructure>();
+                    var computedErrors = CompareLibraryOperation.Operate(new CompareLibraryModel()
                     {
-                        amsComputedErrors = new List<ErrorStructure>();
-                        var computedErrors = CompareDirectorySeparatedLibraryOperation.Operate(new CompareLibraryModel()
-                        {
-                            LibPath = libPath,
-                            AmsExecution = exD,
-                            MetricsConfig = metricsConfig
-                        });
+                        LibPath = libPath,
+                        AmsExecution = exD,
+                        MetricsConfig = metricsConfig
+                    }, libStructureType);
 
-                        amsComputedErrors.AddRange(computedErrors);
+                    
+                    amsComputedErrors.AddRange(computedErrors);
 
-                        exD.AssignLowestValues(amsComputedErrors);
-                        dataGridAmsInner.Items.Refresh();
-                    }
-                }
-                else if (libStructureType == LibStructureType.FILES_SOLARPROP_LIB)
-                {
-                    foreach (var exD in AmsExecutionList)
-                    {
-                        amsComputedErrors = new List<ErrorStructure>();
-                        var computedErrors = CompareGeliosphereLibraryOperation.Operate(new CompareLibraryModel()
-                        {
-                            LibPath = libPath,
-                            AmsExecution = exD,
-                            MetricsConfig = metricsConfig
-                        });
-
-                        amsComputedErrors.AddRange(computedErrors);
-
-                        exD.AssignLowestValues(amsComputedErrors);
-                        dataGridAmsInner.Items.Refresh();
-                    }
-                }
-                else if (libStructureType == LibStructureType.FILES_FORCEFIELD2023_COMPARISION)
-                {
-                    foreach (var exD in AmsExecutionList)
-                    {
-                        amsComputedErrors = new List<ErrorStructure>();
-                        var forceFieldErrors = CompareForceField2023LibraryOperation.Operate(new CompareLibraryModel()
-                        {
-                            LibPath = libPath,
-                            AmsExecution = exD,
-                            MetricsConfig = metricsConfig
-                        });
-
-                        amsComputedErrors.AddRange(forceFieldErrors);
-                        exD.AssignLowestValues(amsComputedErrors);
-                        dataGridAmsInner.Items.Refresh();
-                    }
+                    exD.AssignLowestValues(amsComputedErrors);
+                    dataGridAmsInner.Items.Refresh();
                 }
 
                 ToggleExportAllAsCsvButton(true);
