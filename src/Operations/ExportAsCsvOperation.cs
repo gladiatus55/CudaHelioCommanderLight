@@ -23,9 +23,6 @@ namespace CudaHelioCommanderLight.Operations
                 // Create a StringBuilder to store the CSV data
                 StringBuilder csvData = new StringBuilder();
 
-                // Add the CSV header
-                //csvData.AppendLine("X,Y,Intensity");
-
                 // Iterate over each HeatPoint and add its data to the CSV
                 foreach (HeatPoint heatPoint in HeatPoints)
                 {
@@ -63,9 +60,6 @@ namespace CudaHelioCommanderLight.Operations
 
                 // Create a StringBuilder to store the CSV data
                 StringBuilder csvData = new StringBuilder();
-
-                // Add the CSV header
-                //csvData.AppendLine("X,Y,Intensity");
 
                 // Iterate over each HeatPoint and add its data to the CSV
                 foreach (ErrorStructure error in errors)

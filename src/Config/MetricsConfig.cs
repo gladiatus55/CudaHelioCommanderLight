@@ -67,7 +67,7 @@ namespace CudaHelioCommanderLight.Config
         public bool WasInitialized { get; set; }
         private double _errorFromGev;
         private double _errorToGev;
-        private List<IMetricsConfigObserver> _observers = new List<IMetricsConfigObserver>();
+        private readonly List<IMetricsConfigObserver> _observers = new List<IMetricsConfigObserver>();
 
         public MetricsConfig()
         {

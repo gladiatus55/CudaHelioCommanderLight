@@ -48,16 +48,15 @@ namespace CudaHelioCommanderLight.Operations
                     continue;
                 }
 
-                if ((x.Length > x1Idx && x[x1Idx] != ratioX[ratioIdx]))
+                if (x.Length > x1Idx && x[x1Idx] != ratioX[ratioIdx])
                 {
                     x1Idx++;
                     continue;
                 }
 
-                if ((x2.Length > x2Idx && x2[x2Idx] != ratioX[ratioIdx]))
+                if (x2.Length > x2Idx && x2[x2Idx] != ratioX[ratioIdx])
                 {
                     x2Idx++;
-                    continue;
                 }
             }
 

@@ -315,17 +315,16 @@ namespace CudaHelioCommanderLight
 
             if (!string.IsNullOrEmpty(filterV))
             {
-                bool success = MainHelper.TryConvertToDouble(filterV, out double V);
+                MainHelper.TryConvertToDouble(filterV, out double V);
                 filteredList = filteredList.Where(er => er.V == (int)V).ToList();
             }
 
             if (!string.IsNullOrEmpty(filterK0))
             {
-                bool success = MainHelper.TryConvertToDouble(filterK0, out double K0);
+                MainHelper.TryConvertToDouble(filterK0, out double K0);
                 filteredList = filteredList.Where(er => AreDoubleValuesEqual(er.K0, K0)).ToList();
             }
-
-            //amsErrorsListBox.Items.Clear();
+            
             if (sortByError)
             {
                 amsErrorsListBox.ItemsSource = filteredList.OrderBy(er => er.Error).ToList();
@@ -399,7 +398,7 @@ namespace CudaHelioCommanderLight
 
             ExecutionStatus executionStatus = MainHelper.ExtractOfflineExecStatus(selectedFolderPath);
 
-            ExecutionDetailList = new ObservableCollection<ExecutionDetail>(executionStatus.activeExecutions);
+            ExecutionDetailList = new ObservableCollection<ExecutionDetail>(executionStatus.GetActiveExecutions());
             ActiveCalculationsDataGrid.ItemsSource = ExecutionDetailList;
         }
 
@@ -548,11 +547,7 @@ namespace CudaHelioCommanderLight
                 System.Drawing.Color.Orange
             };
             var plt = new ScottPlot.Plot(600, 400);
-
-            bool firstRun = true;
-            double minY = 0.0;
-            double maxY = 0.0;
-
+            
             List<string> vAndKToIdx = new List<string>();
 
             //foreach (GraphInfo graphInfo in loadedGraphs)
@@ -574,7 +569,6 @@ namespace CudaHelioCommanderLight
                 double[] y = nLowestExecutions.Select(e => e.ErrorValue).ToArray();
 
                 plt.PlotScatter(x, y, markerSize: 5, lineWidth: 0, color: colorList[idx], label: selectedExecutionDetails[idx].FolderName);
-                firstRun = false;
             }
 
             plt.XTicks(Enumerable.Range(0, vAndKToIdx.Count).Select(a => (double)a).ToArray(), vAndKToIdx.ToArray());
@@ -590,21 +584,17 @@ namespace CudaHelioCommanderLight
 
         private void ActiveCalculationsDataGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            Button b = sender as Button;
 
             DataGrid dataGrid = sender as DataGrid;
             DataGridRow row = findParentOfType<DataGridRow>(e.OriginalSource as DependencyObject);
 
-            if (dataGrid != null && row != null)
+            if (dataGrid != null && row != null && dataGrid.SelectedItems.Contains(row.DataContext))
             {
                 //the row DataContext is the selected item
-                if (dataGrid.SelectedItems.Contains(row.DataContext))
-                {
-                    dataGrid.SelectedItems.Remove(row.DataContext);
-                    //mark event as handled so that datagrid does not
-                    //just select it again on the current click.
-                    e.Handled = true;
-                }
+                dataGrid.SelectedItems.Remove(row.DataContext);
+                //mark event as handled so that datagrid does not
+                //just select it again on the current click.
+                e.Handled = true;
             }
         }
 
@@ -618,7 +608,7 @@ namespace CudaHelioCommanderLight
 
             if (parent != null)
             {
-                ret = parent as T ?? findParentOfType<T>(parent) as T;
+                ret = parent as T ?? findParentOfType<T>(parent);
             }
             return ret;
         }
@@ -836,8 +826,8 @@ namespace CudaHelioCommanderLight
 
             ExecutionDetail executionDetail = ExecutionDetailList[executionDetailSelectedIdx];
 
-            int xSize = executionDetail.paramK0.Count;
-            int ySize = executionDetail.paramV.Count;
+            int xSize = executionDetail.GetParamK0().Count;
+            int ySize = executionDetail.GetParamV().Count;
 
             if (xSize < 2 || ySize < 2)
             {
@@ -851,8 +841,8 @@ namespace CudaHelioCommanderLight
             {
                 for (int j = 0; j < ySize; j++)
                 {
-                    double k0 = executionDetail.paramK0[i];
-                    double V = executionDetail.paramV[j];
+                    double k0 = executionDetail.GetParamK0()[i];
+                    double V = executionDetail.GetParamV()[j];
                     Execution ex = executionDetail.GetExecutionByParam(V, k0);
 
                     if (ex == null)
@@ -869,8 +859,6 @@ namespace CudaHelioCommanderLight
 
             heatMap.SetPoints(heatPoints, xSize, ySize);
             heatMap.Render();
-
-            return;
         }
 
         private void ExportListAsCsvBtn_Click(object sender, RoutedEventArgs e)
