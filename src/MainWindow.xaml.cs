@@ -38,7 +38,7 @@ namespace CudaHelioCommanderLight
         {
             InitializeComponent();
 
-            metricsConfig = new MetricsConfig();
+            metricsConfig = MetricsConfig.GetInstance();
             MetricsUsedTB.Text = metricsConfig.ToString();
             _mainWindowVm = new MainWindowVm();
             metricsConfig.RegisterObserver(_mainWindowVm);
@@ -86,7 +86,6 @@ namespace CudaHelioCommanderLight
                 AmsExecution = amsExecution,
                 ErrorStructure = errorStructure,
                 Plt = AmsGraphWpfPlot.plt,
-                MetricsConfig = metricsConfig
             };
 
             RenderAmsErrorGraphOperation.Operate(amsExecutionErrorModel);
@@ -101,7 +100,6 @@ namespace CudaHelioCommanderLight
                 AmsExecution = amsExecution,
                 ErrorStructure = errorStructure,
                 Plt = AmsGraphRatioWpfPlot.plt,
-                MetricsConfig = metricsConfig
             };
 
             RenderAmsErrorRatioGraphOperation.Operate(amsExecutionErrorModel);
@@ -142,7 +140,6 @@ namespace CudaHelioCommanderLight
                 {
                     LibPath = libPath,
                     AmsExecution = exD,
-                    MetricsConfig = metricsConfig
                 }, libStructureType);
                 if (libStructureType != LibStructureType.FILES_FORCEFIELD2023)
                 {
@@ -190,7 +187,6 @@ namespace CudaHelioCommanderLight
                     {
                         LibPath = libPath,
                         AmsExecution = exD,
-                        MetricsConfig = metricsConfig
                     }, libStructureType);
 
                     

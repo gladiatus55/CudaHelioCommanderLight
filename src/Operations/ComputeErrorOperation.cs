@@ -3,6 +3,7 @@ using CudaHelioCommanderLight.Models;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using CudaHelioCommanderLight.Config;
 
 namespace CudaHelioCommanderLight.Operations
 {
@@ -11,7 +12,7 @@ namespace CudaHelioCommanderLight.Operations
         public static new ComputedErrorModel Operate(ErrorComputeModel model)
         {
             var amsExecution = model.AmsExecution;
-            var metricsConfig = model.MetricsConfig;
+            var metricsConfig = MetricsConfig.GetInstance();
             var libraryItem = model.LibraryItem;
             var referenceTi = libraryItem.Spe1e3List;
             var eta = new List<double>();

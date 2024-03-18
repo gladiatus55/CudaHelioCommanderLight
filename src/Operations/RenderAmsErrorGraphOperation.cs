@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CudaHelioCommanderLight.Config;
 
 namespace CudaHelioCommanderLight.Operations
 {
@@ -12,7 +13,7 @@ namespace CudaHelioCommanderLight.Operations
         {
             var amsExecution = amsExecutionErrorModel.AmsExecution;
             var errorStructure = amsExecutionErrorModel.ErrorStructure;
-            var metricsConfig = amsExecutionErrorModel.MetricsConfig;
+            var metricsConfig = MetricsConfig.GetInstance();
             var plt = amsExecutionErrorModel.Plt;
             var tickPositionsListY = new List<double>();
             var tickNamesListY = new List<string>();
