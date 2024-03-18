@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using CudaHelioCommanderLight.MainWindowServices;
 
 namespace CudaHelioCommanderLight
 {
@@ -34,6 +35,8 @@ namespace CudaHelioCommanderLight
         private List<string> GeliosphereLibBurgerRatios;
         private List<string> GeliosphereLibJGRRatios; 
         private MainWindowVm _mainWindowVm;
+
+        private ButtonService _buttonService = new ButtonService();
         public MainWindow()
         {
             InitializeComponent();
@@ -73,8 +76,7 @@ namespace CudaHelioCommanderLight
 
         private void AboutUsButton_Click(object sender, RoutedEventArgs e)
         {
-            string message = "Slovak Academy of Sciences\n\nDeveloped by: Martin Nguyen, Pavol Bobik\n\nCopyright 2023";
-            MessageBox.Show(message, "About Us", MessageBoxButton.OK, MessageBoxImage.Information);
+            _buttonService.AboutUsButton_Click(sender, e);
         }
 
         #region AMS
