@@ -38,6 +38,7 @@ namespace CudaHelioCommanderLight
         private ButtonService _buttonService;
         private RenderingService _renderingService;
         private HeatMapService _heatMapService;
+        private CompareService _compareService;
         public MainWindow()
         {
             InitializeComponent();
@@ -75,6 +76,7 @@ namespace CudaHelioCommanderLight
             _buttonService = new ButtonService();
             _renderingService = new RenderingService();
             _heatMapService = new HeatMapService();
+            _compareService = new CompareService();
         }
 
 
@@ -87,11 +89,6 @@ namespace CudaHelioCommanderLight
         private void RenderAmsGraph(AmsExecution amsExecution, ErrorStructure? errorStructure = null)
         {
             _renderingService.RenderAmsGraph(amsExecution,AmsGraphWpfPlot, errorStructure);
-        }
-
-        private void RenderAmsRatioGraph(AmsExecution amsExecution, ErrorStructure errorStructure = null)
-        {
-            _renderingService.RenderAmsRatioGraph(amsExecution, AmsGraphRatioWpfPlot, errorStructure);
         }
 
         private void DrawAmsHeatmapBtn_Click(object sender, RoutedEventArgs e)
@@ -189,42 +186,10 @@ namespace CudaHelioCommanderLight
         
         private void CompareWithLib_Click(object sender, RoutedEventArgs e)
         {
-            var tag = ((Button)sender)?.Tag;
-            LibStructureType libStructureType = LibStructureType.DIRECTORY_SEPARATED;
-            String libPath = String.Empty;
-            switch (tag)
-            {
-                case "libHelium":
-                {
-                    libPath = @"libFiles\lib-helium";
-                    break;
-                }
-                case "libProton":
-                {
-                    libPath = @"libFiles\lib-proton";
-                    break;
-                }
-                case "forceField":
-                {
-                    libPath = @"libFiles\lib-forcefield2023";
-                    libStructureType = LibStructureType.FILES_FORCEFIELD2023_COMPARISION;
-                    break;
-                }
-                case "geliosphere":
-                {
-                    if (geliosphereLibRatio.SelectedItem == null)
-                    {
-                        MessageBox.Show("Library not found", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-                    var libtype = geliosphereLibType.SelectedItem.ToString();
-                    var libRatio = geliosphereLibRatio.SelectedItem.ToString().Replace(',', '.');
-                    libPath = $"libFiles\\lib-geliosphere-{libtype}-{libRatio}";
-                    libStructureType = LibStructureType.FILES_SOLARPROP_LIB;
-                    break;
-                }
-            }
-            if(tag != null)
+            var (libPath, libStructureType) = _compareService.CompareWithLib((string)((Button)sender).Tag,
+                geliosphereLibRatio, geliosphereLibType);
+            
+            if(((Button)sender).Tag != null && libPath != null)
             {
                 CompareWithLibrary(libPath, libStructureType);
             }
@@ -232,55 +197,22 @@ namespace CudaHelioCommanderLight
 
         private void CompareAllLoadedWithLib_Click(object sender, RoutedEventArgs e)
         {
-            var tag = ((Button)sender).Tag;
-            LibStructureType libStructureType = LibStructureType.DIRECTORY_SEPARATED;
-            String libPath = String.Empty;
-            switch (tag)
+            var (libPath, libStructureType) = _compareService.CompareWithLib((string)((Button)sender).Tag,
+                geliosphereAllLibRatio, geliosphereAllLibType);
+
+            if (((Button)sender).Tag != null && libPath != null)
             {
-                case "libHelium":
-                {
-                    libPath = @"libFiles\lib-helium";
-                    break;
-                }
-                case "libProton":
-                {
-                    libPath = @"libFiles\lib-proton";
-                    break;
-                }
-                case "forceField":
-                {
-                    libPath = @"libFiles\lib-forcefield2023";
-                    libStructureType = LibStructureType.FILES_FORCEFIELD2023_COMPARISION;
-                    break;
-                }
-                case "geliosphere":
-                {
-                    if (geliosphereAllLibRatio.SelectedItem == null)
-                    {
-                        MessageBox.Show("Library not found", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-                    var libtype = geliosphereAllLibType.SelectedItem.ToString();
-                    var libRatio = geliosphereAllLibRatio.SelectedItem.ToString().Replace(',', '.');
-                    libPath = $"libFiles\\lib-geliosphere-{libtype}-{libRatio}";
-                    libStructureType = LibStructureType.FILES_SOLARPROP_LIB;
-                    break;
-                }
+                CompareAllLoadedWithLib(libPath, libStructureType);
             }
-            CompareAllLoadedWithLib(libPath, libStructureType);
         }
 
         private void AmsErrorsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var error = (ErrorStructure)amsErrorsListBox.SelectedItem;
+            var error = _renderingService.AmsErrorsListBox_SelectionChanged((ErrorStructure)amsErrorsListBox.SelectedItem, AmsGraphWpfPlot, AmsGraphRatioWpfPlot, (AmsExecution)dataGridAmsInner.SelectedItem );
             if (error == null)
             {
                 return;
             }
-            AmsExecution exD = (AmsExecution)dataGridAmsInner.SelectedItem;
-
-            RenderAmsGraph(exD, error);
-            RenderAmsRatioGraph(exD, error);
             openedLibraryNameTb.Text = error.DisplayName;
         }
 
@@ -478,61 +410,13 @@ namespace CudaHelioCommanderLight
         {
             try
             {
-                OpenFileDialog fileDialog = new OpenFileDialog();
-                List<ExecutionDetail> selectedExecutionDetails = new List<ExecutionDetail>();
-
-
-                if (fileDialog.ShowDialog() == false)
-                {
-                    return;
-                }
-                string filePath = fileDialog.FileName;
-                bool dataExtractSuccess = MainHelper.ExtractOutputDataFile(filePath, out OutputFileContent outputFileContent);
-
-                if (!dataExtractSuccess)
-                {
-                    MessageBox.Show("Cannot read data values from the input file.");
-                    return;
-                }
-
-                foreach (ExecutionDetail executionDetail in ActiveCalculationsDataGrid.Items)
-                {
-                    if (executionDetail.IsSelected)
-                    {
-                        selectedExecutionDetails.Add(executionDetail);
-
-                        foreach (Execution execution in executionDetail.Executions)
-                        {
-                            ExecutionHelper.InitializeOutput1e3BinDataFromOnlineDir(execution);
-
-                            if (execution.StandardDeviatons != null)
-                            {
-                                try
-                                {
-                                    execution.ComputeError(outputFileContent, MetricsConfig.GetInstance()); // If error in computeError, this was changed recently
-                                }
-                                catch (ArgumentOutOfRangeException ex)
-                                {
-                                    MessageBox.Show(ex.ToString());
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                RenderGraphOfErrors(selectedExecutionDetails);
+                _renderingService.CreateErrorGraph(ActiveCalculationsDataGrid);
             }
             catch(WrongConfigurationException ex)
             {
                 MessageBox.Show(ex.Message);
                 OpenConfigurationWindow();
             }
-        }
-
-        private void RenderGraphOfErrors(List<ExecutionDetail> selectedExecutionDetails)
-        {
-          _renderingService.RenderGraphOfErrors(selectedExecutionDetails);
         }
 
         private void ActiveCalculationsDataGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)

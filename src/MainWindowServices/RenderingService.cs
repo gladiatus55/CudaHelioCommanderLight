@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using CudaHelioCommanderLight.Exceptions;
+using System.Windows.Controls;
+using CudaHelioCommanderLight.Config;
 using CudaHelioCommanderLight.Helpers;
 using CudaHelioCommanderLight.Models;
 using CudaHelioCommanderLight.Operations;
@@ -13,7 +14,26 @@ namespace CudaHelioCommanderLight.MainWindowServices;
 
 public class RenderingService
 {
-    public void RenderAmsGraph(AmsExecution amsExecution, WpfPlot amsGraphWpfPlot, ErrorStructure? errorStructure = null)
+
+    public ErrorStructure? AmsErrorsListBox_SelectionChanged(ErrorStructure errorStructure, WpfPlot amsGraphWpfPlot,
+        WpfPlot amsGraphRatioWpfPlot, AmsExecution amsExecution)
+    {
+        ErrorStructure error = errorStructure;
+        if (error == null)
+        {
+            return null;
+        }
+
+        AmsExecution exD = amsExecution;
+
+        RenderAmsGraph(exD, amsGraphWpfPlot, error);
+        RenderAmsRatioGraph(exD, amsGraphRatioWpfPlot, error);
+
+        return error;
+    }
+
+    public void RenderAmsGraph(AmsExecution amsExecution, WpfPlot amsGraphWpfPlot,
+        ErrorStructure? errorStructure = null)
     {
         amsGraphWpfPlot.Reset();
         var amsExecutionErrorModel = new AmsExecutionPltErrorModel()
@@ -26,8 +46,9 @@ public class RenderingService
         RenderAmsErrorGraphOperation.Operate(amsExecutionErrorModel);
         amsGraphWpfPlot.Render();
     }
-    
-    public void RenderAmsRatioGraph(AmsExecution amsExecution, WpfPlot amsGraphRatioWpfPlot,  ErrorStructure? errorStructure = null)
+
+    private void RenderAmsRatioGraph(AmsExecution amsExecution, WpfPlot amsGraphRatioWpfPlot,
+        ErrorStructure? errorStructure = null)
     {
         amsGraphRatioWpfPlot.Reset();
         var amsExecutionErrorModel = new AmsExecutionPltErrorModel()
@@ -40,9 +61,61 @@ public class RenderingService
         RenderAmsErrorRatioGraphOperation.Operate(amsExecutionErrorModel);
         amsGraphRatioWpfPlot.Render();
     }
-    
-    
-    public void RenderGraphOfErrors(List<ExecutionDetail> selectedExecutionDetails)
+
+    public void CreateErrorGraph(DataGrid activeCalculationsDataGrid)
+    {
+
+        OpenFileDialog fileDialog = new OpenFileDialog();
+        List<ExecutionDetail> selectedExecutionDetails = new List<ExecutionDetail>();
+
+
+        if (fileDialog.ShowDialog() == false)
+        {
+            return;
+        }
+
+        string filePath = fileDialog.FileName;
+        bool dataExtractSuccess = MainHelper.ExtractOutputDataFile(filePath, out OutputFileContent outputFileContent);
+
+        if (!dataExtractSuccess)
+        {
+            MessageBox.Show("Cannot read data values from the input file.");
+            return;
+        }
+
+        foreach (ExecutionDetail executionDetail in activeCalculationsDataGrid.Items)
+        {
+            if (executionDetail.IsSelected)
+            {
+                selectedExecutionDetails.Add(executionDetail);
+
+                foreach (Execution execution in executionDetail.Executions)
+                {
+                    ExecutionHelper.InitializeOutput1e3BinDataFromOnlineDir(execution);
+
+                    if (execution.StandardDeviatons != null)
+                    {
+                        try
+                        {
+                            execution.ComputeError(outputFileContent,
+                                MetricsConfig.GetInstance()); // If error in computeError, this was changed recently
+                        }
+                        catch (ArgumentOutOfRangeException ex)
+                        {
+                            MessageBox.Show(ex.ToString());
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        RenderGraphOfErrors(selectedExecutionDetails);
+
+    }
+
+
+    private void RenderGraphOfErrors(List<ExecutionDetail> selectedExecutionDetails)
     {
         List<System.Drawing.Color> colorList = new List<System.Drawing.Color>()
         {
