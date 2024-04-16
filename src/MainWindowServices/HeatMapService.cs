@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
 using CudaHelioCommanderLight.Models;
 using CudaHelioCommanderLight.Operations;
 
@@ -11,7 +9,7 @@ namespace CudaHelioCommanderLight.MainWindowServices;
 public class HeatMapService
 {
     
-    public void DrawHeatmapBtn_Click(object sender, RoutedEventArgs e, ObservableCollection<ExecutionDetail> executionDetailList, int executionDetailSelectedIdx)
+    public void DrawHeatmapBtn(ObservableCollection<ExecutionDetail> executionDetailList, int executionDetailSelectedIdx)
     {
         HeatMapGraph heatMap = new HeatMapGraph();
         heatMap.Show();
@@ -53,7 +51,7 @@ public class HeatMapService
         heatMap.Render();
     }
     
-    public void DrawAmsHeatmapBtn_Click(string? currentDisplayedAmsInvestigation, List<ErrorStructure> amsComputedErrors, string tag)
+    public void DrawAmsHeatmapBtn(string? currentDisplayedAmsInvestigation, List<ErrorStructure> amsComputedErrors, string tag)
     {
         if (amsComputedErrors.Count == 0)
         {

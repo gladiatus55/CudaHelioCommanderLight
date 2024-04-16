@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
-using CudaHelioCommanderLight.Config;
 using CudaHelioCommanderLight.Enums;
 using CudaHelioCommanderLight.Helpers;
 using CudaHelioCommanderLight.Models;

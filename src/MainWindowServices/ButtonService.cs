@@ -8,13 +8,13 @@ namespace CudaHelioCommanderLight.MainWindowServices;
 
 public class ButtonService
 {
-    public void AboutUsButton_Click(object sender, RoutedEventArgs e)
+    public void AboutUsButton()
     {
         string message = "Slovak Academy of Sciences\n\nDeveloped by: Martin Nguyen, Pavol Bobik\n\nCopyright 2023";
         MessageBox.Show(message, "About Us", MessageBoxButton.OK, MessageBoxImage.Information);
     }
     
-    public void ExportJsonBtn_Click(object sender, RoutedEventArgs e, ObservableCollection<ExecutionDetail> executionDetailList, int executionDetailSelectedIdx)
+    public void ExportJsonBtn(ObservableCollection<ExecutionDetail> executionDetailList, int executionDetailSelectedIdx)
     {
         ExecutionDetail executionDetail = executionDetailList[executionDetailSelectedIdx];
 

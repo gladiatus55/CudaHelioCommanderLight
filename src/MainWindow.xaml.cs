@@ -82,7 +82,7 @@ namespace CudaHelioCommanderLight
 
         private void AboutUsButton_Click(object sender, RoutedEventArgs e)
         {
-            _buttonService.AboutUsButton_Click(sender, e);
+            _buttonService.AboutUsButton();
         }
 
         #region AMS
@@ -93,7 +93,7 @@ namespace CudaHelioCommanderLight
 
         private void DrawAmsHeatmapBtn_Click(object sender, RoutedEventArgs e)
         {
-            _heatMapService.DrawAmsHeatmapBtn_Click(currentDisplayedAmsInvestigation?.FileName, amsComputedErrors, (string) ((Button)sender).Tag);
+            _heatMapService.DrawAmsHeatmapBtn(currentDisplayedAmsInvestigation?.FileName, amsComputedErrors, (string) ((Button)sender).Tag);
         }
 
         private void CompareWithLibrary(string libPath, LibStructureType libStructureType)
@@ -547,7 +547,7 @@ namespace CudaHelioCommanderLight
 
         private void ExportJsonBtn_Click(object sender, RoutedEventArgs e)
         {
-            _buttonService.ExportJsonBtn_Click(sender, e, ExecutionDetailList, executionDetailSelectedIdx);
+            _buttonService.ExportJsonBtn(ExecutionDetailList, executionDetailSelectedIdx);
         }
 
         private void ComputeErrorBtn_Click(object sender, RoutedEventArgs e)
@@ -635,7 +635,7 @@ namespace CudaHelioCommanderLight
 
         private void DrawHeatmapBtn_Click(object sender, RoutedEventArgs e)
         {
-           _heatMapService.DrawHeatmapBtn_Click(sender, e, ExecutionDetailList, executionDetailSelectedIdx);
+           _heatMapService.DrawHeatmapBtn(ExecutionDetailList, executionDetailSelectedIdx);
         }
 
         private void ExportListAsCsvBtn_Click(object sender, RoutedEventArgs e)
