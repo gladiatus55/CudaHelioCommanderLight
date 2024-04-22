@@ -1,5 +1,6 @@
 ﻿using CudaHelioCommanderLight.Models;
 using System.IO;
+using CudaHelioCommanderLight.Config;
 
 namespace CudaHelioCommanderLight.Operations
 {
@@ -9,7 +10,7 @@ namespace CudaHelioCommanderLight.Operations
         {
             var amsExecution = amsExecutionErrorModel.AmsExecution;
             var errorStructure = amsExecutionErrorModel.ErrorStructure;
-            var metricsConfig = amsExecutionErrorModel.MetricsConfig;
+            var metricsConfig = MetricsConfig.GetInstance();
             var plt = amsExecutionErrorModel.Plt;
 
             if (errorStructure == null)
