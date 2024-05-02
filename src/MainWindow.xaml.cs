@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using CudaHelioCommanderLight.MainWindowServices;
 
 namespace CudaHelioCommanderLight
 {
@@ -26,7 +27,6 @@ namespace CudaHelioCommanderLight
     {
         public ObservableCollection<ExecutionDetail> ExecutionDetailList { get; set; }
         private string versionStr = "Version: 1.1.1l";
-        private MetricsConfig metricsConfig;
         private PanelType currentlyDisplayedPanelType;
         private int executionDetailSelectedIdx = -1;
         private List<ErrorStructure> amsComputedErrors;
@@ -34,14 +34,18 @@ namespace CudaHelioCommanderLight
         private List<string> GeliosphereLibBurgerRatios;
         private List<string> GeliosphereLibJGRRatios; 
         private MainWindowVm _mainWindowVm;
+
+        private ButtonService _buttonService;
+        private RenderingService _renderingService;
+        private HeatMapService _heatMapService;
+        private CompareService _compareService;
         public MainWindow()
         {
             InitializeComponent();
 
-            metricsConfig = MetricsConfig.GetInstance();
-            MetricsUsedTB.Text = metricsConfig.ToString();
+            MetricsUsedTB.Text = MetricsConfig.GetInstance().ToString();
             _mainWindowVm = new MainWindowVm();
-            metricsConfig.RegisterObserver(_mainWindowVm);
+            MetricsConfig.GetInstance().RegisterObserver(_mainWindowVm);
 
             DataContext = _mainWindowVm;
 
@@ -68,58 +72,28 @@ namespace CudaHelioCommanderLight
             geliosphereAllLibType.SelectedIndex = 0;
             geliosphereAllLibRatio.ItemsSource = GeliosphereLibBurgerRatios;
             geliosphereAllLibRatio.SelectedIndex = 0;
+            
+            _buttonService = new ButtonService();
+            _renderingService = new RenderingService();
+            _heatMapService = new HeatMapService();
+            _compareService = new CompareService();
         }
 
 
         private void AboutUsButton_Click(object sender, RoutedEventArgs e)
         {
-            string message = "Slovak Academy of Sciences\n\nDeveloped by: Martin Nguyen, Pavol Bobik\n\nCopyright 2023";
-            MessageBox.Show(message, "About Us", MessageBoxButton.OK, MessageBoxImage.Information);
+            _buttonService.AboutUsButton();
         }
 
         #region AMS
         private void RenderAmsGraph(AmsExecution amsExecution, ErrorStructure? errorStructure = null)
         {
-            AmsGraphWpfPlot.Reset();
-            var amsExecutionErrorModel = new AmsExecutionPltErrorModel()
-            {
-                AmsExecution = amsExecution,
-                ErrorStructure = errorStructure,
-                Plt = AmsGraphWpfPlot.plt,
-            };
-
-            RenderAmsErrorGraphOperation.Operate(amsExecutionErrorModel);
-            AmsGraphWpfPlot.Render();
-        }
-
-        private void RenderAmsRatioGraph(AmsExecution amsExecution, ErrorStructure errorStructure = null)
-        {
-            AmsGraphRatioWpfPlot.Reset();
-            var amsExecutionErrorModel = new AmsExecutionPltErrorModel()
-            {
-                AmsExecution = amsExecution,
-                ErrorStructure = errorStructure,
-                Plt = AmsGraphRatioWpfPlot.plt,
-            };
-
-            RenderAmsErrorRatioGraphOperation.Operate(amsExecutionErrorModel);
-            AmsGraphRatioWpfPlot.Render();
+            _renderingService.RenderAmsGraph(amsExecution,AmsGraphWpfPlot, errorStructure);
         }
 
         private void DrawAmsHeatmapBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (amsComputedErrors.Count == 0)
-            {
-                MessageBox.Show("Empty errors!");
-                return;
-            }
-
-            DisplayAmsHeatmapWindowOperation.Operate(new DisplayAmsHeatmapModel
-            {
-                GraphName = currentDisplayedAmsInvestigation?.FileName,
-                Errors = amsComputedErrors,
-                Tag = (string) ((Button)sender).Tag
-            });
+            _heatMapService.DrawAmsHeatmapBtn(currentDisplayedAmsInvestigation?.FileName, amsComputedErrors, (string) ((Button)sender).Tag);
         }
 
         private void CompareWithLibrary(string libPath, LibStructureType libStructureType)
@@ -209,80 +183,36 @@ namespace CudaHelioCommanderLight
         {
             exportListAsCsvBtn.IsEnabled = value;
         }
-
-        private void CompareWithHeliumLibBtn_Click(object sender, RoutedEventArgs e)
+        
+        private void CompareWithLib_Click(object sender, RoutedEventArgs e)
         {
-            var libPath = @"libFiles\lib-helium";
-            CompareWithLibrary(libPath, LibStructureType.DIRECTORY_SEPARATED);
-        }
-
-        private void CompareWithLibBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var libPath = @"libFiles\lib-proton";
-            CompareWithLibrary(libPath, LibStructureType.DIRECTORY_SEPARATED);
-        }
-
-        private void CompareWithGeliosphereLibBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (geliosphereLibRatio.SelectedItem == null)
+            var (libPath, libStructureType) = _compareService.CompareWithLib((string)((Button)sender).Tag,
+                geliosphereLibRatio, geliosphereLibType);
+            
+            if(((Button)sender).Tag != null && libPath != null)
             {
-                MessageBox.Show("Library not found", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                CompareWithLibrary(libPath, libStructureType);
             }
-            var libtype = geliosphereLibType.SelectedItem.ToString();
-            var libRatio = geliosphereLibRatio.SelectedItem.ToString().Replace(',', '.');
-            var libPath = $"libFiles\\lib-geliosphere-{libtype}-{libRatio}";
-            CompareWithLibrary(libPath, LibStructureType.FILES_SOLARPROP_LIB);
         }
 
-        private void CompareWithForceFieldLibBtn_Copy_Click(object sender, RoutedEventArgs e)
+        private void CompareAllLoadedWithLib_Click(object sender, RoutedEventArgs e)
         {
-            var libPath = @"libFiles\lib-forcefield2023";
-            CompareWithLibrary(libPath, LibStructureType.FILES_FORCEFIELD2023_COMPARISION);
-        }
+            var (libPath, libStructureType) = _compareService.CompareWithLib((string)((Button)sender).Tag,
+                geliosphereAllLibRatio, geliosphereAllLibType);
 
-        private void CompareAllLoadedWithHeLibBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var libPath = @"libFiles\lib-helium";
-            CompareAllLoadedWithLib(libPath, LibStructureType.DIRECTORY_SEPARATED);
-        }
-
-        private async void CompareAllLoadedWithLibBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var libPath = @"libFiles\lib-proton";
-            CompareAllLoadedWithLib(libPath, LibStructureType.DIRECTORY_SEPARATED);
-        }
-
-        private async void CompareAllLoadedWitGeliosphereLibBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (geliosphereAllLibRatio.SelectedItem == null)
+            if (((Button)sender).Tag != null && libPath != null)
             {
-                MessageBox.Show("Library not found", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                CompareAllLoadedWithLib(libPath, libStructureType);
             }
-            var libtype = geliosphereAllLibType.SelectedItem.ToString();
-            var libRatio = geliosphereAllLibRatio.SelectedItem.ToString().Replace(',', '.');
-            var libPath = $"libFiles\\lib-geliosphere-{libtype}-{libRatio}";
-            CompareAllLoadedWithLib(libPath, LibStructureType.FILES_SOLARPROP_LIB);
-        }
-
-        private void CompareAllLoadedWithForceFieldLibBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var libPath = @"libFiles\lib-forcefield2023";
-            CompareAllLoadedWithLib(libPath, LibStructureType.FILES_FORCEFIELD2023_COMPARISION);
         }
 
         private void AmsErrorsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var error = (ErrorStructure)amsErrorsListBox.SelectedItem;
+            var error = _renderingService.AmsErrorsListBox_SelectionChanged((ErrorStructure)amsErrorsListBox.SelectedItem, AmsGraphWpfPlot, AmsGraphRatioWpfPlot, (AmsExecution)dataGridAmsInner.SelectedItem );
             if (error == null)
             {
                 return;
             }
-            AmsExecution exD = (AmsExecution)dataGridAmsInner.SelectedItem;
-
-            RenderAmsGraph(exD, error);
-            RenderAmsRatioGraph(exD, error);
             openedLibraryNameTb.Text = error.DisplayName;
         }
 
@@ -400,32 +330,32 @@ namespace CudaHelioCommanderLight
 
         private void SwitchPanels(PanelType panelType)
         {
-            this.ExplorerMainpanel.Visibility = Visibility.Hidden;
-            this.ExplorerLeftPanel.Visibility = Visibility.Hidden;
-            this.ExplorerRightPanel.Visibility = Visibility.Hidden;
-            this.StatusCheckerMainPanel.Visibility = Visibility.Hidden;
-            this.StatusCheckerGridPanelDetail.Visibility = Visibility.Hidden;
-            this.AmsInvestigationPanel.Visibility = Visibility.Hidden;
-            this.AmsInvestigationDetailPanel.Visibility = Visibility.Hidden;
+            ExplorerMainpanel.Visibility = Visibility.Hidden;
+            ExplorerLeftPanel.Visibility = Visibility.Hidden;
+            ExplorerRightPanel.Visibility = Visibility.Hidden;
+            StatusCheckerMainPanel.Visibility = Visibility.Hidden;
+            StatusCheckerGridPanelDetail.Visibility = Visibility.Hidden;
+            AmsInvestigationPanel.Visibility = Visibility.Hidden;
+            AmsInvestigationDetailPanel.Visibility = Visibility.Hidden;
 
             switch (panelType)
             {
                 case PanelType.STATUS_CHECKER_DETAIL:
-                    this.StatusCheckerGridPanelDetail.Visibility = Visibility.Visible;
+                    StatusCheckerGridPanelDetail.Visibility = Visibility.Visible;
                     break;
                 case PanelType.STATUS_CHECKER:
-                    this.StatusCheckerMainPanel.Visibility = Visibility.Visible;
+                    StatusCheckerMainPanel.Visibility = Visibility.Visible;
                     break;
                 case PanelType.EXPLORER:
-                    this.ExplorerMainpanel.Visibility = Visibility.Visible;
-                    this.ExplorerRightPanel.Visibility = Visibility.Visible;
-                    this.ExplorerLeftPanel.Visibility = Visibility.Visible;
+                    ExplorerMainpanel.Visibility = Visibility.Visible;
+                    ExplorerRightPanel.Visibility = Visibility.Visible;
+                    ExplorerLeftPanel.Visibility = Visibility.Visible;
                     break;
                 case PanelType.AMS_INVESTIGATION:
-                    this.AmsInvestigationPanel.Visibility = Visibility.Visible;
+                    AmsInvestigationPanel.Visibility = Visibility.Visible;
                     break;
                 case PanelType.AMS_INVESTIGATION_DETAIL:
-                    this.AmsInvestigationDetailPanel.Visibility = Visibility.Visible;
+                    AmsInvestigationDetailPanel.Visibility = Visibility.Visible;
                     break;
                 default:
                     break;
@@ -480,102 +410,13 @@ namespace CudaHelioCommanderLight
         {
             try
             {
-                OpenFileDialog fileDialog = new OpenFileDialog();
-                List<ExecutionDetail> selectedExecutionDetails = new List<ExecutionDetail>();
-
-
-                if (fileDialog.ShowDialog() == false)
-                {
-                    return;
-                }
-                string filePath = fileDialog.FileName;
-                bool dataExtractSuccess = MainHelper.ExtractOutputDataFile(filePath, out OutputFileContent outputFileContent);
-
-                if (!dataExtractSuccess)
-                {
-                    MessageBox.Show("Cannot read data values from the input file.");
-                    return;
-                }
-
-                foreach (ExecutionDetail executionDetail in ActiveCalculationsDataGrid.Items)
-                {
-                    if (executionDetail.IsSelected)
-                    {
-                        selectedExecutionDetails.Add(executionDetail);
-
-                        foreach (Execution execution in executionDetail.Executions)
-                        {
-                            ExecutionHelper.InitializeOutput1e3BinDataFromOnlineDir(execution);
-
-                            if (execution.StandardDeviatons != null)
-                            {
-                                try
-                                {
-                                    execution.ComputeError(outputFileContent, metricsConfig); // If error in computeError, this was changed recently
-                                }
-                                catch (ArgumentOutOfRangeException ex)
-                                {
-                                    MessageBox.Show(ex.ToString());
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                RenderGraphOfErrors(selectedExecutionDetails);
+                _renderingService.CreateErrorGraph(ActiveCalculationsDataGrid);
             }
             catch(WrongConfigurationException ex)
             {
                 MessageBox.Show(ex.Message);
                 OpenConfigurationWindow();
             }
-        }
-
-        private void RenderGraphOfErrors(List<ExecutionDetail> selectedExecutionDetails)
-        {
-            List<System.Drawing.Color> colorList = new List<System.Drawing.Color>()
-            {
-                System.Drawing.Color.Red,
-                System.Drawing.Color.Green,
-                System.Drawing.Color.Blue,
-                System.Drawing.Color.Aqua,
-                System.Drawing.Color.Orange
-            };
-            var plt = new ScottPlot.Plot(600, 400);
-            
-            List<string> vAndKToIdx = new List<string>();
-
-            //foreach (GraphInfo graphInfo in loadedGraphs)
-            for (int idx = 0; idx < selectedExecutionDetails.Count; idx++)
-            {
-                List<Execution> nLowestExecutions = selectedExecutionDetails[idx].GetLowestExecutions(10);
-
-                foreach (Execution e in nLowestExecutions)
-                {
-                    string stringify = "V=" + e.V + "K0=" + e.K0;
-
-                    if (!vAndKToIdx.Contains(stringify))
-                    {
-                        vAndKToIdx.Add(stringify);
-                    }
-                }
-
-                double[] x = nLowestExecutions.Select(e => (double)vAndKToIdx.IndexOf("V=" + e.V + "K0=" + e.K0)).ToArray();
-                double[] y = nLowestExecutions.Select(e => e.ErrorValue).ToArray();
-
-                plt.PlotScatter(x, y, markerSize: 5, lineWidth: 0, color: colorList[idx], label: selectedExecutionDetails[idx].FolderName);
-            }
-
-            plt.XTicks(Enumerable.Range(0, vAndKToIdx.Count).Select(a => (double)a).ToArray(), vAndKToIdx.ToArray());
-
-            plt.Title("Plotted errors");
-            plt.YLabel("Error");
-            plt.XLabel("Index");
-            plt.Legend();
-            var plotViewer = new ScottPlot.WpfPlotViewer(plt);
-
-            plotViewer.Show();
         }
 
         private void ActiveCalculationsDataGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -634,14 +475,13 @@ namespace CudaHelioCommanderLight
 
         private void OpenConfigurationWindow()
         {
-            var configWindowResult = OpenConfigurationWindowOperation.Operate(metricsConfig);
+            var configWindowResult = OpenConfigurationWindowOperation.Operate(MetricsConfig.GetInstance());
 
-            this.metricsConfig = configWindowResult.MetricsConfig;
-            this.MetricsUsedTB.Text = metricsConfig.ToString();
+            MetricsUsedTB.Text = MetricsConfig.GetInstance().ToString();
 
             if (currentlyDisplayedPanelType == PanelType.AMS_INVESTIGATION_DETAIL && configWindowResult.HasChanged)
             {
-                CompareWithLibBtn_Click(null, null);
+                CompareWithLibrary(@"libFiles\lib-proton", LibStructureType.DIRECTORY_SEPARATED);
             }
         }
 
@@ -707,29 +547,7 @@ namespace CudaHelioCommanderLight
 
         private void ExportJsonBtn_Click(object sender, RoutedEventArgs e)
         {
-            ExecutionDetail executionDetail = ExecutionDetailList[executionDetailSelectedIdx];
-
-            if (executionDetail == null)
-            {
-                return;
-            }
-
-            SaveFileDialog fileDialog = new SaveFileDialog();
-
-            fileDialog.Filter = "JSON File|*.json";
-            fileDialog.Title = "Save JSON File";
-            fileDialog.ShowDialog();
-
-            // If the file name is not an empty string open it for saving.
-            if (fileDialog.FileName != "")
-            {
-                var exportModel = new ExecutionListExportModel
-                {
-                    Executions = executionDetail.Executions,
-                    FilePath = fileDialog.FileName
-                };
-                ExportAsJsonOperation.Operate(exportModel);
-            }
+            _buttonService.ExportJsonBtn(ExecutionDetailList, executionDetailSelectedIdx);
         }
 
         private void ComputeErrorBtn_Click(object sender, RoutedEventArgs e)
@@ -762,7 +580,7 @@ namespace CudaHelioCommanderLight
                     {
                         try
                         {
-                            execution.ComputeError(outputFileContent, metricsConfig); // If error in computeError, this was changed recently
+                            execution.ComputeError(outputFileContent, MetricsConfig.GetInstance()); // If error in computeError, this was changed recently
                         }
                         catch (ArgumentOutOfRangeException ex)
                         {
@@ -817,44 +635,7 @@ namespace CudaHelioCommanderLight
 
         private void DrawHeatmapBtn_Click(object sender, RoutedEventArgs e)
         {
-            HeatMapGraph heatMap = new HeatMapGraph();
-            heatMap.Show();
-
-            ExecutionDetail executionDetail = ExecutionDetailList[executionDetailSelectedIdx];
-
-            int xSize = executionDetail.GetParamK0().Count;
-            int ySize = executionDetail.GetParamV().Count;
-
-            if (xSize < 2 || ySize < 2)
-            {
-                MessageBox.Show("Cannot make map");
-                return;
-            }
-
-            HeatMapGraph.HeatPoint[,] heatPoints = new HeatMapGraph.HeatPoint[xSize, ySize];
-
-            for (int i = 0; i < xSize; i++)
-            {
-                for (int j = 0; j < ySize; j++)
-                {
-                    double k0 = executionDetail.GetParamK0()[i];
-                    double V = executionDetail.GetParamV()[j];
-                    Execution ex = executionDetail.GetExecutionByParam(V, k0);
-
-                    if (ex == null)
-                    {
-                        heatPoints[i, j] = new HeatMapGraph.HeatPoint(k0, V, double.NaN);
-                        continue;
-                    }
-
-                    double error = ex.ErrorValue;
-
-                    heatPoints[i, j] = new HeatMapGraph.HeatPoint(k0, V, error);
-                }
-            }
-
-            heatMap.SetPoints(heatPoints, xSize, ySize);
-            heatMap.Render();
+           _heatMapService.DrawHeatmapBtn(ExecutionDetailList, executionDetailSelectedIdx);
         }
 
         private void ExportListAsCsvBtn_Click(object sender, RoutedEventArgs e)
