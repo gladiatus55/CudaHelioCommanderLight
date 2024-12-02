@@ -18,5 +18,6 @@ namespace CudaHelioCommanderLight.Services
         {
             MessageBox.Show(text, caption, button, icon);
         }
+        
     }
 }
