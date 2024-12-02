@@ -6,7 +6,7 @@ namespace CudaHelioCommanderLight.Models
 {
     public class OutputFileContent
     {
-        private readonly Dictionary<OutputFileColumnType, List<double>> listDictionary;
+        private Dictionary<OutputFileColumnType, List<double>> listDictionary;
 
         public List<double> TKinList
         {
@@ -94,7 +94,10 @@ namespace CudaHelioCommanderLight.Models
 
         public void SwapLists(OutputFileColumnType oldType, OutputFileColumnType newType)
         {
-            (listDictionary[oldType], listDictionary[newType]) = (listDictionary[newType], listDictionary[oldType]);
+            List<double> oldTypeList = listDictionary[oldType];
+
+            listDictionary[oldType] = listDictionary[newType];
+            listDictionary[newType] = oldTypeList;
         }
 
         public OutputFileColumnType GetColumnTypeByFirstValue(double firstValue)

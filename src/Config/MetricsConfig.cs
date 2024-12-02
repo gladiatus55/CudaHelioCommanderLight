@@ -8,9 +8,11 @@ using System.Xml.Linq;
 
 namespace CudaHelioCommanderLight.Config
 {
-    
+
+    // TODO: make as singleton
     public class MetricsConfig
     {
+
         public enum K0Metrics
         {
             cm2ps,
@@ -65,13 +67,9 @@ namespace CudaHelioCommanderLight.Config
         public bool WasInitialized { get; set; }
         private double _errorFromGev;
         private double _errorToGev;
-        private readonly List<IMetricsConfigObserver> _observers = new List<IMetricsConfigObserver>();
+        private List<IMetricsConfigObserver> _observers = new List<IMetricsConfigObserver>();
 
-        
-        private static MetricsConfig _instance;
-        private static readonly object _lock = new object();
-
-        private MetricsConfig()
+        public MetricsConfig()
         {
             K0Metric = K0Metrics.cm2ps;
             VMetric = VMetrics.kmps;
@@ -86,21 +84,6 @@ namespace CudaHelioCommanderLight.Config
             {
                 LoadConfigurationinfo();
             }
-        }
-
-        public static MetricsConfig GetInstance()
-        {
-            if (_instance == null)
-            {
-                lock (_lock)
-                {
-                    if (_instance == null)
-                    {
-                        _instance = new MetricsConfig();
-                    }
-                }
-            }
-            return _instance;
         }
 
         public void RegisterObserver(IMetricsConfigObserver observer)

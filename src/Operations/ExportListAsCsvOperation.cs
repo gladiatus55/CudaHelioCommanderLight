@@ -22,6 +22,9 @@ namespace CudaHelioCommanderLight.Operations
                 // Create a StringBuilder to store the CSV data
                 StringBuilder csvData = new StringBuilder();
 
+                // Add the CSV header
+                //csvData.AppendLine("FileName,LowestRMSError,LowestRMSErrorFile,MinimalMaxError,MinimalMaxErrorFile");
+
                 // Iterate over each HeatPoint and add its data to the CSV
                 foreach (var record in exportList)
                 {

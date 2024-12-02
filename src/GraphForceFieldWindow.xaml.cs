@@ -14,6 +14,7 @@ namespace CudaHelioCommanderLight
     /// </summary>
     public partial class GraphForceFieldWindow : Window
     {
+        //private List<GraphInfo> loadedGraphs;
         private List<ErrorStructure> forceFieldErrors;
 
         public GraphForceFieldWindow(List<ErrorStructure> forceFieldErrors)
@@ -25,6 +26,8 @@ namespace CudaHelioCommanderLight
 
         private void RenderGraph()
         {
+            //var plt = new ScottPlot.Plot(600, 400);
+
             List<Tuple<double, double>> extractedData = new List<Tuple<double, double>>();
 
             // Loop through each item in the forceFieldErrors list
@@ -52,6 +55,7 @@ namespace CudaHelioCommanderLight
             var scatter = new PlottableScatter(x, y);
             scatter.color = Color.Red;
             PlotView.plt.Add(scatter);
+            //PlotView.Plot.AddScatter(xs: x, ys: y, markerSize: 3);
 
             // Customize the plot appearance
             PlotView.plt.Title("Error vs. X");

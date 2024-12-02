@@ -30,27 +30,27 @@ namespace CudaHelioCommanderLight.Models
             if (libStructureType == LibStructureType.DIRECTORY_SEPARATED)
             {
                 var split = splitStrFileName(str);
-                if (split.Count % 2 != 0)
+                if (split.Count() % 2 != 0)
                 {
                     return;
                 }
 
-                for (int idx = 0; idx < split.Count; idx += 2)
+                for (int idx = 0; idx < split.Count(); idx += 2)
                 {
                     if (split[idx].ToLower().Equals("k0"))
                     {
-                        var success = MainHelper.TryConvertToDouble(split[idx + 1], out double outK0);
+                        var success = MainHelper.TryConvertToDouble(split[idx + 1], out double K0);
                         if (success)
                         {
-                            K0 = outK0;
+                            this.K0 = K0;
                         }
                     }
                     else if (split[idx].ToLower().Equals("v"))
                     {
-                        var success = MainHelper.TryConvertToDouble(split[idx + 1], out double outV);
+                        var success = MainHelper.TryConvertToDouble(split[idx + 1], out double V);
                         if (success)
                         {
-                            V = (int)outV;
+                            this.V = (int)V;
                         }
                     }
                 }
@@ -64,15 +64,15 @@ namespace CudaHelioCommanderLight.Models
                     return;
                 }
                 // outfil_0.0001_0_Burger2000LIS_spectrum_interpolated.dat
-                var success = MainHelper.TryConvertToDouble(split[1], out double outK0);
+                var success = MainHelper.TryConvertToDouble(split[1], out double K0);
                 if (success)
                 {
-                    K0 = outK0;
+                    this.K0 = K0;
                 }
                 success = MainHelper.TryConvertToDouble(split[2], out double theta);
                 if (success)
                 {
-                    V = (int)theta;
+                    this.V = (int)theta;
                 }
             }
         }
@@ -80,7 +80,7 @@ namespace CudaHelioCommanderLight.Models
         private List<string> splitStrFileName(string str)
         {
             List<string> splittedStr = new List<string>();
-            var split = str.ToLower().Split('=' );
+            var split = str.ToLower().Split(new char[] { '=' });
 
             for (int idx = 0; idx < split.Count(); idx++)
             {

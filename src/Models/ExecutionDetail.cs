@@ -47,11 +47,12 @@ namespace CudaHelioCommanderLight.Models
         }
 
         public List<Execution> Executions { get; set; }
-        
-        private List<double> paramK0 { get; }
-        private List<double> paramV { get; }
-        private List<double> paramDt { get; }
-        private List<double> paramN { get; }
+
+        // TODO: change visibility
+        public List<double> paramK0;
+        public List<double> paramV;
+        public List<double> paramDt;
+        public List<double> paramN;
 
         public int VSize { get; set; }
         public int DtSize { get; set; }
@@ -82,26 +83,6 @@ namespace CudaHelioCommanderLight.Models
             paramN = new List<double>();
             MethodType = MethodType.UNDEFINED;
             
-        }
-        
-        public List<double> GetParamK0()
-        {
-            return paramK0;
-        }
-
-        public List<double> GetParamV()
-        {
-            return paramV;
-        }
-
-        public List<double> GetParamDt()
-        {
-            return paramDt;
-        }
-
-        public List<double> GetParamN()
-        {
-            return paramN;
         }
 
         public void AddK0(double K0Value)
@@ -163,6 +144,7 @@ namespace CudaHelioCommanderLight.Models
 
         private bool IsDirectoryRelatedToParams(string dirNamePath, Execution execution)
         {
+            string n = execution.N.ToString().ToLower();
             string v = "v=" + execution.V.ToString().ToLower();
             string dt = "dt=" + execution.dt.ToString().ToLower();
             string k = "k0=" + execution.K0.ToString().ToLower();
@@ -175,7 +157,7 @@ namespace CudaHelioCommanderLight.Models
 
         public List<Execution> GetLowestExecutions(int count)
         {
-            List<Execution> firstNLowest = Executions.Where(x => !double.IsNaN(x.ErrorValue)).OrderBy(x => x.ErrorValue).Take(10).ToList();
+            List<Execution> firstNLowest = Executions.Where(x => x.ErrorValue != double.NaN).OrderBy(x => x.ErrorValue).Take(10).ToList();
 
             return firstNLowest;
         }

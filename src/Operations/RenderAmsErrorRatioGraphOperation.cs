@@ -1,6 +1,5 @@
 ﻿using CudaHelioCommanderLight.Models;
 using System.IO;
-using CudaHelioCommanderLight.Config;
 
 namespace CudaHelioCommanderLight.Operations
 {
@@ -10,7 +9,7 @@ namespace CudaHelioCommanderLight.Operations
         {
             var amsExecution = amsExecutionErrorModel.AmsExecution;
             var errorStructure = amsExecutionErrorModel.ErrorStructure;
-            var metricsConfig = MetricsConfig.GetInstance();
+            var metricsConfig = amsExecutionErrorModel.MetricsConfig;
             var plt = amsExecutionErrorModel.Plt;
 
             if (errorStructure == null)
@@ -49,15 +48,16 @@ namespace CudaHelioCommanderLight.Operations
                     continue;
                 }
 
-                if (x.Length > x1Idx && x[x1Idx] != ratioX[ratioIdx])
+                if ((x.Length > x1Idx && x[x1Idx] != ratioX[ratioIdx]))
                 {
                     x1Idx++;
                     continue;
                 }
 
-                if (x2.Length > x2Idx && x2[x2Idx] != ratioX[ratioIdx])
+                if ((x2.Length > x2Idx && x2[x2Idx] != ratioX[ratioIdx]))
                 {
                     x2Idx++;
+                    continue;
                 }
             }
 

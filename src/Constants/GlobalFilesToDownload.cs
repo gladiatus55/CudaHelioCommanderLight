@@ -2,21 +2,21 @@
 
 namespace CudaHelioCommanderLight.Constants
 {
-    public abstract class GlobalFilesToDownload
+    public class GlobalFilesToDownload
     {
-        public static readonly string RunningInfoFile = "runningInfo.dat";
-        public static readonly string GlobalSpe1e3GraphFile = "output_1e3bin_graph_all_spe1e3.png";
-        public static readonly string DetailSpe1e3GraphFile = "plotted_graph_spe1e3.png";
-        public static readonly string DetailSpe1e3NGraphFile = "plotted_graph_spe1e3N.png";
-        public static readonly string DetailSpe1e3FitGraphFile = "plotted_graph_spe1e3_fit.png";
-        public static readonly string DetailSpe1e3Fit30GraphFile = "plotted_graph_spe1e3_fit30gev.png";
-        public static readonly string DetailOutput1e3binFile = "output_1e3bin.dat";
-        public static readonly string DetailOutput1e2binFile = "output_1e2bin.dat";
-        public static readonly string DetailOutput4e2binFile = "output_4e2bin.dat";
-        public static readonly string DetailOutputlogbinFile = "output_logbin.dat";
-        public static readonly string DetailMapaFile = "mapa.dat";
-        public static readonly string DetailTimeStatsFile = "timeStats.dat";
-        public static readonly string DetailLogFile = "log.dat";
+        public static string RunningInfoFile = "runningInfo.dat";
+        public static string GlobalSpe1e3GraphFile = "output_1e3bin_graph_all_spe1e3.png";
+        public static string DetailSpe1e3GraphFile = "plotted_graph_spe1e3.png";
+        public static string DetailSpe1e3NGraphFile = "plotted_graph_spe1e3N.png";
+        public static string DetailSpe1e3FitGraphFile = "plotted_graph_spe1e3_fit.png";
+        public static string DetailSpe1e3Fit30GraphFile = "plotted_graph_spe1e3_fit30gev.png";
+        public static string DetailOutput1e3binFile = "output_1e3bin.dat";
+        public static string DetailOutput1e2binFile = "output_1e2bin.dat";
+        public static string DetailOutput4e2binFile = "output_4e2bin.dat";
+        public static string DetailOutputlogbinFile = "output_logbin.dat";
+        public static string DetailMapaFile = "mapa.dat";
+        public static string DetailTimeStatsFile = "timeStats.dat";
+        public static string DetailLogFile = "log.dat";
 
         public static List<string> overallFilesToDownload { get; private set; }
 

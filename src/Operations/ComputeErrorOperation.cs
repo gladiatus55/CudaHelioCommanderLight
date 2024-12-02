@@ -3,7 +3,6 @@ using CudaHelioCommanderLight.Models;
 using System.Collections.Generic;
 using System;
 using System.Linq;
-using CudaHelioCommanderLight.Config;
 
 namespace CudaHelioCommanderLight.Operations
 {
@@ -12,7 +11,7 @@ namespace CudaHelioCommanderLight.Operations
         public static new ComputedErrorModel Operate(ErrorComputeModel model)
         {
             var amsExecution = model.AmsExecution;
-            var metricsConfig = MetricsConfig.GetInstance();
+            var metricsConfig = model.MetricsConfig;
             var libraryItem = model.LibraryItem;
             var referenceTi = libraryItem.Spe1e3List;
             var eta = new List<double>();
@@ -46,8 +45,8 @@ namespace CudaHelioCommanderLight.Operations
             double sumDown = 0;
             int etaIdx = 0;
 
-            var firstRequiredValue = (int)(metricsConfig.ErrorFromGev * 10) / 10.0;
-            var lastRequiredValue = (int)(metricsConfig.ErrorFromGev * 10) / 10.0;
+            var firstRequiredValue = (double)((int)(metricsConfig.ErrorFromGev * 10) / 10.0);
+            var lastRequiredValue = (double)((int)(metricsConfig.ErrorFromGev * 10) / 10.0);
             if (amsExecution.TKin.IndexOf(firstRequiredValue) == -1 || libraryItem.TKinList.IndexOf(firstRequiredValue) == -1)
             {
                 throw new WrongConfigurationException($"Starting GeV value {firstRequiredValue} from configuration file is not found in library. Adjust configuration file first.");
@@ -59,7 +58,7 @@ namespace CudaHelioCommanderLight.Operations
 
             for (double T = metricsConfig.ErrorFromGev; T <= metricsConfig.ErrorToGev; T += 0.1)
             {
-                double TValue = (int)(T * 10) / 10.0;
+                double TValue = (double)((int)(T * 10) / 10.0);
                 int idx1 = amsExecution.TKin.IndexOf(TValue);
                 int idx2 = libraryItem.TKinList.IndexOf(TValue);
                 eta[etaIdx] = (computedTi[idx1] - referenceTi[idx2]) / referenceTi[idx2];
