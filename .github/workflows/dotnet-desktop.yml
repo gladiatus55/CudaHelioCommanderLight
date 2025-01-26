@@ -59,4 +59,4 @@ jobs:
   
       - name: Format code
         run: |
-          dotnet format ./CudaHelioCommanderLight.sln --verify-no-changes
+          dotnet format ./src/CudaHelioCommanderLight.sln --verify-no-changes
