@@ -23,23 +23,33 @@ jobs:
           dotnet build --no-restore
 
   test:
-    runs-on: windows-latest
-    needs: build
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: "7.x"
-
-      - name: Test
-        run: |
-          cd CudaHelioCommanderLight.Tests
-          dotnet restore
-          dotnet build --no-restore
-          dotnet test --no-build
+      runs-on: windows-latest
+      needs: build
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+  
+        - name: Set up .NET SDK
+          uses: actions/setup-dotnet@v3
+          with:
+            dotnet-version: "7.x"
+  
+        - name: Install coverlet collector
+          run: dotnet add package coverlet.collector --version 3.0.3
+  
+        - name: Run tests and generate coverage report
+          run: |
+            cd src
+            dotnet restore
+            dotnet build --no-restore
+            dotnet test --no-build --collect:"XPlat Code Coverage"
+        
+        - name: Upload coverage to Codecov
+          uses: codecov/codecov-action@v3
+          with:
+            token: ${{ secrets.CODECOV_TOKEN }}
+            files: ./TestResults/**/coverage.cobertura.xml
+            fail_ci_if_error: true
 
   code-quality:
     runs-on: windows-latest
