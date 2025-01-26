@@ -34,9 +34,5 @@
     <Resource Include="Resources\sav-slov.jpg" />
   </ItemGroup>
   
-  <ItemGroup>
-    <PackageReference Include="dotnet-format" Version="5.0.23250203" />
-  </ItemGroup>
-
 
 </Project>
