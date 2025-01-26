@@ -17,6 +17,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using CudaHelioCommanderLight.MainWindowServices;
+using CudaHelioCommanderLight.Interfaces;
+using CudaHelioCommanderLight.Services;
 
 namespace CudaHelioCommanderLight
 {
@@ -298,7 +300,10 @@ namespace CudaHelioCommanderLight
 
         private void ExportAsCsvBtn_Click(object sender, RoutedEventArgs e)
         {
-            ExportAsCsvOperation.Operate((IEnumerable<ErrorStructure>)amsErrorsListBox.ItemsSource);
+            IFileWriter fileWriter = new FileWriter();
+            IDialogService dialogService = new DialogService();
+
+            ExportAsCsvOperation.Operate((IEnumerable<ErrorStructure>)amsErrorsListBox.ItemsSource, fileWriter, dialogService);
         }
         #endregion AMS
 

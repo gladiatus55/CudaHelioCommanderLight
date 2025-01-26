@@ -1,5 +1,7 @@
 ﻿using CudaHelioCommanderLight.Helpers;
+using CudaHelioCommanderLight.Interfaces;
 using CudaHelioCommanderLight.Operations;
+using CudaHelioCommanderLight.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -341,7 +343,9 @@ namespace CudaHelioCommanderLight
 
         private void ExportAsCsvBtn_Click(object sender, RoutedEventArgs e)
         {
-            ExportAsCsvOperation.Operate(HeatPoints);
+            IFileWriter fileWriter = new FileWriter();
+            IDialogService dialogService = new DialogService();
+            ExportAsCsvOperation.Operate(HeatPoints, fileWriter, dialogService);
         }
     }
 }
