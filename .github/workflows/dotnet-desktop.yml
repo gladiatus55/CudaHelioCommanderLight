@@ -53,11 +53,10 @@ jobs:
         with:
           dotnet-version: "7.x"
   
-      - name: Install dotnet-format tool
+      - name: Install dotnet-format tool globally
         run: |
           dotnet tool install --global dotnet-format
   
       - name: Format code
         run: |
-          dotnet tool restore
-          dotnet format ./CudaHelioCommanderLight.sln --check
+          dotnet format ./CudaHelioCommanderLight.sln --verify-no-changes
