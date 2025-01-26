@@ -1,27 +1,21 @@
 name: CI Pipeline
 
-# Trigger the workflow on pushes to the main branch or pull requests
 on:
   push:
   pull_request:
 
-# Define the jobs
 jobs:
   build:
-    # This job runs on a Windows runner
     runs-on: windows-latest
     steps:
-      # Check out the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Set up .NET SDK
       - name: Set up .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "7.x" # Update this to match your .NET version
+          dotnet-version: "7.x"
 
-      # Restore dependencies and build the project
       - name: Build
         run: |
           cd src
@@ -29,24 +23,38 @@ jobs:
           dotnet build --no-restore
 
   test:
-    # This job also runs on a Windows runner and depends on the build job
     runs-on: windows-latest
     needs: build
     steps:
-      # Check out the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Set up .NET SDK
       - name: Set up .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "7.x" # Update this to match your .NET version
+          dotnet-version: "7.x"
 
-      # Restore dependencies, build the tests, and run them
       - name: Test
         run: |
           cd CudaHelioCommanderLight.Tests
           dotnet restore
           dotnet build --no-restore
           dotnet test --no-build
+
+  code-quality:
+    runs-on: windows-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "7.x"
+
+      - name: Format code
+        run: |
+          cd src
+          dotnet tool restore
+          dotnet format --check
