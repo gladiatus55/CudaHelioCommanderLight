@@ -14,10 +14,13 @@ namespace CudaHelioCommanderLight
         public MetricsConfig MetricsConfig { get; set; }
         public bool HasChanged { get; private set; }
 
-        public ConfigWindow(MetricsConfig metricsConfig)
+        private readonly IMainHelper _mainHelper;
+
+        public ConfigWindow(MetricsConfig metricsConfig, IMainHelper mainHelper)
         {
             InitializeComponent();
             this.MetricsConfig = metricsConfig;
+            _mainHelper = mainHelper ?? throw new ArgumentNullException(nameof(mainHelper));
 
             K0UnitsComboBox.ItemsSource = Enum.GetValues(typeof(MetricsConfig.K0Metrics)).Cast<MetricsConfig.K0Metrics>();
             VUnitsComboBox.ItemsSource = Enum.GetValues(typeof(MetricsConfig.VMetrics)).Cast<MetricsConfig.VMetrics>();
@@ -40,8 +43,8 @@ namespace CudaHelioCommanderLight
             MetricsConfig.DtMetric = (MetricsConfig.DtMetrics)DtUnitsComboBox.SelectedItem;
             MetricsConfig.IntensityMetric = (MetricsConfig.IntensityMetrics)IntensityUnitsComboBox.SelectedItem;
 
-            MainHelper.TryConvertToDouble(ErrorFromGevTb.Text, out double gevFromError);
-            MainHelper.TryConvertToDouble(ErrorToGevTb.Text, out double gevToError);
+            _mainHelper.TryConvertToDouble(ErrorFromGevTb.Text, out double gevFromError);
+            _mainHelper.TryConvertToDouble(ErrorToGevTb.Text, out double gevToError);
 
             MetricsConfig.ErrorFromGev = gevFromError;
             MetricsConfig.ErrorToGev = gevToError;

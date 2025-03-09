@@ -1,12 +1,14 @@
 ﻿using CudaHelioCommanderLight.Config;
+using CudaHelioCommanderLight.Helpers;
+using CudaHelioCommanderLight.Interfaces; // Make sure this is included
 
 namespace CudaHelioCommanderLight.Operations
 {
     public class OpenConfigurationWindowOperation : Operation<MetricsConfig, ConfigWindow>
     {
-        public static new ConfigWindow Operate(MetricsConfig metricsConfig)
+        public static new ConfigWindow Operate(MetricsConfig metricsConfig, IMainHelper mainHelper)
         {
-            var configWindow = new ConfigWindow(metricsConfig);
+            var configWindow = new ConfigWindow(metricsConfig, mainHelper);
             configWindow.ShowDialog();
 
             return configWindow;

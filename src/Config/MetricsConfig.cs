@@ -8,7 +8,6 @@ using System.Xml.Linq;
 
 namespace CudaHelioCommanderLight.Config
 {
-    
     public class MetricsConfig
     {
         public enum K0Metrics
@@ -38,6 +37,9 @@ namespace CudaHelioCommanderLight.Config
         public VMetrics VMetric { get; set; }
         public DtMetrics DtMetric { get; set; }
         public IntensityMetrics IntensityMetric { get; set; }
+
+        private readonly IMainHelper _mainHelper;
+
         public double ErrorFromGev
         {
             get { return _errorFromGev; }
@@ -50,6 +52,7 @@ namespace CudaHelioCommanderLight.Config
                 }
             }
         }
+
         public double ErrorToGev
         {
             get { return _errorToGev; }
@@ -62,17 +65,19 @@ namespace CudaHelioCommanderLight.Config
                 }
             }
         }
+
         public bool WasInitialized { get; set; }
         private double _errorFromGev;
         private double _errorToGev;
         private readonly List<IMetricsConfigObserver> _observers = new List<IMetricsConfigObserver>();
 
-        
         private static MetricsConfig _instance;
         private static readonly object _lock = new object();
 
-        private MetricsConfig()
+        private MetricsConfig(IMainHelper mainHelper)
         {
+            _mainHelper = mainHelper ?? throw new ArgumentNullException(nameof(mainHelper));
+
             K0Metric = K0Metrics.cm2ps;
             VMetric = VMetrics.kmps;
             DtMetric = DtMetrics.s;
@@ -88,7 +93,7 @@ namespace CudaHelioCommanderLight.Config
             }
         }
 
-        public static MetricsConfig GetInstance()
+        public static MetricsConfig GetInstance(IMainHelper mainHelper)
         {
             if (_instance == null)
             {
@@ -96,7 +101,7 @@ namespace CudaHelioCommanderLight.Config
                 {
                     if (_instance == null)
                     {
-                        _instance = new MetricsConfig();
+                        _instance = new MetricsConfig(mainHelper);
                     }
                 }
             }
@@ -192,8 +197,8 @@ namespace CudaHelioCommanderLight.Config
                     var errorFromGev = el.Element("errorFromGev").Value;
                     var errorToGev = el.Element("errorToGev").Value;
 
-                    MainHelper.TryConvertToDouble(errorFromGev, out double gevFromError);
-                    MainHelper.TryConvertToDouble(errorToGev, out double gevToError);
+                    _mainHelper.TryConvertToDouble(errorFromGev, out double gevFromError);
+                    _mainHelper.TryConvertToDouble(errorToGev, out double gevToError);
 
                     this.ErrorFromGev = gevFromError;
                     this.ErrorToGev = gevToError;
@@ -217,7 +222,7 @@ namespace CudaHelioCommanderLight.Config
                 "configInfo",
                     new XElement("errorFromGev", this.ErrorFromGev),
                     new XElement("errorToGev", this.ErrorToGev)
-                    );
+             );
 
             configInfo.Save(CONFIGURATION_CACHE);
         }

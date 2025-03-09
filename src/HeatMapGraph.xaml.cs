@@ -49,7 +49,9 @@ namespace CudaHelioCommanderLight
         private double minColorValue;
         private double maxColorValue;
 
-        public HeatMapGraph()
+        private readonly IMainHelper _mainHelper;
+
+        public HeatMapGraph(IMainHelper mainHelper)
         {
             InitializeComponent();
             drawnObjects = new ArrayList();
@@ -64,14 +66,17 @@ namespace CudaHelioCommanderLight
             });
 
             isMinMaxColorValueExternal = false;
+            _mainHelper = mainHelper ?? throw new ArgumentNullException(nameof(mainHelper));
         }
 
-        public HeatMapGraph(double minColorValue, double maxColorValue) : this()
+        public HeatMapGraph(double minColorValue, double maxColorValue, IMainHelper mainHelper) : this(mainHelper)
         {
             isMinMaxColorValueExternal = true;
             this.minColorValue = minColorValue;
             this.maxColorValue = maxColorValue;
         }
+
+        public HeatMapGraph() : this(new MainHelper()) { }
 
         public Color ComputeColor(double minVal, double maxVal, double val)
         {
@@ -127,7 +132,7 @@ namespace CudaHelioCommanderLight
                     intensities.Add(HeatPoints[i, j].Intensity);
                 }
             }
-            
+
             List<double> first10Lowest = intensities.Where(x => !double.IsNaN(x)).OrderBy(x => x).Take(10).ToList();
             List<double> first10Highest = intensities.Where(x => !double.IsNaN(x)).OrderByDescending(x => x).Take(10).ToList();
 
@@ -216,8 +221,6 @@ namespace CudaHelioCommanderLight
                     int left = 0 + j * tileHeight;
 
                     Brush fillBrush;
-
-
                     if (double.IsNaN(point.Intensity))
                     {
                         fillBrush = new SolidColorBrush(Colors.White);
@@ -287,8 +290,8 @@ namespace CudaHelioCommanderLight
         private void RerenderBtn_Click(object sender, RoutedEventArgs e)
         {
             isMinMaxColorValueExternal = true;
-            MainHelper.TryConvertToDouble(MinColorValueTb.Text, out double outMinColorValue);
-            MainHelper.TryConvertToDouble(MaxColorValueTb.Text, out double outMaxColorValue);
+            _mainHelper.TryConvertToDouble(MinColorValueTb.Text, out double outMinColorValue);
+            _mainHelper.TryConvertToDouble(MaxColorValueTb.Text, out double outMaxColorValue);
 
             minColorValue = outMinColorValue;
             maxColorValue = outMaxColorValue;
