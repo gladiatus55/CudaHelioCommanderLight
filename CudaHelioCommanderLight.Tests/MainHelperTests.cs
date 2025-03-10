@@ -5,6 +5,7 @@ using CudaHelioCommanderLight.Models;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -67,10 +68,14 @@ public class MainHelperTests
     [Test]
     public void TryConvertToDouble_ValidString_ReturnsTrue()
     {
-        var success = _mainHelper.TryConvertToDouble("123,45", out double result);
+        string number = "123,45";
+        CultureInfo customCulture = new CultureInfo("es-ES");
+        double expectedResult = double.Parse(number, customCulture);
+
+        bool success = _mainHelper.TryConvertToDouble(number, out double result);
 
         Assert.IsTrue(success);
-        Assert.That(result, Is.EqualTo(123.45));
+        Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     [Test]
