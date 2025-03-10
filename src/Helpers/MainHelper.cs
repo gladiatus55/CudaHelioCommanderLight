@@ -102,7 +102,10 @@ namespace CudaHelioCommanderLight.Helpers
                     }
                 }
 
-                amsExecutionDetail.AmsExecutions.Add(amsExecution);
+                if (amsExecution.TKin.Count > 0)
+                {
+                    amsExecutionDetail.AmsExecutions.Add(amsExecution);
+                }
             }
 
             return amsExecutionDetail;

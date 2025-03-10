@@ -179,7 +179,7 @@ namespace CudaHelioCommanderLight.Config
             return sb.ToString();
         }
 
-        private static string CACHE_DIR = "cache";
+        public static string CACHE_DIR = "cache";
         private readonly string CONFIGURATION_CACHE = Path.Combine(CACHE_DIR, "configInfo.xml");
 
         public void LoadConfigurationinfo()
@@ -233,6 +233,10 @@ namespace CudaHelioCommanderLight.Config
             {
                 observer.NotifyMetricsConfigChanged(this);
             }
+        }
+        public static void ResetInstance()
+        {
+            _instance = null;
         }
     }
 }

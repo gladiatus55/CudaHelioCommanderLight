@@ -35,10 +35,8 @@ public class CompareLibraryOperationTests
     [Test]
     public void Operate_DirectorySeparated_CorrectlyProcessesDirectories()
     {
-        // Arrange
         CreateTestStructure(new[] { "V100K03", "V200K05" }); // Removed "InvalidDir"
 
-        // Initialize AMS Execution with valid data and a FilePath
         var amsExecution = new AmsExecution
         {
             FileName = "test_ams_execution.dat",
@@ -53,7 +51,6 @@ public class CompareLibraryOperationTests
             AmsExecution = amsExecution
         };
 
-        // Initialize MetricsConfig
         var metricsConfig = MetricsConfig.GetInstance(_mainHelper);
         metricsConfig.ErrorFromGev = 0.0;
         metricsConfig.ErrorToGev = 3.0;
@@ -64,7 +61,7 @@ public class CompareLibraryOperationTests
             {
                 x[1] = new OutputFileContent
                 {
-                    FilePath = Path.Combine(_testDir, "output_1e3bin.dat"), // Set a valid FilePath
+                    FilePath = Path.Combine(_testDir, "output_1e3bin.dat"),
                     TKinList = Enumerable.Range(0, 31).Select(x => Math.Round(x * 0.1, 1)).ToList(),
                     Spe1e3List = Enumerable.Range(10, 31).Select(x => (double)x).ToList(),
                     Spe1e3NList = Enumerable.Repeat(1.0, 31).ToList()
@@ -72,9 +69,8 @@ public class CompareLibraryOperationTests
                 return true;
             });
 
-        // Act and Assert
         var result = _operation.Operate(model, LibStructureType.DIRECTORY_SEPARATED);
-        Assert.That(result, Has.Count.EqualTo(2)); // Expecting results for two valid directories
+        Assert.That(result, Has.Count.EqualTo(2));
     }
 
 
@@ -82,7 +78,6 @@ public class CompareLibraryOperationTests
     [Test]
     public void Operate_InvalidDataFile_ShowsErrorMessage()
     {
-        // Arrange
         File.WriteAllText(Path.Combine(_testDir, "test.dat"), "invalid data");
 
         var model = new CompareLibraryModel
@@ -98,10 +93,8 @@ public class CompareLibraryOperationTests
         _mainHelper.ExtractOutputDataFile(Arg.Any<string>(), out Arg.Any<OutputFileContent>())
             .Returns(false);
 
-        // Act
         var result = _operation.Operate(model, LibStructureType.FILES_SOLARPROP_LIB);
 
-        // Assert
         Assert.That(result, Is.Empty);
         _dialogService.Received(1).ShowMessage(
             "Cannot read data values from the input file.",
