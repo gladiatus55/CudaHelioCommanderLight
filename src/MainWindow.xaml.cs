@@ -44,6 +44,7 @@ namespace CudaHelioCommanderLight
         private readonly IDialogService _dialogService;
         private readonly IFileWriter _fileWriter;
         private readonly CompareLibraryOperation _compareLibraryOperation;
+        private readonly IMetricsConfig _metricsConfig;
 
         public MainWindow(IMainHelper mainHelper,
                           IDialogService dialogService,
@@ -52,7 +53,8 @@ namespace CudaHelioCommanderLight
                           HeatMapService heatMapService,
                           CompareService compareService,
                           IFileWriter fileWriter,
-                          CompareLibraryOperation compareLibraryOperation)
+                          CompareLibraryOperation compareLibraryOperation,
+                          IMetricsConfig metricsConfig)
         {
             InitializeComponent();
             _mainHelper = mainHelper ?? throw new ArgumentNullException(nameof(mainHelper));
@@ -63,6 +65,7 @@ namespace CudaHelioCommanderLight
             _compareService = compareService ?? throw new ArgumentNullException(nameof(compareService));
             _fileWriter = fileWriter ?? throw new ArgumentNullException(nameof(fileWriter));
             _compareLibraryOperation = compareLibraryOperation ?? throw new ArgumentNullException(nameof(compareLibraryOperation));
+            _metricsConfig = metricsConfig ?? throw new ArgumentNullException(nameof(metricsConfig));
 
             MetricsUsedTB.Text = MetricsConfig.GetInstance(_mainHelper).ToString();
             _mainWindowVm = new MainWindowVm();

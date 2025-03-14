@@ -1,4 +1,5 @@
-﻿using CudaHelioCommanderLight.Helpers;
+﻿using CudaHelioCommanderLight.Config;
+using CudaHelioCommanderLight.Helpers;
 using CudaHelioCommanderLight.Interfaces;
 using CudaHelioCommanderLight.MainWindowServices;
 using CudaHelioCommanderLight.Operations;
@@ -26,6 +27,7 @@ namespace CudaHelioCommanderLight
             services.AddSingleton<IMainHelper, MainHelper>();
             services.AddSingleton<IDialogService, DialogService>();
             services.AddSingleton<IFileWriter, FileWriter>();
+            services.AddSingleton<IMetricsConfig>(provider => MetricsConfig.GetInstance(provider.GetRequiredService<IMainHelper>()));
             services.AddTransient<CompareLibraryOperation>();
             services.AddTransient<ComputeErrorOperation>();
             services.AddTransient<ButtonService>();
@@ -41,7 +43,8 @@ namespace CudaHelioCommanderLight
                 provider.GetRequiredService<HeatMapService>(),
                 provider.GetRequiredService<CompareService>(),
                 provider.GetRequiredService<IFileWriter>(),
-                provider.GetRequiredService<CompareLibraryOperation>()
+                provider.GetRequiredService<CompareLibraryOperation>(),
+                provider.GetRequiredService<IMetricsConfig>()
             ));
         }
 

@@ -5,24 +5,25 @@ using System;
 using System.Linq;
 using CudaHelioCommanderLight.Config;
 using CudaHelioCommanderLight.Helpers;
+using CudaHelioCommanderLight.Interfaces;
 
 namespace CudaHelioCommanderLight.Operations
 {
     public class ComputeErrorOperation : Operation<ErrorComputeModel, ComputedErrorModel>
     {
         private readonly IMainHelper _mainHelper;
+        private readonly IMetricsConfig _metricsConfig;
 
-        public ComputeErrorOperation(IMainHelper mainHelper)
+        public ComputeErrorOperation(IMainHelper mainHelper, IMetricsConfig metricsConfig)
         {
-            _mainHelper = mainHelper ?? throw new ArgumentNullException(nameof(mainHelper));
+            _mainHelper = mainHelper;
+            _metricsConfig = metricsConfig;
         }
 
-        public static new ComputedErrorModel Operate(ErrorComputeModel model, IMainHelper mainHelper)
+
+        public static new ComputedErrorModel Operate(ErrorComputeModel model, IMainHelper mainHelper, IMetricsConfig metricsConfig)
         {
             var amsExecution = model.AmsExecution;
-
-  
-            var metricsConfig = MetricsConfig.GetInstance(mainHelper);
 
             var libraryItem = model.LibraryItem;
             var referenceTi = libraryItem.Spe1e3List;

@@ -13,6 +13,7 @@ public class CompareLibraryOperationTests
     private string _testDir;
     private IDialogService _dialogService;
     private IMainHelper _mainHelper;
+    private IMetricsConfig _metricsConfig;
     private CompareLibraryOperation _operation;
 
     [SetUp]
@@ -23,7 +24,8 @@ public class CompareLibraryOperationTests
 
         _dialogService = Substitute.For<IDialogService>();
         _mainHelper = Substitute.For<IMainHelper>();
-        _operation = new CompareLibraryOperation(_dialogService, _mainHelper);
+        _metricsConfig = Substitute.For<IMetricsConfig>();
+        _operation = new CompareLibraryOperation(_dialogService, _mainHelper,_metricsConfig);
     }
 
     [TearDown]

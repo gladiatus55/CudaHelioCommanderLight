@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using CudaHelioCommanderLight.Config;
 using CudaHelioCommanderLight.Enums;
 using CudaHelioCommanderLight.Helpers;
 using CudaHelioCommanderLight.Interfaces;
@@ -13,11 +14,13 @@ namespace CudaHelioCommanderLight.Operations
     {
         private readonly IDialogService _dialogService;
         private readonly IMainHelper _mainHelper;
+        private readonly IMetricsConfig _metricsConfig;
 
-        public CompareLibraryOperation(IDialogService dialogService, IMainHelper mainHelper)
+        public CompareLibraryOperation(IDialogService dialogService, IMainHelper mainHelper,IMetricsConfig metricsConfig)
         {
             _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
             _mainHelper = mainHelper ?? throw new ArgumentNullException(nameof(mainHelper));
+            _metricsConfig = metricsConfig ?? throw new ArgumentNullException(nameof(metricsConfig));
         }
 
         public List<ErrorStructure> Operate(CompareLibraryModel model, LibStructureType libStructureType)
@@ -57,7 +60,7 @@ namespace CudaHelioCommanderLight.Operations
                 {
                     AmsExecution = model.AmsExecution,
                     LibraryItem = outputFileContent,
-                },_mainHelper);
+                },_mainHelper, _metricsConfig);
                 error.Error = computedError.Error;
                 error.MaxError = computedError.MaxError;
                 error.FilePath = outputFileContent.FilePath;

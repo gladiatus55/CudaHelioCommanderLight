@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace CudaHelioCommanderLight.Config
 {
-    public class MetricsConfig
+    public class MetricsConfig : IMetricsConfig
     {
         public enum K0Metrics
         {
