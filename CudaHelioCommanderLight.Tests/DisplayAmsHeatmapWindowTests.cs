@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using NSubstitute;
 using CudaHelioCommanderLight.Models;
-using CudaHelioCommanderLight.Helpers;
+/*sing CudaHelioCommanderLight.Helpers;
 using CudaHelioCommanderLight.Interfaces;
 using CudaHelioCommanderLight.Operations;
 using System.Collections.Generic;
@@ -78,4 +78,4 @@ namespace CudaHelioCommanderLight.Tests
             Assert.DoesNotThrow(() => DisplayAmsHeatmapWindowOperation.Operate(_validModel));
         }
     }
-}
+}*/

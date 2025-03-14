@@ -33,8 +33,8 @@ public class MainHelperTests
     public void ExtractMultipleOfflineStatus_ValidFiles_ReturnsAmsExecutionDetail()
     {
         CreateTestFiles(new[] { "file1.txt", "file2.txt" });
-        File.WriteAllText(Path.Combine(_testDir, "file1.txt"), "1.0 2.0");  // Valid data
-        File.WriteAllText(Path.Combine(_testDir, "file2.txt"), "");         // Empty file
+        File.WriteAllText(Path.Combine(_testDir, "file1.txt"), "1.0 2.0");
+        File.WriteAllText(Path.Combine(_testDir, "file2.txt"), "");
 
         var result = _mainHelper.ExtractMultipleOfflineStatus(new[]
         {
@@ -76,10 +76,8 @@ public class MainHelperTests
             // Force a culture that uses "," as decimal separator (e.g., French)
             CultureInfo.CurrentCulture = new CultureInfo("fr-FR");
 
-            // Test the conversion
             bool success = _mainHelper.TryConvertToDouble("123,45", out double result);
 
-            // Assertions
             Assert.IsTrue(success, "Conversion should succeed");
             Assert.That(result, Is.EqualTo(123.45).Within(0.001), "Result should be 123.45");
         }
