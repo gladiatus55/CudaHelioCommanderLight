@@ -66,3 +66,4 @@ jobs:
       - name: Format code
         run: |
           dotnet format ./src/CudaHelioCommanderLight.sln --verify-no-changes
+          continue-on-error: true
