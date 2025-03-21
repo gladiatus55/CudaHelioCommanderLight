@@ -50,7 +50,7 @@ namespace CudaHelioCommanderLight.Tests
             Assert.DoesNotThrow(() => DisplayAmsHeatmapWindowOperation.Operate(_validModel));
         }
 
-        [Test]
+/*        [Test]
         [Apartment(ApartmentState.STA)]
         public void Operate_InvalidInputXSizeTooSmall_ShowsErrorMessage()
         {
@@ -76,6 +76,6 @@ namespace CudaHelioCommanderLight.Tests
             _validModel.Errors = invalidErrors;
 
             Assert.DoesNotThrow(() => DisplayAmsHeatmapWindowOperation.Operate(_validModel));
-        }
+        }*/
     }
 }

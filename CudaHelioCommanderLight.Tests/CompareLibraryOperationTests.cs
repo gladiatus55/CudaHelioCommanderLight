@@ -37,8 +37,8 @@ public class CompareLibraryOperationTests
     [Test]
     public void Operate_DirectorySeparated_CorrectlyProcessesDirectories()
     {
-
-        CreateTestStructure(new[] { "V100K03", "V200K05" }); // Removed "InvalidDir"
+        // Arrange
+        CreateTestStructure(new[] { "V100K03", "V200K05" });
 
         var amsExecution = new AmsExecution
         {
@@ -58,7 +58,7 @@ public class CompareLibraryOperationTests
         metricsConfig.ErrorFromGev = 0.0;
         metricsConfig.ErrorToGev = 3.0;
 
-        // Mock data includes all TKin values and a valid FilePath
+        // Mock file parsing behavior
         _mainHelper.ExtractOutputDataFile(Arg.Any<string>(), out Arg.Any<OutputFileContent>())
             .Returns(x =>
             {
@@ -72,15 +72,17 @@ public class CompareLibraryOperationTests
                 return true;
             });
 
+        // Act
         var result = _operation.Operate(model, LibStructureType.DIRECTORY_SEPARATED);
+
+        // Assert
         Assert.That(result, Has.Count.EqualTo(2));
     }
-
-
 
     [Test]
     public void Operate_InvalidDataFile_ShowsErrorMessage()
     {
+        // Arrange
         File.WriteAllText(Path.Combine(_testDir, "test.dat"), "invalid data");
 
         var model = new CompareLibraryModel
@@ -88,7 +90,7 @@ public class CompareLibraryOperationTests
             LibPath = _testDir,
             AmsExecution = new AmsExecution()
             {
-                Spe1e3 = new List<double> { }, // Empty list for invalid case testing.
+                Spe1e3 = new List<double> { },
                 TKin = new List<double> { }
             }
         };
@@ -96,8 +98,10 @@ public class CompareLibraryOperationTests
         _mainHelper.ExtractOutputDataFile(Arg.Any<string>(), out Arg.Any<OutputFileContent>())
             .Returns(false);
 
+        // Act
         var result = _operation.Operate(model, LibStructureType.FILES_SOLARPROP_LIB);
 
+        // Assert
         Assert.That(result, Is.Empty);
         _dialogService.Received(1).ShowMessage(
             "Cannot read data values from the input file.",
@@ -106,7 +110,6 @@ public class CompareLibraryOperationTests
             MessageBoxImage.Error
         );
     }
-
     private void CreateTestStructure(IEnumerable<string> directories)
     {
         foreach (var dir in directories)
@@ -119,7 +122,4 @@ public class CompareLibraryOperationTests
                 "TKin: 0.0 0.1 0.2 ... 3.0\nSpe1e3: ...\nSpe1e3N: ...");
         }
     }
-
-
-
 }
