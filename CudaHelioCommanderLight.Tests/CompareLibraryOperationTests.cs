@@ -37,6 +37,7 @@ public class CompareLibraryOperationTests
     [Test]
     public void Operate_DirectorySeparated_CorrectlyProcessesDirectories()
     {
+
         CreateTestStructure(new[] { "V100K03", "V200K05" }); // Removed "InvalidDir"
 
         var amsExecution = new AmsExecution
