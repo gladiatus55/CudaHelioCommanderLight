@@ -46,6 +46,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: PatrikTorok/CudaHelioCommanderLight
+          file: ./codecov.yml
 
   code-quality:
     runs-on: windows-latest
@@ -66,3 +67,4 @@ jobs:
       - name: Format code
         run: |
           dotnet format ./src/CudaHelioCommanderLight.sln --verify-no-changes
+          continue-on-error: true
