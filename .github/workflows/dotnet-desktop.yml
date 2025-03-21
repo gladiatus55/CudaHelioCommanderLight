@@ -46,6 +46,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: PatrikTorok/CudaHelioCommanderLight
+          file: ./codecov.yml
 
   code-quality:
     runs-on: windows-latest
