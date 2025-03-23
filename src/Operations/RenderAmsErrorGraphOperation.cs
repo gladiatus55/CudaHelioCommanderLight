@@ -4,28 +4,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CudaHelioCommanderLight.Config;
-using CudaHelioCommanderLight.Interfaces;
-using CudaHelioCommanderLight.Helpers;
 
 namespace CudaHelioCommanderLight.Operations
 {
     public class RenderAmsErrorGraphOperation : Operation<AmsExecutionPltErrorModel>
     {
-        private readonly IMainHelper _mainHelper;
-
-        public RenderAmsErrorGraphOperation(IMainHelper mainHelper)
-        {
-            _mainHelper = mainHelper ?? throw new ArgumentNullException(nameof(mainHelper));
-        }
-
-        public static new void Operate(AmsExecutionPltErrorModel amsExecutionErrorModel, IMainHelper mainHelper)
+        public static new void Operate(AmsExecutionPltErrorModel amsExecutionErrorModel)
         {
             var amsExecution = amsExecutionErrorModel.AmsExecution;
             var errorStructure = amsExecutionErrorModel.ErrorStructure;
-
-            var metricsConfig = MetricsConfig.GetInstance(mainHelper);
+            var metricsConfig = MetricsConfig.GetInstance();
             var plt = amsExecutionErrorModel.Plt;
-
             var tickPositionsListY = new List<double>();
             var tickNamesListY = new List<string>();
             var tickPositionsList = new List<double>();
@@ -105,15 +94,13 @@ namespace CudaHelioCommanderLight.Operations
 
             var tickPositionsY = ScottPlot.Tools.Log10(tickPositionsListY.ToArray());
             var tickLabelsY = tickNamesListY.ToArray();
-
             plt.YTicks(tickPositionsY, tickLabelsY);
-
             plt.PlotHSpan(
                 x1: ScottPlot.Tools.Log10(new double[] { metricsConfig.ErrorFromGev }).First(),
                 x2: ScottPlot.Tools.Log10(new double[] { metricsConfig.ErrorToGev }).First(),
                 draggable: false,
                 color: System.Drawing.Color.FromArgb(0, 255, 0, 0),
-                alpha: 0.1
+            alpha: 0.1
             );
 
             plt.Ticks(useExponentialNotation: true);

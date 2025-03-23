@@ -4,27 +4,15 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using CudaHelioCommanderLight.Config;
-using CudaHelioCommanderLight.Helpers;
-using CudaHelioCommanderLight.Interfaces;
 
 namespace CudaHelioCommanderLight.Operations
 {
     public class ComputeErrorOperation : Operation<ErrorComputeModel, ComputedErrorModel>
     {
-        private readonly IMainHelper _mainHelper;
-        private readonly IMetricsConfig _metricsConfig;
-
-        public ComputeErrorOperation(IMainHelper mainHelper, IMetricsConfig metricsConfig)
-        {
-            _mainHelper = mainHelper;
-            _metricsConfig = metricsConfig;
-        }
-
-
-        public static new ComputedErrorModel Operate(ErrorComputeModel model, IMainHelper mainHelper, IMetricsConfig metricsConfig)
+        public static new ComputedErrorModel Operate(ErrorComputeModel model)
         {
             var amsExecution = model.AmsExecution;
-
+            var metricsConfig = MetricsConfig.GetInstance();
             var libraryItem = model.LibraryItem;
             var referenceTi = libraryItem.Spe1e3List;
             var eta = new List<double>();
@@ -44,10 +32,7 @@ namespace CudaHelioCommanderLight.Operations
             {
                 return computedErrorModel;
             }
-            if (amsExecution.Spe1e3 == null || amsExecution.Spe1e3.Count == 0)
-            {
-                throw new ArgumentNullException(nameof(amsExecution.Spe1e3), "The Spe1e3 list in AMS execution is null or empty.");
-            }
+
             var computedTi = amsExecution.Spe1e3.ToList();
 
             for (int i = 0; i < amsExecution.Spe1e3.Count; i++)
@@ -62,7 +47,7 @@ namespace CudaHelioCommanderLight.Operations
             int etaIdx = 0;
 
             var firstRequiredValue = (int)(metricsConfig.ErrorFromGev * 10) / 10.0;
-            var lastRequiredValue = (int)(metricsConfig.ErrorToGev * 10) / 10.0;
+            var lastRequiredValue = (int)(metricsConfig.ErrorFromGev * 10) / 10.0;
             if (amsExecution.TKin.IndexOf(firstRequiredValue) == -1 || libraryItem.TKinList.IndexOf(firstRequiredValue) == -1)
             {
                 throw new WrongConfigurationException($"Starting GeV value {firstRequiredValue} from configuration file is not found in library. Adjust configuration file first.");

@@ -1,27 +1,16 @@
 ﻿using CudaHelioCommanderLight.Models;
 using System.IO;
 using CudaHelioCommanderLight.Config;
-using CudaHelioCommanderLight.Helpers;
-using System;
 
 namespace CudaHelioCommanderLight.Operations
 {
     public class RenderAmsErrorRatioGraphOperation : Operation<AmsExecutionPltErrorModel>
     {
-        private readonly IMainHelper _mainHelper;
-
-        public RenderAmsErrorRatioGraphOperation(IMainHelper mainHelper)
-        {
-            _mainHelper = mainHelper ?? throw new ArgumentNullException(nameof(mainHelper));
-        }
-
-        public static new void Operate(AmsExecutionPltErrorModel amsExecutionErrorModel, IMainHelper mainHelper)
+        public static new void Operate(AmsExecutionPltErrorModel amsExecutionErrorModel)
         {
             var amsExecution = amsExecutionErrorModel.AmsExecution;
             var errorStructure = amsExecutionErrorModel.ErrorStructure;
-
-
-            var metricsConfig = MetricsConfig.GetInstance(mainHelper);
+            var metricsConfig = MetricsConfig.GetInstance();
             var plt = amsExecutionErrorModel.Plt;
 
             if (errorStructure == null)
@@ -49,6 +38,7 @@ namespace CudaHelioCommanderLight.Operations
                 {
                     break;
                 }
+
 
                 if ((x.Length > x1Idx && x[x1Idx] == ratioX[ratioIdx]) && (x2.Length > x2Idx && x2[x2Idx] == ratioX[ratioIdx]))
                 {
