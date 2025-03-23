@@ -15,7 +15,6 @@ namespace CudaHelioCommanderLight.Models
         public double V { get; set; }
         public double N { get; set; }
         public int Percentage { get; set; }
-        //public string Error { get; set; }
         public double Error { get; set; }
         public MethodType MethodType { get; set; }
 
@@ -103,7 +102,7 @@ namespace CudaHelioCommanderLight.Models
             int etaIdx = 0;
             for (double T = metricsConfig.ErrorFromGev; T <= metricsConfig.ErrorToGev; T += 0.1)
             {
-                double TValue = (double)((int)(T * 10) / 10.0);
+                double TValue = (int)(T * 10) / 10.0;
                 int idx1 = TKin.IndexOf(TValue);
                 int idx2 = fileContent.TKinList.IndexOf(TValue);
                 eta[etaIdx] = (computedTi[idx1] - referenceTi[idx2]) / referenceTi[idx2];
@@ -120,11 +119,6 @@ namespace CudaHelioCommanderLight.Models
 
             ErrorValue = etaRms;
             this.Error = etaRms;
-        }
-
-        public Execution()
-        {
-
         }
     }
 }

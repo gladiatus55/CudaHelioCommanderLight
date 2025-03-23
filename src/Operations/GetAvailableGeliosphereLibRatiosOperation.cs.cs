@@ -9,7 +9,6 @@ namespace CudaHelioCommanderLight.Operations
     {
         public static new List<string> Operate(string libTypeName)
         {
-            //var libFilesPath = @"libFiles\";
             var libFilesPath = Path.Combine(Environment.CurrentDirectory, "libFiles");
 
             if (!Directory.Exists(libFilesPath))
@@ -27,10 +26,7 @@ namespace CudaHelioCommanderLight.Operations
                 if (directoryName.Contains(libTypeName))
                 {
                     var numberStr = directoryName.Split('-').Last();
-                    //if (MainHelper.TryConvertToDecimal(numberStr, out decimal number))
-                    //{
                     geliosphereRatios.Add(numberStr);
-                    //}
                 }
             }
 

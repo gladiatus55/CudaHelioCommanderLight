@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using CudaHelioCommanderLight.Enums;
 using CudaHelioCommanderLight.Helpers;
@@ -15,10 +14,8 @@ public class CompareLibraryOperation : Operation<CompareLibraryModel, List<Error
         var errors = new List<ErrorStructure>();
 
         var isFileDirectory = IsDirectory(libStructureType);
-        
-        var files = isFileDirectory
-            ? Directory.GetDirectories(model.LibPath)
-            : Directory.GetFiles(model.LibPath);
+
+        var files = GetFile(model, isFileDirectory);
 
         foreach (var file in files)
         {
@@ -35,7 +32,7 @@ public class CompareLibraryOperation : Operation<CompareLibraryModel, List<Error
             }
 
             var dividedList = new List<double>();
-            for (int idx = 0; idx < outputFileContent.TKinList.Count(); idx++)
+            for (int idx = 0; idx < outputFileContent.TKinList.Count; idx++)
             {
                 dividedList.Add(isFileDirectory ? outputFileContent.Spe1e3List[idx] / outputFileContent.Spe1e3NList[idx] : outputFileContent.Spe1e3List[idx]);
             }
@@ -46,7 +43,6 @@ public class CompareLibraryOperation : Operation<CompareLibraryModel, List<Error
             {
                 AmsExecution = model.AmsExecution,
                 LibraryItem = outputFileContent,
-                MetricsConfig = model.MetricsConfig,
             });
             error.Error = computedError.Error;
             error.MaxError = computedError.MaxError;
@@ -78,6 +74,11 @@ public class CompareLibraryOperation : Operation<CompareLibraryModel, List<Error
             errors.Add(error);
         }
         return errors;
+    }
+
+    private static string[] GetFile(CompareLibraryModel model, bool isFileDirectory)
+    {
+        return isFileDirectory? Directory.GetDirectories(model.LibPath) : Directory.GetFiles(model.LibPath);
     }
     
     private static string? GetDisplayName(string outputFilePath, bool isFileDirectory)

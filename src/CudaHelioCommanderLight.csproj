@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
-	<EnableWindowsTargeting>true</EnableWindowsTargeting>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x64</Platforms>
@@ -34,5 +33,6 @@
     <Resource Include="Resources\explorer.png" />
     <Resource Include="Resources\sav-slov.jpg" />
   </ItemGroup>
+
 
 </Project>

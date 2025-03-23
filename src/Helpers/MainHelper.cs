@@ -25,12 +25,11 @@ namespace CudaHelioCommanderLight.Helpers
                 foreach (string subDirName in Directory.GetDirectories(localMainFolderPath))
                 {
                     string localSubFolderPath = Path.Combine(localMainFolderPath, subDirName);
-                    string graph1LocalFilePath = Path.Combine(localSubFolderPath, GlobalFilesToDownload.DetailSpe1e3GraphFile);
 
                     executionDetail.AddExecutionFilePathsToExecution(localSubFolderPath, string.Empty, localMainFolderPath, string.Empty);
                 }
 
-                executionStatus.activeExecutions.Add(executionDetail);
+                executionStatus.GetActiveExecutions().Add(executionDetail);
             }
 
             return executionStatus;
@@ -60,7 +59,7 @@ namespace CudaHelioCommanderLight.Helpers
 
                 foreach (string line in lines)
                 {
-                    if (line.StartsWith("#"))
+                    if (line.StartsWith('#'))
                     {
                         continue;
                     }
@@ -100,7 +99,6 @@ namespace CudaHelioCommanderLight.Helpers
                     else
                     {
                         Console.WriteLine(localFilePath + " - error, Accepting Tkin | spe1e3 [or count 4 for AMS solarprop], got line count " + parsedLine.Count());
-                        continue;
                     }
 
 
@@ -353,7 +351,6 @@ namespace CudaHelioCommanderLight.Helpers
                 }
                 else if (line.Contains(keyWords["type"]))
                 {
-                    // TODO
                     string param = parseParam(line);
                     if (param.Equals("FWMethod"))
                     {
@@ -447,18 +444,16 @@ namespace CudaHelioCommanderLight.Helpers
                 }
                 else if (line.Contains(keyWords["progress"]))
                 {
-                    if (execution != null)
+                    if (execution == null) continue;
+                    switch (executionDetail.MethodType)
                     {
-                        if (executionDetail.MethodType == MethodType.BP_1D || executionDetail.MethodType == MethodType.BP_HELIUM_1D)
-                        {
-                            //execution.Percentage = (int)(line.Count(c => c == '|') / (1.0 * iterations) * 100);
+                        case MethodType.BP_1D:
+                        case MethodType.BP_HELIUM_1D:
                             execution.Percentage = (int)(line.Count(c => c == '|') / (double)iterations * 100.0);
-                        }
-                        else if (executionDetail.MethodType == MethodType.FP_1D)
-                        {
-                            //execution.Percentage = (int)(line.Count(c => c == '|') / (31.0 * iterations) * 100);
+                            break;
+                        case MethodType.FP_1D:
                             execution.Percentage = (int)(line.Count(c => c == '|') / (double)iterations * 100.0);
-                        }
+                            break;
                     }
                 }
             }
@@ -481,7 +476,7 @@ namespace CudaHelioCommanderLight.Helpers
 
             foreach (string dirtyParsed in dirtyParsedValues)
             {
-                if (dirtyParsed.StartsWith("#")) continue;
+                if (dirtyParsed.StartsWith('#')) continue;
                 parsedParams.Add(dirtyParsed.Substring(0, dirtyParsed.Length - 1));
             }
 

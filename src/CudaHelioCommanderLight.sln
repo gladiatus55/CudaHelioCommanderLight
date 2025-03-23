@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CudaHelioCommanderLight", "CudaHelioCommanderLight.csproj", "{569354F1-FE5C-49A6-8C25-A02C1AF51DEA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CudaHelioCommanderLight.Tests", "..\CudaHelioCommanderLight.Tests\CudaHelioCommanderLight.Tests.csproj", "{507415A2-B810-49CB-B3FE-BEDCB16BAC73}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CudaHelioCommanderLight", "CudaHelioCommanderLight.csproj", "{569354F1-FE5C-49A6-8C25-A02C1AF51DEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +21,6 @@ Global
 		{569354F1-FE5C-49A6-8C25-A02C1AF51DEA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{569354F1-FE5C-49A6-8C25-A02C1AF51DEA}.Release|x64.ActiveCfg = Release|x64
 		{569354F1-FE5C-49A6-8C25-A02C1AF51DEA}.Release|x64.Build.0 = Release|x64
-		{507415A2-B810-49CB-B3FE-BEDCB16BAC73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{507415A2-B810-49CB-B3FE-BEDCB16BAC73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{507415A2-B810-49CB-B3FE-BEDCB16BAC73}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{507415A2-B810-49CB-B3FE-BEDCB16BAC73}.Debug|x64.Build.0 = Debug|Any CPU
-		{507415A2-B810-49CB-B3FE-BEDCB16BAC73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{507415A2-B810-49CB-B3FE-BEDCB16BAC73}.Release|Any CPU.Build.0 = Release|Any CPU
-		{507415A2-B810-49CB-B3FE-BEDCB16BAC73}.Release|x64.ActiveCfg = Release|Any CPU
-		{507415A2-B810-49CB-B3FE-BEDCB16BAC73}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

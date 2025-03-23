@@ -4,11 +4,16 @@ namespace CudaHelioCommanderLight.Models
 {
     public class ExecutionStatus
     {
-        public List<ExecutionDetail> activeExecutions;
+        private List<ExecutionDetail> ActiveExecutions { get; }
+
+        public List<ExecutionDetail> GetActiveExecutions()
+        {
+            return ActiveExecutions;
+        }
 
         public ExecutionStatus()
         {
-            activeExecutions = new List<ExecutionDetail>();
+            ActiveExecutions = new List<ExecutionDetail>();
         }
     }
 }
