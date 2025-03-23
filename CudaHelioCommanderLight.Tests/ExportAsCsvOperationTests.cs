@@ -1,9 +1,9 @@
 using NUnit.Framework;
 using NSubstitute;
 using System;
-using System.Windows; // Include if needed for MessageBoxImage
-using CudaHelioCommanderLight.Operations; // Adjust namespace as necessary
-using CudaHelioCommanderLight.Interfaces; // Adjust namespace as necessary
+using System.Windows;
+using CudaHelioCommanderLight.Operations;
+using CudaHelioCommanderLight.Interfaces;
 using static CudaHelioCommanderLight.HeatMapGraph;
 
 [TestFixture]
@@ -16,22 +16,20 @@ public class ExportAsCsvOperationTests
     [SetUp]
     public void SetUp()
     {
-        // Initialize mocks
         _mockFileWriter = Substitute.For<IFileWriter>();
         _mockDialogService = Substitute.For<IDialogService>();
 
-        // Prepare some sample data to test with
         _sampleHeatPoints = new HeatPoint[,]
         {
             { new HeatPoint (0,0,1.0 ), new HeatPoint (1, 1, 2.0) }
         };
 
-        // Set up a default behavior for the dialog service
+
         _mockDialogService.SaveFileDialog(out Arg.Any<string>(), Arg.Any<string>())
             .Returns(x =>
             {
-                x[0] = "test.csv"; // Simulate a file path return
-                return true;       // Simulate user clicked 'Save'
+                x[0] = "test.csv";
+                return true;
             });
     }
 

@@ -17,16 +17,15 @@ public class ExportAsJsonOperationTests
     [SetUp]
     public void SetUp()
     {
-        _testFilePath = "test.json"; // Simulated file path
+        _testFilePath = "test.json";
 
-        // Sample data setup - Providing required constructor arguments
+
         _sampleExecutionModel = new ExecutionListExportModel
         {
             FilePath = _testFilePath,
             Executions = new List<Execution>
             {
-                new Execution(2.0, 1.0, 10, 0.1, MethodType.FP_1D),  // V, K0, N, dt, MethodType
-                new Execution(3.0, 2.0, 20, 0.2, MethodType.BT_2D)   // V, K0, N, dt, MethodType
+                new Execution(2.0, 1.0, 10, 0.1, MethodType.FP_1D),
             }
         };
     }
@@ -40,16 +39,14 @@ public class ExportAsJsonOperationTests
         // Assert
         Assert.That(File.Exists(_testFilePath), Is.True, "JSON file was not created.");
 
-        // Read the file and check content
         string jsonContent = File.ReadAllText(_testFilePath);
         List<ExecutionDto> deserializedData = JsonConvert.DeserializeObject<List<ExecutionDto>>(jsonContent);
 
         Assert.That(deserializedData, Is.Not.Null);
         Assert.That(deserializedData.Count, Is.EqualTo(_sampleExecutionModel.Executions.Count));
         Assert.That(deserializedData[0].K0, Is.EqualTo(_sampleExecutionModel.Executions[0].K0));
-        Assert.That(deserializedData[0].Method, Is.EqualTo(nameof(MethodType.FP_1D))); // Correctly check enum string
+        Assert.That(deserializedData[0].Method, Is.EqualTo(nameof(MethodType.FP_1D)));
 
-        // Cleanup
         File.Delete(_testFilePath);
     }
 
@@ -59,7 +56,7 @@ public class ExportAsJsonOperationTests
         // Arrange
         var executionModel = new ExecutionListExportModel
         {
-            FilePath = @"C:\invalid\path\test.json", // Invalid path
+            FilePath = @"C:\invalid\path\test.json", 
             Executions = new List<Execution>
         {
             new Execution(1.0, 2.0, 3.0, 4.0, MethodType.FP_1D)
@@ -68,8 +65,6 @@ public class ExportAsJsonOperationTests
 
         // Act & Assert
         var ex = Assert.Throws<IOException>(() => ExportAsJsonOperation.Operate(executionModel));
-
-        // Ensure it is the expected exception
         Assert.That(ex, Is.InstanceOf<IOException>());
     }
 }

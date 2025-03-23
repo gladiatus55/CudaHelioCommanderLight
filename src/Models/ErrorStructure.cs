@@ -19,8 +19,8 @@ namespace CudaHelioCommanderLight.Models
         public double MaxError { get; set; }
         public string DisplayName { get; set; }
         public string FilePath { get; set; }
-        public List<double> TKinList { get; set; }  // Fixed to List<double>
-        public List<double> Spe1e3binList { get; set; }  // Fixed to List<double>
+        public List<double> TKinList { get; set; }
+        public List<double> Spe1e3binList { get; set; }
         public int V { get; set; }
         public double K0 { get; set; }
 

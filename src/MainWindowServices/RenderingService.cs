@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-// add
 using System.Collections.ObjectModel;
 using CudaHelioCommanderLight.Helpers;
 
@@ -17,9 +16,7 @@ namespace CudaHelioCommanderLight.MainWindowServices
 {
     public class RenderingService
     {
-        // Add injected member to refer to main helper
         private readonly IMainHelper _mainHelper;
-        // Modify constructor signature to receive the new dependency
         public RenderingService(IMainHelper mainHelper)
         {
             _mainHelper = mainHelper;
@@ -97,7 +94,6 @@ namespace CudaHelioCommanderLight.MainWindowServices
                 MessageBox.Show("Cannot read data values from the input file.");
                 return;
             }
-            // Change signature so that it can be injected
             foreach (ExecutionDetail executionDetail in (ObservableCollection<ExecutionDetail>)activeCalculationsDataGrid.ItemsSource)
             {
                 if (executionDetail.IsSelected)
@@ -107,11 +103,9 @@ namespace CudaHelioCommanderLight.MainWindowServices
                     foreach (Execution execution in executionDetail.Executions)
                     {
                         ExecutionHelper.InitializeOutput1e3BinDataFromOnlineDir(execution, _mainHelper);
-                        // Change function in these
                         if (execution.StandardDeviatons != null)
                         {
-                            try
-                            {   // Change MetricsConfig.GetInstance( _mainHelper
+                            try { 
                                 execution.ComputeError(outputFileContent, MetricsConfig.GetInstance(_mainHelper));
                             }
                             catch (ArgumentOutOfRangeException ex)

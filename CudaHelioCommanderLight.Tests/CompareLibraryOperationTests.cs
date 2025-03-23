@@ -58,7 +58,6 @@ public class CompareLibraryOperationTests
         metricsConfig.ErrorFromGev = 0.0;
         metricsConfig.ErrorToGev = 3.0;
 
-        // Mock file parsing behavior
         _mainHelper.ExtractOutputDataFile(Arg.Any<string>(), out Arg.Any<OutputFileContent>())
             .Returns(x =>
             {
@@ -117,7 +116,6 @@ public class CompareLibraryOperationTests
             var path = Path.Combine(_testDir, dir);
             Directory.CreateDirectory(path);
 
-            // Write valid data to files with proper paths
             File.WriteAllText(Path.Combine(path, "output_1e3bin.dat"),
                 "TKin: 0.0 0.1 0.2 ... 3.0\nSpe1e3: ...\nSpe1e3N: ...");
         }

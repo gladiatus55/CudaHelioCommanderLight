@@ -24,7 +24,7 @@ public class MetricsConfigTests
         MetricsConfig.CACHE_DIR = _tempCacheDir;
         Directory.CreateDirectory(_tempCacheDir);
 
-        // Delete any existing configuration file
+
         var configFilePath = Path.Combine(_tempCacheDir, "configInfo.xml");
         if (File.Exists(configFilePath))
         {
@@ -43,7 +43,7 @@ public class MetricsConfigTests
     public void GetInstance_ReturnsSingletonInstance()
     {
         // Arrange
-        // (Instance creation handled by GetInstance)
+
 
         // Act
         var instance1 = MetricsConfig.GetInstance(_mainHelper);
