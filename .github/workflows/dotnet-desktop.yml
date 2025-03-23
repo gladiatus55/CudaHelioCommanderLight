@@ -21,7 +21,7 @@ jobs:
           cd src
           dotnet restore
           dotnet build --no-restore
-
+          
   test:
     runs-on: windows-latest
     needs: build
