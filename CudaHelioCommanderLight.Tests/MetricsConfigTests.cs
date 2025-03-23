@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.Xml.Linq;
 
-
 [TestFixture]
 public class MetricsConfigTests
 {
@@ -43,20 +42,24 @@ public class MetricsConfigTests
     [Test]
     public void GetInstance_ReturnsSingletonInstance()
     {
+        // Arrange
+        // (Instance creation handled by GetInstance)
 
+        // Act
         var instance1 = MetricsConfig.GetInstance(_mainHelper);
         var instance2 = MetricsConfig.GetInstance(_mainHelper);
 
+        // Assert
         Assert.That(instance2, Is.SameAs(instance1));
     }
 
     [Test]
     public void Constructor_InitializesDefaultValues()
     {
-
+        // Arrange & Act
         var config = MetricsConfig.GetInstance(_mainHelper);
 
-
+        // Assert
         Assert.Multiple(() =>
         {
             Assert.That(config.K0Metric, Is.EqualTo(MetricsConfig.K0Metrics.cm2ps));
@@ -71,15 +74,16 @@ public class MetricsConfigTests
     [Test]
     public void Properties_NotifyObserversOnChange()
     {
+        // Arrange
         var config = MetricsConfig.GetInstance(_mainHelper);
         var observer = Substitute.For<IMetricsConfigObserver>();
 
-        // Register observer (triggers 1st notification)
+        // Act
         config.RegisterObserver(observer);
+        config.ErrorFromGev = 1.0;
+        config.ErrorToGev = 50.0;
 
-        config.ErrorFromGev = 1.0; // 2nd notification
-        config.ErrorToGev = 50.0;  // 3rd notification
-
+        // Assert
         Received.InOrder(() =>
         {
             observer.NotifyMetricsConfigChanged(config); // Initial registration
@@ -91,6 +95,7 @@ public class MetricsConfigTests
     [Test]
     public void LoadConfigurationInfo_LoadsValuesFromXml()
     {
+        // Arrange
         const double testFrom = 1.5;
         const double testTo = 50.0;
         File.WriteAllText(Path.Combine(_tempCacheDir, "configInfo.xml"),
@@ -112,8 +117,11 @@ public class MetricsConfigTests
         });
 
         var config = MetricsConfig.GetInstance(_mainHelper);
+
+        // Act
         config.LoadConfigurationinfo();
 
+        // Assert
         Assert.Multiple(() =>
         {
             Assert.That(config.ErrorFromGev, Is.EqualTo(testFrom));
@@ -125,22 +133,27 @@ public class MetricsConfigTests
     [Test]
     public void LoadConfigurationInfo_HandlesInvalidXml()
     {
+        // Arrange
         File.WriteAllText(Path.Combine(_tempCacheDir, "configInfo.xml"), "INVALID XML CONTENT");
 
+        // Act & Assert
         Assert.DoesNotThrow(() => MetricsConfig.GetInstance(_mainHelper).LoadConfigurationinfo());
     }
 
     [Test]
     public void SaveConfigurationInfo_WritesToXml()
     {
+        // Arrange
         const double testFrom = 2.0;
         const double testTo = 75.0;
         var config = MetricsConfig.GetInstance(_mainHelper);
         config.ErrorFromGev = testFrom;
         config.ErrorToGev = testTo;
 
+        // Act
         config.SaveConfigurationInfo();
 
+        // Assert
         var doc = XDocument.Load(Path.Combine(_tempCacheDir, "configInfo.xml"));
         Assert.Multiple(() =>
         {
@@ -149,29 +162,27 @@ public class MetricsConfigTests
         });
     }
 
-
     [Test]
     public void ToString_ReturnsCorrectFormat()
     {
-
+        // Arrange
         var config = MetricsConfig.GetInstance(_mainHelper);
         config.K0Metric = MetricsConfig.K0Metrics.m2ps;
         config.VMetric = MetricsConfig.VMetrics.mps;
         config.DtMetric = MetricsConfig.DtMetrics.m;
 
- 
+        // Act
         var result = config.ToString();
 
-
+        // Assert
         Assert.That(result, Is.EqualTo(
             "Metrics used: K0 (m^2/s) | dt (min) | V (m/s) | w (n/m^2*s*sr*GeV)"));
     }
 
-
     [Test]
     public void GetInstance_NullMainHelper_ThrowsException()
     {
+        // Act & Assert
         Assert.Throws<ArgumentNullException>(() => MetricsConfig.GetInstance(null));
     }
 }
-

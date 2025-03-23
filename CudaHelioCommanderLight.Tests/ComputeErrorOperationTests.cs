@@ -26,6 +26,7 @@ namespace CudaHelioCommanderLight.Tests
         [Test]
         public void Operate_ValidInput_ReturnsCorrectComputedErrorModel()
         {
+            // Arrange
             var amsExecution = new AmsExecution
             {
                 TKin = new List<double> { 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4 },
@@ -47,27 +48,29 @@ namespace CudaHelioCommanderLight.Tests
             _mockMetricsConfig.ErrorFromGev.Returns(0.5);
             _mockMetricsConfig.ErrorToGev.Returns(1.4);
 
+            // Act
             var result = ComputeErrorOperation.Operate(model, _mockMainHelper, _mockMetricsConfig);
 
+            // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Error, Is.Not.NaN);
             Assert.That(result.MaxError, Is.Not.NaN);
         }
 
-
-
-
         [Test]
         public void Operate_EmptyReferenceTi_ReturnsModelWithNaNValues()
         {
+            // Arrange
             var model = new ErrorComputeModel
             {
                 AmsExecution = new AmsExecution(),
                 LibraryItem = new OutputFileContent { Spe1e3List = new List<double>() }
             };
 
+            // Act
             var result = ComputeErrorOperation.Operate(model, _mockMainHelper, _mockMetricsConfig);
 
+            // Assert
             Assert.That(result.Error, Is.NaN);
             Assert.That(result.MaxError, Is.NaN);
         }
@@ -75,12 +78,14 @@ namespace CudaHelioCommanderLight.Tests
         [Test]
         public void Operate_NullAmsExecutionSpe1e3_ThrowsArgumentNullException()
         {
+            // Arrange
             var model = new ErrorComputeModel
             {
                 AmsExecution = new AmsExecution { Spe1e3 = null },
                 LibraryItem = new OutputFileContent { Spe1e3List = new List<double> { 1, 2, 3 } }
             };
 
+            // Act & Assert
             Assert.Throws<ArgumentNullException>(
                 () => ComputeErrorOperation.Operate(model, _mockMainHelper, _mockMetricsConfig)
             );
@@ -89,6 +94,7 @@ namespace CudaHelioCommanderLight.Tests
         [Test]
         public void Operate_MissingRequiredGeVValue_ThrowsWrongConfigurationException()
         {
+            // Arrange
             var amsExecution = new AmsExecution
             {
                 TKin = new List<double> { 1.0, 2.0, 3.0 },
@@ -110,6 +116,7 @@ namespace CudaHelioCommanderLight.Tests
             _mockMetricsConfig.ErrorFromGev.Returns(0.5);
             _mockMetricsConfig.ErrorToGev.Returns(3.0);
 
+            // Act & Assert
             Assert.Throws<WrongConfigurationException>(
                 () => ComputeErrorOperation.Operate(model, _mockMainHelper, _mockMetricsConfig)
             );

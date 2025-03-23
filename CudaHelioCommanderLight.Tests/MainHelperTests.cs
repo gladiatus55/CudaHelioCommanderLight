@@ -32,27 +32,33 @@ public class MainHelperTests
     [Test]
     public void ExtractMultipleOfflineStatus_ValidFiles_ReturnsAmsExecutionDetail()
     {
+        // Arrange
         CreateTestFiles(new[] { "file1.txt", "file2.txt" });
         File.WriteAllText(Path.Combine(_testDir, "file1.txt"), "1.0 2.0");
         File.WriteAllText(Path.Combine(_testDir, "file2.txt"), "");
 
+        // Act
         var result = _mainHelper.ExtractMultipleOfflineStatus(new[]
         {
-        Path.Combine(_testDir, "file1.txt"),
-        Path.Combine(_testDir, "file2.txt")
-    });
+            Path.Combine(_testDir, "file1.txt"),
+            Path.Combine(_testDir, "file2.txt")
+        });
 
+        // Assert
         Assert.That(result.AmsExecutions.Count, Is.EqualTo(1));
     }
 
     [Test]
     public void ExtractOutputDataFile_ValidFile_ReturnsTrue()
     {
+        // Arrange
         var filePath = Path.Combine(_testDir, "output.txt");
         File.WriteAllText(filePath, "1.0 2.0 3.0 4.0");
 
+        // Act
         var success = _mainHelper.ExtractOutputDataFile(filePath, out OutputFileContent content);
 
+        // Assert
         Assert.IsTrue(success);
         Assert.That(content.TKinList.Count, Is.EqualTo(1));
     }
@@ -60,30 +66,36 @@ public class MainHelperTests
     [Test]
     public void ExtractForceFieldOutputDataFile_InvalidFile_ReturnsFalse()
     {
-        var result = _mainHelper.ExtractForceFieldOutputDataFile("invalid_path.txt", out _);
+        // Arrange
+        var invalidPath = "invalid_path.txt";
 
+        // Act
+        var result = _mainHelper.ExtractForceFieldOutputDataFile(invalidPath, out _);
+
+        // Assert
         Assert.IsFalse(result);
     }
 
     [Test]
     public void TryConvertToDouble_ValidString_ReturnsTrue()
     {
-        // Save the original culture
+        // Arrange
         var originalCulture = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = new CultureInfo("fr-FR");  // Use comma decimal separator
+        const string testValue = "123,45";
 
         try
         {
-            // Force a culture that uses "," as decimal separator (e.g., French)
-            CultureInfo.CurrentCulture = new CultureInfo("fr-FR");
+            // Act
+            bool success = _mainHelper.TryConvertToDouble(testValue, out double result);
 
-            bool success = _mainHelper.TryConvertToDouble("123,45", out double result);
-
+            // Assert
             Assert.IsTrue(success, "Conversion should succeed");
             Assert.That(result, Is.EqualTo(123.45).Within(0.001), "Result should be 123.45");
         }
         finally
         {
-            // Restore the original culture
+            // Cleanup
             CultureInfo.CurrentCulture = originalCulture;
         }
     }
@@ -91,8 +103,13 @@ public class MainHelperTests
     [Test]
     public void TryConvertToDecimal_InvalidString_ReturnsFalse()
     {
-        var success = _mainHelper.TryConvertToDecimal("invalid", out _);
+        // Arrange
+        const string invalidValue = "invalid";
 
+        // Act
+        var success = _mainHelper.TryConvertToDecimal(invalidValue, out _);
+
+        // Assert
         Assert.IsFalse(success);
     }
 
