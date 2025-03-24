@@ -17,12 +17,21 @@ namespace CudaHelioCommanderLight.Operations
 
         public static new void Operate(AmsExecutionPltErrorModel amsExecutionErrorModel, IMainHelper mainHelper)
         {
+            if (amsExecutionErrorModel == null)
+            {
+                throw new ArgumentNullException(nameof(amsExecutionErrorModel));
+            }
+
+            if (amsExecutionErrorModel.PltWrapper == null)
+            {
+                throw new ArgumentNullException(nameof(amsExecutionErrorModel.PltWrapper));
+            }
+
             var amsExecution = amsExecutionErrorModel.AmsExecution;
             var errorStructure = amsExecutionErrorModel.ErrorStructure;
 
-
             var metricsConfig = MetricsConfig.GetInstance(mainHelper);
-            var plt = amsExecutionErrorModel.Plt;
+            var plt = amsExecutionErrorModel.PltWrapper;
 
             if (errorStructure == null)
             {
@@ -45,12 +54,12 @@ namespace CudaHelioCommanderLight.Operations
 
             for (var idx = 0; idx < biggerX; idx++)
             {
-                if (ratioIdx >= ratioX.Length)
+                if (ratioIdx >= ratioX.Length || x1Idx >= x.Length || x2Idx >= x2.Length)
                 {
                     break;
                 }
 
-                if ((x.Length > x1Idx && x[x1Idx] == ratioX[ratioIdx]) && (x2.Length > x2Idx && x2[x2Idx] == ratioX[ratioIdx]))
+                if ((x[x1Idx] == ratioX[ratioIdx]) && (x2[x2Idx] == ratioX[ratioIdx]))
                 {
                     ratioY[ratioIdx] = y[x1Idx] / y2[x2Idx];
                     x1Idx++;
@@ -59,13 +68,13 @@ namespace CudaHelioCommanderLight.Operations
                     continue;
                 }
 
-                if (x.Length > x1Idx && x[x1Idx] != ratioX[ratioIdx])
+                if (x[x1Idx] != ratioX[ratioIdx])
                 {
                     x1Idx++;
                     continue;
                 }
 
-                if (x2.Length > x2Idx && x2[x2Idx] != ratioX[ratioIdx])
+                if (x2[x2Idx] != ratioX[ratioIdx])
                 {
                     x2Idx++;
                 }
@@ -73,15 +82,17 @@ namespace CudaHelioCommanderLight.Operations
 
             var amsLegend = Path.GetFileNameWithoutExtension(amsExecution.FileName);
             var errorName = Path.GetFileName(Path.GetDirectoryName(errorStructure.FilePath));
-            plt.PlotScatter(ratioX, ratioY, markerSize: 1, color: System.Drawing.Color.Red, label: $"Ratio {amsLegend}/ {errorName}");
+
+            plt.PlotScatter(ratioX, ratioY, markerSize: 1, color: System.Drawing.Color.Red,
+                            label: $"Ratio {amsLegend}/ {errorName}");
 
             plt.PlotHSpan(
-                x1: metricsConfig.ErrorFromGev,
-                x2: metricsConfig.ErrorToGev,
+                metricsConfig.ErrorFromGev,
+                metricsConfig.ErrorToGev,
                 draggable: false,
                 color: System.Drawing.Color.FromArgb(0, 255, 0, 0),
-                alpha: 0.1
-                );
+                alpha: 0.1f
+             );
 
             plt.Title("Ratio graph");
             plt.YLabel("Ratio");

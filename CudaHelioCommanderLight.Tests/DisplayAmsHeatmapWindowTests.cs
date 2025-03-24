@@ -5,6 +5,7 @@ using CudaHelioCommanderLight.Helpers;
 using CudaHelioCommanderLight.Interfaces;
 using CudaHelioCommanderLight.Operations;
 using System.Collections.Generic;
+using System.Windows.Automation;
 
 namespace CudaHelioCommanderLight.Tests
 {
@@ -49,8 +50,8 @@ namespace CudaHelioCommanderLight.Tests
         {
             Assert.DoesNotThrow(() => DisplayAmsHeatmapWindowOperation.Operate(_validModel));
         }
-
-/*        [Test]
+/*
+        [Test]
         [Apartment(ApartmentState.STA)]
         public void Operate_InvalidInputXSizeTooSmall_ShowsErrorMessage()
         {
@@ -62,6 +63,18 @@ namespace CudaHelioCommanderLight.Tests
             _validModel.Errors = invalidErrors;
 
             Assert.DoesNotThrow(() => DisplayAmsHeatmapWindowOperation.Operate(_validModel));
+            // Automate clicking "OK"
+            AutomationElement dialog = AutomationElement.RootElement.FindFirst(
+                TreeScope.Children,
+                new PropertyCondition(AutomationElement.NameProperty, "Cannot make map, size too small"));
+
+            if (dialog != null)
+            {
+                var okButton = dialog.FindFirst(TreeScope.Descendants,
+                    new PropertyCondition(AutomationElement.AutomationIdProperty, "OK"));
+                InvokePattern clickPattern = okButton.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
+                clickPattern.Invoke();
+            }
         }
 
         [Test]
@@ -69,13 +82,27 @@ namespace CudaHelioCommanderLight.Tests
         public void Operate_InvalidInputYSizeTooSmall_ShowsErrorMessage()
         {
             var invalidErrors = new List<ErrorStructure>
-            {
-                new ErrorStructure(_mockMainHelper) { K0 = 1.0, V = 100 },
-                new ErrorStructure(_mockMainHelper) { K0 = 2.0, V = 100 }
-            };
+    {
+        new ErrorStructure(_mockMainHelper) { K0 = 1.0, V = 100 },
+        new ErrorStructure(_mockMainHelper) { K0 = 2.0, V = 100 }
+    };
             _validModel.Errors = invalidErrors;
 
             Assert.DoesNotThrow(() => DisplayAmsHeatmapWindowOperation.Operate(_validModel));
+
+            // Automate clicking "OK"
+            AutomationElement dialog = AutomationElement.RootElement.FindFirst(
+                TreeScope.Children,
+                new PropertyCondition(AutomationElement.NameProperty, "Cannot make map, size too small"));
+
+            if (dialog != null)
+            {
+                var okButton = dialog.FindFirst(TreeScope.Descendants,
+                    new PropertyCondition(AutomationElement.AutomationIdProperty, "OK"));
+                InvokePattern clickPattern = okButton.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
+                clickPattern.Invoke();
+            }
         }*/
     }
+
 }
