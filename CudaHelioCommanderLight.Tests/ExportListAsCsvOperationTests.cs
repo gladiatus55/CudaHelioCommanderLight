@@ -8,6 +8,7 @@ using System.Text;
 using CudaHelioCommanderLight.Operations;
 using System.Windows;
 using CudaHelioCommanderLight.Helpers;
+using System.Globalization;
 
 namespace CudaHelioCommanderLight.Tests
 {
@@ -62,6 +63,8 @@ namespace CudaHelioCommanderLight.Tests
         [Test]
         public void Operate_WhenUserConfirms_WritesCorrectCsv()
         {
+            var originalCulture = CultureInfo.CurrentCulture;
+            CultureInfo.CurrentCulture = new CultureInfo("fr-FR");  // Use comma decimal separator
             // Arrange
             var expectedCsv = new StringBuilder()
                 .AppendLine("Test 1,0,1,0,5,path/to/file1.txt")
@@ -86,6 +89,7 @@ namespace CudaHelioCommanderLight.Tests
                 MessageBoxButton.OK,
                 MessageBoxImage.Information
             );
+            CultureInfo.CurrentCulture = originalCulture;
         }
 
         [Test]
