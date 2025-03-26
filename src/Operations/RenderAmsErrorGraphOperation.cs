@@ -4,17 +4,28 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CudaHelioCommanderLight.Config;
+using CudaHelioCommanderLight.Interfaces;
+using CudaHelioCommanderLight.Helpers;
 
 namespace CudaHelioCommanderLight.Operations
 {
     public class RenderAmsErrorGraphOperation : Operation<AmsExecutionPltErrorModel>
     {
-        public static new void Operate(AmsExecutionPltErrorModel amsExecutionErrorModel)
+        private readonly IMainHelper _mainHelper;
+
+        public RenderAmsErrorGraphOperation(IMainHelper mainHelper)
+        {
+            _mainHelper = mainHelper ?? throw new ArgumentNullException(nameof(mainHelper));
+        }
+
+        public static new void Operate(AmsExecutionPltErrorModel amsExecutionErrorModel, IMainHelper mainHelper)
         {
             var amsExecution = amsExecutionErrorModel.AmsExecution;
             var errorStructure = amsExecutionErrorModel.ErrorStructure;
-            var metricsConfig = MetricsConfig.GetInstance();
+
+            var metricsConfig = MetricsConfig.GetInstance(mainHelper);
             var plt = amsExecutionErrorModel.Plt;
+            var pltwrapper = amsExecutionErrorModel.PltWrapper;
             var tickPositionsListY = new List<double>();
             var tickNamesListY = new List<string>();
             var tickPositionsList = new List<double>();
@@ -30,7 +41,10 @@ namespace CudaHelioCommanderLight.Operations
 
             var amsLegend = Path.GetFileNameWithoutExtension(amsExecution.FileName) + ": reference spectrum";
             plt.PlotScatter(xLog, yLog, markerSize: 1, color: System.Drawing.Color.Orange, label: amsLegend);
-
+            if (pltwrapper != null)
+            {
+                pltwrapper.PlotScatter(xLog, yLog, markerSize: 1, color: System.Drawing.Color.Orange, label: amsLegend); // just for testing purposes
+            }
             for (double z = min; z <= max; z *= 10)
             {
                 tickPositionsList.Add(z);
@@ -94,14 +108,27 @@ namespace CudaHelioCommanderLight.Operations
 
             var tickPositionsY = ScottPlot.Tools.Log10(tickPositionsListY.ToArray());
             var tickLabelsY = tickNamesListY.ToArray();
+
             plt.YTicks(tickPositionsY, tickLabelsY);
+
             plt.PlotHSpan(
                 x1: ScottPlot.Tools.Log10(new double[] { metricsConfig.ErrorFromGev }).First(),
                 x2: ScottPlot.Tools.Log10(new double[] { metricsConfig.ErrorToGev }).First(),
                 draggable: false,
                 color: System.Drawing.Color.FromArgb(0, 255, 0, 0),
-            alpha: 0.1
-            );
+                alpha: 0.1
+             );
+            //jsut for testing purposes
+            if (pltwrapper != null)
+            {
+                pltwrapper.PlotHSpan(
+                    x1: ScottPlot.Tools.Log10(new double[] { metricsConfig.ErrorFromGev }).First(),
+                    x2: ScottPlot.Tools.Log10(new double[] { metricsConfig.ErrorToGev }).First(),
+                    draggable: false,
+                    color: System.Drawing.Color.FromArgb(0, 255, 0, 0),
+                    alpha: 0.1
+                 );
+            }
 
             plt.Ticks(useExponentialNotation: true);
             plt.Ticks(logScaleX: true);
@@ -110,6 +137,7 @@ namespace CudaHelioCommanderLight.Operations
             plt.YLabel("Spe1e3 [proton_flux m^-2sr^-1s^-1GeV^-1]");
             plt.XLabel("Kinetic Energy [GeV]");
             plt.Legend();
+            
         }
     }
 }
