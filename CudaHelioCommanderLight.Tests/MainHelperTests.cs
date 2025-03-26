@@ -113,11 +113,101 @@ public class MainHelperTests
         Assert.IsFalse(success);
     }
 
-    private void CreateTestDirectories(IEnumerable<string> dirs)
+    [Test]
+    public void ExtractOfflineExecStatus_ValidDirectory_ReturnsExecutionStatus()
     {
-        foreach (var dir in dirs)
+        // Arrange
+        var offlineResultDirPath = Path.Combine(_testDir, "offlineResults");
+        Directory.CreateDirectory(offlineResultDirPath);
+        var mainFolderPath = Path.Combine(offlineResultDirPath, "mainFolder");
+        Directory.CreateDirectory(mainFolderPath);
+        File.WriteAllText(Path.Combine(mainFolderPath, GlobalFilesToDownload.RunningInfoFile),
+            "Grid-run 0\nType [FWMethod]\nV-size [1]\nK0-size [1]\nN-size [1]\ndt-size [1]\n" +
+            "V-params [1.0]\nK0-params [1.0]\nN-params [1.0]\ndt-params [1.0]\n" +
+            "Algorithm-started [1.0] [1.0] [1.0] [1.0]\nProgress |");
+
+        // Act
+        var result = _mainHelper.ExtractOfflineExecStatus(offlineResultDirPath);
+
+        // Assert
+        Assert.That(result.GetActiveExecutions().Count, Is.EqualTo(1));
+        Assert.That(result.GetActiveExecutions()[0].MethodType, Is.EqualTo(MethodType.FP_1D));
+    }
+
+    [Test]
+    public void ExtractMultipleOfflineStatus_InvalidFile_ProcessesValidFileAndThrowsException()
+    {
+        // Arrange
+        CreateTestFiles(new[] { "valid.txt", "invalid.txt" });
+        File.WriteAllText(Path.Combine(_testDir, "valid.txt"), "1.0 2.0");
+        File.WriteAllText(Path.Combine(_testDir, "invalid.txt"), "invalid data");
+
+        // Act & Assert
+        var ex = Assert.Throws<Exception>(() => _mainHelper.ExtractMultipleOfflineStatus(new[]
         {
-            Directory.CreateDirectory(Path.Combine(_testDir, dir));
+        Path.Combine(_testDir, "valid.txt"),
+        Path.Combine(_testDir, "invalid.txt")
+    }));
+
+        Assert.That(ex.Message, Is.EqualTo("Exception during parsing tKin and spe1e3 of ams spectra"));
+
+        // Check that the valid file was processed before the exception
+        var result = _mainHelper.ExtractMultipleOfflineStatus(new[] { Path.Combine(_testDir, "valid.txt") });
+        Assert.That(result.AmsExecutions.Count, Is.EqualTo(1));
+    }
+
+
+    [Test]
+    public void ExtractForceFieldOutputDataFile_ValidFile_ReturnsTrue()
+    {
+        // Arrange
+        var filePath = Path.Combine(_testDir, "forceField.txt");
+        File.WriteAllText(filePath, "1.0 2.0 3.0 4.0\n5.0 6.0 7.0 8.0");
+
+        // Act
+        var result = _mainHelper.ExtractForceFieldOutputDataFile(filePath, out var content);
+
+        // Assert
+        Assert.IsTrue(result);
+        Assert.That(content.TKinList.Count, Is.EqualTo(2));
+        Assert.That(content.Spe1e3List.Count, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void ExtractOutputDataFile_DifferentFormats_ParsesCorrectly()
+    {
+        // Arrange
+        var filePath = Path.Combine(_testDir, "output.txt");
+        File.WriteAllLines(filePath, new[]
+        {
+            "1.0 2.0",
+            "3.0 4.0 5.0",
+            "6.0 7.0 8.0 9.0"
+        });
+
+        // Act
+        var result = _mainHelper.ExtractOutputDataFile(filePath, out var content);
+
+        // Assert
+        Assert.IsTrue(result);
+        Assert.That(content.TKinList.Count, Is.EqualTo(3));
+        Assert.That(content.Spe1e3List.Count, Is.EqualTo(3));
+    }
+
+    [Test]
+    public void TryConvertToDouble_DifferentFormats_ConvertSuccessfully()
+    {
+        // Arrange
+        var testCases = new[] { "123.45", "123,45", "123" };
+
+        foreach (var testCase in testCases)
+        {
+            // Act
+            var success = _mainHelper.TryConvertToDouble(testCase, out var result);
+
+            // Assert
+            Assert.IsTrue(success, $"Failed to convert {testCase}");
+            Assert.That(result, Is.GreaterThan(0), $"Incorrect conversion for {testCase}");
         }
     }
 
