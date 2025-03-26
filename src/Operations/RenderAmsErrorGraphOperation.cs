@@ -25,7 +25,7 @@ namespace CudaHelioCommanderLight.Operations
 
             var metricsConfig = MetricsConfig.GetInstance(mainHelper);
             var plt = amsExecutionErrorModel.Plt;
-
+            var pltwrapper = amsExecutionErrorModel.PltWrapper;
             var tickPositionsListY = new List<double>();
             var tickNamesListY = new List<string>();
             var tickPositionsList = new List<double>();
@@ -41,7 +41,10 @@ namespace CudaHelioCommanderLight.Operations
 
             var amsLegend = Path.GetFileNameWithoutExtension(amsExecution.FileName) + ": reference spectrum";
             plt.PlotScatter(xLog, yLog, markerSize: 1, color: System.Drawing.Color.Orange, label: amsLegend);
-
+            if (pltwrapper != null)
+            {
+                pltwrapper.PlotScatter(xLog, yLog, markerSize: 1, color: System.Drawing.Color.Orange, label: amsLegend); // just for testing purposes
+            }
             for (double z = min; z <= max; z *= 10)
             {
                 tickPositionsList.Add(z);
@@ -114,7 +117,18 @@ namespace CudaHelioCommanderLight.Operations
                 draggable: false,
                 color: System.Drawing.Color.FromArgb(0, 255, 0, 0),
                 alpha: 0.1
-            );
+             );
+            //jsut for testing purposes
+            if (pltwrapper != null)
+            {
+                pltwrapper.PlotHSpan(
+                    x1: ScottPlot.Tools.Log10(new double[] { metricsConfig.ErrorFromGev }).First(),
+                    x2: ScottPlot.Tools.Log10(new double[] { metricsConfig.ErrorToGev }).First(),
+                    draggable: false,
+                    color: System.Drawing.Color.FromArgb(0, 255, 0, 0),
+                    alpha: 0.1
+                 );
+            }
 
             plt.Ticks(useExponentialNotation: true);
             plt.Ticks(logScaleX: true);
@@ -123,6 +137,7 @@ namespace CudaHelioCommanderLight.Operations
             plt.YLabel("Spe1e3 [proton_flux m^-2sr^-1s^-1GeV^-1]");
             plt.XLabel("Kinetic Energy [GeV]");
             plt.Legend();
+            
         }
     }
 }

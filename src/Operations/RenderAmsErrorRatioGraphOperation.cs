@@ -91,7 +91,7 @@ namespace CudaHelioCommanderLight.Operations
                 metricsConfig.ErrorToGev,
                 draggable: false,
                 color: System.Drawing.Color.FromArgb(0, 255, 0, 0),
-                alpha: 0.1f
+                alpha: 0.1
              );
 
             plt.Title("Ratio graph");

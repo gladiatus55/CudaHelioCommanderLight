@@ -5,6 +5,7 @@ using CudaHelioCommanderLight.Operations;
 using CudaHelioCommanderLight.Helpers;
 using CudaHelioCommanderLight.Interfaces;
 using System.Drawing;
+using CudaHelioCommanderLight.Config;
 
 namespace CudaHelioCommanderLight.Tests
 {
@@ -22,7 +23,6 @@ namespace CudaHelioCommanderLight.Tests
         {
             _mockMainHelper = Substitute.For<IMainHelper>();
             _mockMetricsConfig = Substitute.For<IMetricsConfig>();
-
             _mockMetricsConfig.ErrorFromGev.Returns(0.5);
             _mockMetricsConfig.ErrorToGev.Returns(100);
 
@@ -63,7 +63,7 @@ namespace CudaHelioCommanderLight.Tests
                 3,
                 draggable: false,
                 color: Color.FromArgb(0, 255, 0, 0),
-                alpha: 0.1f
+                alpha: 0.1
             );
         }
 
@@ -95,7 +95,7 @@ namespace CudaHelioCommanderLight.Tests
                 Arg.Any<double[]>(),
                 markerSize: 1,
                 color: Color.Red,
-                label: "Ratio ams_data/ path" // Expected label
+                label: "Ratio ams_data/ path"
             );
         }
 

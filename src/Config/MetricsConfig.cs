@@ -10,6 +10,7 @@ namespace CudaHelioCommanderLight.Config
 {
     public class MetricsConfig : IMetricsConfig
     {
+
         public enum K0Metrics
         {
             cm2ps,
@@ -232,6 +233,13 @@ namespace CudaHelioCommanderLight.Config
             foreach (var observer in _observers)
             {
                 observer.NotifyMetricsConfigChanged(this);
+            }
+        }
+        public static void SetTestInstance(MetricsConfig testInstance)
+        {
+            lock (_lock)
+            {
+                _instance = testInstance;
             }
         }
         public static void ResetInstance()
