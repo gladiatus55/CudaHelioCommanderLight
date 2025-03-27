@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using CudaHelioCommanderLight.Helpers;
+using CudaHelioCommanderLight.Wrappers;
 
 namespace CudaHelioCommanderLight.MainWindowServices
 {
@@ -21,8 +22,8 @@ namespace CudaHelioCommanderLight.MainWindowServices
         {
             _mainHelper = mainHelper;
         }
-        public ErrorStructure? AmsErrorsListBox_SelectionChanged(ErrorStructure errorStructure, WpfPlot amsGraphWpfPlot,
-            WpfPlot amsGraphRatioWpfPlot, AmsExecution amsExecution)
+        public ErrorStructure? AmsErrorsListBox_SelectionChanged(ErrorStructure errorStructure, IWpfPlotWrapper amsGraphWpfPlot,
+            IWpfPlotWrapper amsGraphRatioWpfPlot, AmsExecution amsExecution)
         {
             ErrorStructure error = errorStructure;
             if (error == null)
@@ -38,39 +39,43 @@ namespace CudaHelioCommanderLight.MainWindowServices
             return error;
         }
 
-        public void RenderAmsGraph(AmsExecution amsExecution, WpfPlot amsGraphWpfPlot,
+        public void RenderAmsGraph(AmsExecution amsExecution, IWpfPlotWrapper amsGraphWpfPlot,
             ErrorStructure? errorStructure = null)
         {
             try
             {
                 amsGraphWpfPlot.Reset();
             }
-            catch { amsGraphWpfPlot = new WpfPlot(); }
+            catch { amsGraphWpfPlot = new WpfPlotWrapper(new WpfPlot()); }
             var amsExecutionErrorModel = new AmsExecutionPltErrorModel()
             {
                 AmsExecution = amsExecution,
                 ErrorStructure = errorStructure,
-                Plt = amsGraphWpfPlot.plt,
+                PltWrapper = amsGraphWpfPlot.PlotWrapper,
             };
 
             RenderAmsErrorGraphOperation.Operate(amsExecutionErrorModel, _mainHelper);
             amsGraphWpfPlot.Render();
         }
 
-        private void RenderAmsRatioGraph(AmsExecution amsExecution, WpfPlot amsGraphRatioWpfPlot,
+        internal void RenderAmsRatioGraph(AmsExecution amsExecution, IWpfPlotWrapper amsGraphRatioWpfPlot,
             ErrorStructure? errorStructure = null)
         {
             amsGraphRatioWpfPlot.Reset();
+
+            var plotWrapper = amsGraphRatioWpfPlot.PlotWrapper;
+
             var amsExecutionErrorModel = new AmsExecutionPltErrorModel()
             {
                 AmsExecution = amsExecution,
                 ErrorStructure = errorStructure,
-                Plt = amsGraphRatioWpfPlot.plt,
+                PltWrapper = plotWrapper
             };
 
-            RenderAmsErrorRatioGraphOperation.Operate(amsExecutionErrorModel,_mainHelper);
+            RenderAmsErrorRatioGraphOperation.Operate(amsExecutionErrorModel, _mainHelper);
             amsGraphRatioWpfPlot.Render();
         }
+
 
         public void CreateErrorGraph(DataGrid activeCalculationsDataGrid)
         {
@@ -125,7 +130,7 @@ namespace CudaHelioCommanderLight.MainWindowServices
             RenderGraphOfErrors(selectedExecutionDetails);
         }
 
-        private void RenderGraphOfErrors(List<ExecutionDetail> selectedExecutionDetails)
+        internal void RenderGraphOfErrors(List<ExecutionDetail> selectedExecutionDetails)
         {
             List<System.Drawing.Color> colorList = new List<System.Drawing.Color>()
             {

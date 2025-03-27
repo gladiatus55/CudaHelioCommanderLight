@@ -1,0 +1,127 @@
+﻿using NUnit.Framework;
+using NSubstitute;
+using CudaHelioCommanderLight.Interfaces;
+using CudaHelioCommanderLight.Models;
+using CudaHelioCommanderLight.MainWindowServices;
+using ScottPlot;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
+using CudaHelioCommanderLight.Helpers;
+using CudaHelioCommanderLight.Enums;
+using CudaHelioCommanderLight.Wrappers;
+
+namespace CudaHelioCommanderLight.Tests
+{
+
+    [TestFixture]
+    [Apartment(ApartmentState.STA)]
+    public class RenderingServiceTests
+    {
+        private RenderingService _renderingService;
+        private IMainHelper _mainHelper;
+
+        [SetUp]
+        public void Setup()
+        {
+            _mainHelper = Substitute.For<IMainHelper>();
+            _renderingService = new RenderingService(_mainHelper);
+        }
+
+        [Test]
+        public void AmsErrorsListBox_SelectionChanged_RendersGraphsAndReturnsError()
+        {
+            // Arrange
+            var amsExecution = new AmsExecution
+            {
+                TKin = new List<double> { 1.0, 2.0, 3.0 },
+                Spe1e3 = new List<double> { 10, 20, 30 }
+            };
+            var errorStructure = new ErrorStructure(_mainHelper)
+            {
+                TKinList = new List<double> { 1.0 },
+                Spe1e3binList = new List<double> { 50.0 },
+                FilePath = "error_data/errors.txt"
+            };
+            var amsGraphWpfPlot = new WpfPlot();
+            var amsGraphRatioWpfPlot = new WpfPlot();
+
+            // Act
+            var result = _renderingService.AmsErrorsListBox_SelectionChanged(
+                errorStructure, new WpfPlotWrapper(amsGraphWpfPlot), new WpfPlotWrapper(amsGraphRatioWpfPlot), amsExecution);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(errorStructure));
+            Assert.DoesNotThrow(() => amsGraphWpfPlot.Render());
+            Assert.DoesNotThrow(() => amsGraphRatioWpfPlot.Render());
+        }
+
+        [Test]
+        public void RenderAmsGraph_CallsRenderAndResetsPlot()
+        {
+            // Arrange
+            var amsExecution = new AmsExecution
+            {
+                TKin = new List<double> { 1.0, 2.0, 3.0 },
+                Spe1e3 = new List<double> { 10, 20, 30 }
+            };
+            var errorStructure = new ErrorStructure(_mainHelper)
+            {
+                TKinList = new List<double> { 1.0 },
+                Spe1e3binList = new List<double> { 50.0 },
+                FilePath = "error_data/errors.txt"
+            };
+            var mockWpfPlot = Substitute.For<IWpfPlotWrapper>();
+
+            // Act
+            _renderingService.RenderAmsGraph(amsExecution, mockWpfPlot, errorStructure);
+
+            // Assert
+            mockWpfPlot.Received(1).Reset();
+            mockWpfPlot.Received(1).Render();
+        }
+
+        [Test]
+        public void RenderAmsRatioGraph_CallsRenderAndResetsPlot()
+        {
+            var amsExecution = new AmsExecution
+            {
+                TKin = new List<double> { 1.0, 2.0, 3.0 },
+                Spe1e3 = new List<double> { 10, 20, 30 }
+            };
+            var errorStructure = new ErrorStructure(_mainHelper)
+            {
+                TKinList = new List<double> { 1.0 },
+                Spe1e3binList = new List<double> { 50.0 },
+                FilePath = "error_data/errors.txt"
+            };
+            var amsGraphRatioWpfPlot = Substitute.For<IWpfPlotWrapper>();
+
+            // Act
+            _renderingService.RenderAmsRatioGraph(amsExecution, amsGraphRatioWpfPlot, errorStructure);
+
+            // Assert
+            amsGraphRatioWpfPlot.Received(1).Reset();
+            amsGraphRatioWpfPlot.Received(1).Render();
+        }
+        [Test]
+        public void RenderGraphOfErrors_CreatesScatterPlotsForExecutions()
+        {
+            // Arrange
+            var executionDetails = new List<ExecutionDetail>
+            {
+                new ExecutionDetail
+                {
+                    FolderName = "Folder1",
+                    Executions = new List<Execution>
+                    {
+                        new Execution(2.0, 1.0, 10, 0.1, MethodType.FP_1D),
+                    }
+                }
+            };
+
+            // Act & Assert
+            Assert.DoesNotThrow(() => _renderingService.RenderGraphOfErrors(executionDetails));
+        }
+    }
+}

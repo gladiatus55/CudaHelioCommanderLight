@@ -171,22 +171,10 @@ public class RenderAmsErrorGraphOperationTests
     }
 
     [Test]
-    public void Operate_WhenPltWrapperIsNull_ReturnsNull()
+    public void Operate_WhenPltWrapperIsNull_ThrowsNullReferenceException()
     {
         // Arrange
         _model.PltWrapper = null;
-
-        // Act
-        RenderAmsErrorGraphOperation.Operate(_model, _mockMainHelper);
-        // Assert
-        Assert.IsNull(_model.PltWrapper);
-        
-    }
-    [Test]
-    public void Operate_WhenPltIsNull_ThrowsNullReferenceException()
-    {
-        // Arrange
-        _model.Plt = null;
 
         // Act & Assert
         Assert.Throws<NullReferenceException>(() =>

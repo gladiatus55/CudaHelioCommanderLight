@@ -12,6 +12,7 @@ using CudaHelioCommanderLight.MainWindowServices;
 using CudaHelioCommanderLight;
 using System.Windows.Controls;
 using ScottPlot;
+using CudaHelioCommanderLight.Wrappers;
 
 [TestFixture]
 [Apartment(ApartmentState.STA)]
@@ -121,7 +122,7 @@ public class MainWindowTests
         _mainWindow.RenderAmsGraph(amsExecution, errorStructure);
 
         // Assert
-        _renderingService.Received(1).RenderAmsGraph(amsExecution, new WpfPlot(), errorStructure);
+        _renderingService.Received(1).RenderAmsGraph(amsExecution, new WpfPlotWrapper(new WpfPlot()), errorStructure);
     }
 
 

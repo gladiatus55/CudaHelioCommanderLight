@@ -19,6 +19,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using CudaHelioCommanderLight.MainWindowServices;
+using CudaHelioCommanderLight.Wrappers;
 
 namespace CudaHelioCommanderLight
 {
@@ -120,7 +121,7 @@ namespace CudaHelioCommanderLight
 
         internal void RenderAmsGraph(AmsExecution amsExecution, ErrorStructure? errorStructure = null)
         {
-            _renderingService.RenderAmsGraph(amsExecution, AmsGraphWpfPlot, errorStructure);
+            _renderingService.RenderAmsGraph(amsExecution, new WpfPlotWrapper(AmsGraphWpfPlot), errorStructure);
         }
 
         internal void DrawAmsHeatmapBtn_Click(object sender, RoutedEventArgs e)
@@ -236,7 +237,7 @@ namespace CudaHelioCommanderLight
 
         private void AmsErrorsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var error = _renderingService.AmsErrorsListBox_SelectionChanged((ErrorStructure)amsErrorsListBox.SelectedItem, AmsGraphWpfPlot, AmsGraphRatioWpfPlot, (AmsExecution)dataGridAmsInner.SelectedItem);
+            var error = _renderingService.AmsErrorsListBox_SelectionChanged((ErrorStructure)amsErrorsListBox.SelectedItem, new WpfPlotWrapper(AmsGraphWpfPlot), new WpfPlotWrapper(AmsGraphRatioWpfPlot), (AmsExecution)dataGridAmsInner.SelectedItem);
             if (error == null)
             {
                 return;
