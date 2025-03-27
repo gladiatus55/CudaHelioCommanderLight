@@ -29,10 +29,10 @@ namespace CudaHelioCommanderLight
     {
         public ObservableCollection<ExecutionDetail> ExecutionDetailList { get; set; }
         private string versionStr = "Version: 1.1.1l";
-        private PanelType currentlyDisplayedPanelType;
+        internal PanelType currentlyDisplayedPanelType;
         private int executionDetailSelectedIdx = -1;
-        private List<ErrorStructure> amsComputedErrors;
-        private List<string> GeliosphereLibTypes;
+        internal List<ErrorStructure> amsComputedErrors;
+        internal List<string> GeliosphereLibTypes;
         private List<string> GeliosphereLibBurgerRatios;
         private List<string> GeliosphereLibJGRRatios;
         private MainWindowVm _mainWindowVm;
@@ -54,9 +54,13 @@ namespace CudaHelioCommanderLight
                           CompareService compareService,
                           IFileWriter fileWriter,
                           CompareLibraryOperation compareLibraryOperation,
-                          IMetricsConfig metricsConfig)
+                          IMetricsConfig metricsConfig,
+                          bool isUnitTest = false)
         {
-            InitializeComponent();
+            if (!isUnitTest)
+            {
+                InitializeComponent();
+            }
             _mainHelper = mainHelper ?? throw new ArgumentNullException(nameof(mainHelper));
             _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
             _buttonService = buttonService ?? throw new ArgumentNullException(nameof(buttonService));
@@ -66,19 +70,28 @@ namespace CudaHelioCommanderLight
             _fileWriter = fileWriter ?? throw new ArgumentNullException(nameof(fileWriter));
             _compareLibraryOperation = compareLibraryOperation ?? throw new ArgumentNullException(nameof(compareLibraryOperation));
             _metricsConfig = metricsConfig ?? throw new ArgumentNullException(nameof(metricsConfig));
+            if (isUnitTest)
+            {
+                Resources.MergedDictionaries.Add(new ResourceDictionary
+                {
+                    Source = new Uri("pack://application:,,,/CudaHelioCommanderLight;component/Styles/MainStyle.xaml")
+                });
+            }
+            if (!isUnitTest)
+            {
+                MetricsUsedTB.Text = MetricsConfig.GetInstance(_mainHelper).ToString();
+                _mainWindowVm = new MainWindowVm();
+                MetricsConfig.GetInstance(_mainHelper).RegisterObserver(_mainWindowVm);
+                DataContext = _mainWindowVm;
 
-            MetricsUsedTB.Text = MetricsConfig.GetInstance(_mainHelper).ToString();
-            _mainWindowVm = new MainWindowVm();
-            MetricsConfig.GetInstance(_mainHelper).RegisterObserver(_mainWindowVm);
-            DataContext = _mainWindowVm;
+                SwitchPanels(PanelType.NONE);
+                versionTb.Text = versionStr;
 
-            SwitchPanels(PanelType.NONE);
-            versionTb.Text = versionStr;
-
-            InitializeAvailableGeliosphereLibs();
+                InitializeAvailableGeliosphereLibs();
+            }
         }
 
-        private void InitializeAvailableGeliosphereLibs()
+        internal void InitializeAvailableGeliosphereLibs()
         {
             var burgerTypeName = "Burger";
             var jgrTypeName = "JGR";
@@ -98,24 +111,24 @@ namespace CudaHelioCommanderLight
             geliosphereAllLibRatio.SelectedIndex = 0;
         }
 
-        private void AboutUsButton_Click(object sender, RoutedEventArgs e)
+        internal void AboutUsButton_Click(object sender, RoutedEventArgs e)
         {
             _buttonService.AboutUsButton();
         }
 
         #region AMS
 
-        private void RenderAmsGraph(AmsExecution amsExecution, ErrorStructure? errorStructure = null)
+        internal void RenderAmsGraph(AmsExecution amsExecution, ErrorStructure? errorStructure = null)
         {
             _renderingService.RenderAmsGraph(amsExecution, AmsGraphWpfPlot, errorStructure);
         }
 
-        private void DrawAmsHeatmapBtn_Click(object sender, RoutedEventArgs e)
+        internal void DrawAmsHeatmapBtn_Click(object sender, RoutedEventArgs e)
         {
             _heatMapService.DrawAmsHeatmapBtn(currentDisplayedAmsInvestigation?.FileName, amsComputedErrors, (string)((Button)sender).Tag);
         }
 
-        private void CompareWithLibrary(string libPath, LibStructureType libStructureType)
+        internal void CompareWithLibrary(string libPath, LibStructureType libStructureType)
         {
             try
             {
@@ -162,7 +175,7 @@ namespace CudaHelioCommanderLight
             }
         }
 
-        private void CompareAllLoadedWithLib(string libPath, LibStructureType libStructureType)
+        internal void CompareAllLoadedWithLib(string libPath, LibStructureType libStructureType)
         {
             try
             {
@@ -199,7 +212,7 @@ namespace CudaHelioCommanderLight
             exportListAsCsvBtn.IsEnabled = value;
         }
 
-        private void CompareWithLib_Click(object sender, RoutedEventArgs e)
+        internal void CompareWithLib_Click(object sender, RoutedEventArgs e)
         {
             var (libPath, libStructureType) = _compareService.CompareWithLib((string)((Button)sender).Tag,
                 geliosphereLibRatio, geliosphereLibType);
@@ -234,7 +247,7 @@ namespace CudaHelioCommanderLight
 
         private bool sortByError = true;
 
-        private void AmsApplyFilterBtn_Click(object sender, RoutedEventArgs e)
+        internal void AmsApplyFilterBtn_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(((Button)sender).Tag?.ToString()))
             {
@@ -312,14 +325,14 @@ namespace CudaHelioCommanderLight
             }
         }
 
-        private void ExportAsCsvBtn_Click(object sender, RoutedEventArgs e)
+        internal void ExportAsCsvBtn_Click(object sender, RoutedEventArgs e)
         {
             ExportAsCsvOperation.Operate((IEnumerable<ErrorStructure>)amsErrorsListBox.ItemsSource, _fileWriter, _dialogService);
         }
 
         #endregion AMS
 
-        private void OpenExplorerButton_Click(object sender, RoutedEventArgs e)
+        internal void OpenExplorerButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.FolderBrowserDialog folderDialog = new System.Windows.Forms.FolderBrowserDialog();
             System.Windows.Forms.DialogResult dialogResult = folderDialog.ShowDialog();
@@ -376,8 +389,8 @@ namespace CudaHelioCommanderLight
             currentlyDisplayedPanelType = panelType;
         }
 
-        private ObservableCollection<AmsExecution> AmsExecutionList { get; set; }
-        private AmsExecution currentDisplayedAmsInvestigation;
+        internal ObservableCollection<AmsExecution> AmsExecutionList { get; set; }
+        internal AmsExecution currentDisplayedAmsInvestigation;
 
         private void RmsComputeModeBtn_Click(object sender, RoutedEventArgs e)
         {

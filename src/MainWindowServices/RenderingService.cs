@@ -41,7 +41,11 @@ namespace CudaHelioCommanderLight.MainWindowServices
         public void RenderAmsGraph(AmsExecution amsExecution, WpfPlot amsGraphWpfPlot,
             ErrorStructure? errorStructure = null)
         {
-            amsGraphWpfPlot.Reset();
+            try
+            {
+                amsGraphWpfPlot.Reset();
+            }
+            catch { amsGraphWpfPlot = new WpfPlot(); }
             var amsExecutionErrorModel = new AmsExecutionPltErrorModel()
             {
                 AmsExecution = amsExecution,

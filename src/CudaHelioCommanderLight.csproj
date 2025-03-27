@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Remove="Styles\MainStyle.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\chart.png" />
   </ItemGroup>
 
@@ -33,6 +37,7 @@
     <Resource Include="Resources\check-status.png" />
     <Resource Include="Resources\explorer.png" />
     <Resource Include="Resources\sav-slov.jpg" />
+    <Resource Include="Styles\MainStyle.xaml" />
   </ItemGroup>
   
 
