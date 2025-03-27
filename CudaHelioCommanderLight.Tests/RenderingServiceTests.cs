@@ -123,5 +123,52 @@ namespace CudaHelioCommanderLight.Tests
             // Act & Assert
             Assert.DoesNotThrow(() => _renderingService.RenderGraphOfErrors(executionDetails));
         }
+
+        [Test]
+        public void AmsErrorsListBox_SelectionChanged_NullErrorStructure_ReturnsNull()
+        {
+            // Arrange
+            var amsExecution = new AmsExecution();
+            var amsGraph = new WpfPlotWrapper(new WpfPlot());
+            var amsRatioGraph = new WpfPlotWrapper(new WpfPlot());
+
+            // Act
+            var result = _renderingService.AmsErrorsListBox_SelectionChanged(
+                null, amsGraph, amsRatioGraph, amsExecution);
+
+            // Assert
+            Assert.That(result, Is.Null);
+        }
+
+
+        [Test]
+        public void RenderAmsRatioGraph_WithNullErrorStructure_HandlesGracefully()
+        {
+            // Arrange
+            var execution = new AmsExecution { TKin = new List<double> { 1.0 }, Spe1e3 = new List<double> { 2.0 } };
+            var mockPlot = Substitute.For<IWpfPlotWrapper>();
+
+            // Act & Assert
+            Assert.DoesNotThrow(() =>
+                _renderingService.RenderAmsRatioGraph(execution, mockPlot, null));
+        }
+        [Test]
+        public void RenderAmsGraph_HandlesPlotResetException()
+        {
+            // Arrange
+            var mockPlot = Substitute.For<IWpfPlotWrapper>();
+            mockPlot.When(x => x.Reset()).Throw<Exception>();
+            var execution = new AmsExecution { TKin = new List<double> { 1.0 }, Spe1e3 = new List<double> { 2.0 } };
+            var errorStructure = new ErrorStructure(_mainHelper)
+            {
+                TKinList = new List<double> { 1.0 },
+                Spe1e3binList = new List<double> { 50.0 },
+                FilePath = "error_data/errors.txt"
+            };
+            // Act & Assert
+            Assert.DoesNotThrow(() =>
+                _renderingService.RenderAmsGraph(execution, mockPlot, errorStructure));
+        }
+
     }
 }
