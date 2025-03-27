@@ -35,7 +35,7 @@ public class MainWindowTests
         _mainHelper = Substitute.For<IMainHelper>();
         _dialogService = Substitute.For<IDialogService>();
         _buttonService = Substitute.For<ButtonService>(_dialogService);
-        _renderingService = Substitute.For<RenderingService>(_mainHelper);
+        _renderingService = Substitute.For<RenderingService>(_mainHelper,_dialogService);
         _heatMapService = Substitute.For<HeatMapService>();
         _compareService = Substitute.For<CompareService>();
         _fileWriter = Substitute.For<IFileWriter>();

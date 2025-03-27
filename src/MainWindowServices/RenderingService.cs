@@ -17,10 +17,12 @@ namespace CudaHelioCommanderLight.MainWindowServices
 {
     public class RenderingService
     {
+        private readonly IDialogService _dialogService;
         private readonly IMainHelper _mainHelper;
-        public RenderingService(IMainHelper mainHelper)
+        public RenderingService(IMainHelper mainHelper, IDialogService dialogService)
         {
             _mainHelper = mainHelper;
+            _dialogService = dialogService; 
         }
         public ErrorStructure? AmsErrorsListBox_SelectionChanged(ErrorStructure errorStructure, IWpfPlotWrapper amsGraphWpfPlot,
             IWpfPlotWrapper amsGraphRatioWpfPlot, AmsExecution amsExecution)
@@ -80,18 +82,10 @@ namespace CudaHelioCommanderLight.MainWindowServices
         public void CreateErrorGraph(DataGrid activeCalculationsDataGrid)
         {
 
-            OpenFileDialog fileDialog = new OpenFileDialog();
             List<ExecutionDetail> selectedExecutionDetails = new List<ExecutionDetail>();
 
 
-            if (fileDialog.ShowDialog() == false)
-            {
-                return;
-            }
-
-            string filePath = fileDialog.FileName;
-
-            if (filePath == null)
+            if (!_dialogService.ShowOpenFileDialog(out string filePath))
             {
                 return;
             }
@@ -100,7 +94,8 @@ namespace CudaHelioCommanderLight.MainWindowServices
 
             if (!dataExtractSuccess)
             {
-                MessageBox.Show("Cannot read data values from the input file.");
+                _dialogService.ShowMessage("Cannot read data values from the input file.",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             foreach (ExecutionDetail executionDetail in (ObservableCollection<ExecutionDetail>)activeCalculationsDataGrid.ItemsSource)

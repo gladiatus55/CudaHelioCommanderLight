@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using CudaHelioCommanderLight.Helpers;
 using CudaHelioCommanderLight.Enums;
 using CudaHelioCommanderLight.Wrappers;
+using System.Windows;
 
 namespace CudaHelioCommanderLight.Tests
 {
@@ -20,12 +21,14 @@ namespace CudaHelioCommanderLight.Tests
     {
         private RenderingService _renderingService;
         private IMainHelper _mainHelper;
+        private IDialogService _dialogService;
 
         [SetUp]
         public void Setup()
         {
             _mainHelper = Substitute.For<IMainHelper>();
-            _renderingService = new RenderingService(_mainHelper);
+            _dialogService = Substitute.For<IDialogService>();
+            _renderingService = new RenderingService(_mainHelper,_dialogService);
         }
 
         [Test]
@@ -168,6 +171,47 @@ namespace CudaHelioCommanderLight.Tests
             // Act & Assert
             Assert.DoesNotThrow(() =>
                 _renderingService.RenderAmsGraph(execution, mockPlot, errorStructure));
+        }
+        [Test]
+        public void CreateErrorGraph_CanceledFileDialog_AbortsProcess()
+        {
+            // Arrange
+            var mockMainHelper = Substitute.For<IMainHelper>();
+            var mockFileDialogService = Substitute.For<IDialogService>();
+            mockFileDialogService.ShowOpenFileDialog(out Arg.Any<string>()).Returns(false);
+
+            var service = new RenderingService(mockMainHelper, mockFileDialogService);
+            var dataGrid = new DataGrid();
+
+            // Act
+            service.CreateErrorGraph(dataGrid);
+
+            // Assert
+            mockMainHelper.DidNotReceive().ExtractOutputDataFile(Arg.Any<string>(), out _);
+        }
+        [Test]
+        public void CreateErrorGraph_FailedDataExtract_ShowsErrorMessage()
+        {
+            // Arrange
+            _dialogService.ShowOpenFileDialog(out Arg.Any<string>()).Returns(true);
+
+            string dummyFilePath = "dummy/path.txt";
+            _dialogService.When(x => x.ShowOpenFileDialog(out dummyFilePath)).Do(x => x[0] = dummyFilePath);
+
+            _mainHelper.ExtractOutputDataFile(dummyFilePath, out _).Returns(false);
+
+            var service = new RenderingService(_mainHelper, _dialogService);
+            var dataGrid = new DataGrid();
+
+            // Act
+            service.CreateErrorGraph(dataGrid);
+
+            // Assert
+            _dialogService.Received(1).ShowMessage(
+            "Cannot read data values from the input file.",
+            "Error",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
         }
 
     }

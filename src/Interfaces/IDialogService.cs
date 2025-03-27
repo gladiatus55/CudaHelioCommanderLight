@@ -6,6 +6,7 @@ namespace CudaHelioCommanderLight.Interfaces
     {
         bool SaveFileDialog(out string filePath, string filter);
         void ShowMessage(string text, string caption, MessageBoxButton button, MessageBoxImage icon);
+        bool ShowOpenFileDialog(out string filePath);
     }
 }
 

@@ -18,5 +18,17 @@ namespace CudaHelioCommanderLight.Services
         {
             MessageBox.Show(text, caption, button, icon);
         }
+        public bool ShowOpenFileDialog(out string filePath)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            if (fileDialog.ShowDialog() == true)
+            {
+                filePath = fileDialog.FileName;
+                return true;
+            }
+
+            filePath = null;
+            return false;
+        }
     }
 }
