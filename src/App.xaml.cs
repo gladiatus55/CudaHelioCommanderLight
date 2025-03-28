@@ -5,6 +5,7 @@ using CudaHelioCommanderLight.MainWindowServices;
 using CudaHelioCommanderLight.Operations;
 using CudaHelioCommanderLight.Services;
 using CudaHelioCommanderLight.ViewModels;
+using CudaHelioCommanderLight.Wrappers;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows;
@@ -33,6 +34,7 @@ namespace CudaHelioCommanderLight
             services.AddTransient<ButtonService>();
             services.AddTransient<RenderingService>();
             services.AddTransient<HeatMapService>();
+            services.AddTransient<IHeatMapGraphFactory, HeatMapGraphFactory>();
             services.AddTransient<CompareService>();
 
             services.AddTransient<MainWindow>(provider => new MainWindow(

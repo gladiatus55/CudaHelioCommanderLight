@@ -21,6 +21,7 @@ public class MainWindowTests
     private MainWindow _mainWindow;
     private IMainHelper _mainHelper;
     private IDialogService _dialogService;
+    private IHeatMapGraphFactory _heatMapGraphFactory;
     private ButtonService _buttonService;
     private RenderingService _renderingService;
     private HeatMapService _heatMapService;
@@ -34,25 +35,41 @@ public class MainWindowTests
     {
         _mainHelper = Substitute.For<IMainHelper>();
         _dialogService = Substitute.For<IDialogService>();
-        _buttonService = Substitute.For<ButtonService>(_dialogService);
-        _renderingService = Substitute.For<RenderingService>(_mainHelper,_dialogService);
-        _heatMapService = Substitute.For<HeatMapService>();
-        _compareService = Substitute.For<CompareService>();
+        _heatMapGraphFactory = Substitute.For<IHeatMapGraphFactory>();
+
+        // Initialize services with correct dependencies
+        _buttonService = new ButtonService(_dialogService);
+        _renderingService = Substitute.For<RenderingService>(_mainHelper, _dialogService);
+        _heatMapService = new HeatMapService(_dialogService, _heatMapGraphFactory);
+        _compareService = new CompareService();
         _fileWriter = Substitute.For<IFileWriter>();
         _metricsConfig = Substitute.For<IMetricsConfig>();
-        _compareLibraryOperation = Substitute.For<CompareLibraryOperation>(_dialogService,_mainHelper,_metricsConfig);
-        _mainWindow = new MainWindow(
-            _mainHelper, _dialogService, _buttonService, _renderingService,
-            _heatMapService, _compareService, _fileWriter, _compareLibraryOperation, _metricsConfig,true
+
+        _compareLibraryOperation = new CompareLibraryOperation(
+            _dialogService,
+            _mainHelper,
+            _metricsConfig
         );
+
+        _mainWindow = new MainWindow(
+            mainHelper: _mainHelper,
+            dialogService: _dialogService,
+            buttonService: _buttonService,
+            renderingService: _renderingService,
+            heatMapService: _heatMapService,
+            compareService: _compareService,
+            fileWriter: _fileWriter,
+            compareLibraryOperation: _compareLibraryOperation,
+            metricsConfig: _metricsConfig,
+            true
+        );
+
         _mainWindow.amsErrorsListBox = new ListBox();
         _dialogService.SaveFileDialog(out Arg.Any<string>(), Arg.Any<string>())
-            .Returns(x =>
-            {
+            .Returns(x => {
                 x[0] = "test.csv";
                 return true;
-        });
-
+            });
     }
 
     [Test]
