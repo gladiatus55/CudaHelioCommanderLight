@@ -31,7 +31,7 @@ namespace CudaHelioCommanderLight
         public ObservableCollection<ExecutionDetail> ExecutionDetailList { get; set; }
         private string versionStr = "Version: 1.1.1l";
         internal PanelType currentlyDisplayedPanelType;
-        private int executionDetailSelectedIdx = -1;
+        internal int executionDetailSelectedIdx = -1;
         internal List<ErrorStructure> amsComputedErrors;
         internal List<string> GeliosphereLibTypes;
         private List<string> GeliosphereLibBurgerRatios;
@@ -235,7 +235,7 @@ namespace CudaHelioCommanderLight
             }
         }
 
-        private void AmsErrorsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        internal void AmsErrorsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var error = _renderingService.AmsErrorsListBox_SelectionChanged((ErrorStructure)amsErrorsListBox.SelectedItem, new WpfPlotWrapper(AmsGraphWpfPlot), new WpfPlotWrapper(AmsGraphRatioWpfPlot), (AmsExecution)dataGridAmsInner.SelectedItem);
             if (error == null)
@@ -429,7 +429,7 @@ namespace CudaHelioCommanderLight
             }
         }
 
-        private void CreateErrorGraphBtn_Click(object sender, RoutedEventArgs e)
+        internal void CreateErrorGraphBtn_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -647,7 +647,7 @@ namespace CudaHelioCommanderLight
             mainCanvas.Background = spe1e3FitCanvas.Background;
         }
 
-        private void DrawHeatmapBtn_Click(object sender, RoutedEventArgs e)
+        internal void DrawHeatmapBtn_Click(object sender, RoutedEventArgs e)
         {
             _heatMapService.DrawHeatmapBtn(ExecutionDetailList, executionDetailSelectedIdx);
         }

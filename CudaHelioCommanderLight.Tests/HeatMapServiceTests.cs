@@ -18,6 +18,7 @@ namespace CudaHelioCommanderLight.Tests
         private HeatMapService _heatMapService;
         private IDialogService _mockDialogService;
         private IHeatMapGraphFactory _mockGraphFactory;
+        private IDisplayAmsHeatmapWindowOperation _mockDisplayOperation;
         private IHeatMapGraph _mockHeatMapGraph;
 
         [SetUp]
@@ -25,11 +26,16 @@ namespace CudaHelioCommanderLight.Tests
         {
             _mockDialogService = Substitute.For<IDialogService>();
             _mockGraphFactory = Substitute.For<IHeatMapGraphFactory>();
+            _mockDisplayOperation = Substitute.For<IDisplayAmsHeatmapWindowOperation>();
             _mockHeatMapGraph = Substitute.For<IHeatMapGraph>();
 
             _mockGraphFactory.Create().Returns(_mockHeatMapGraph);
 
-            _heatMapService = new HeatMapService(_mockDialogService, _mockGraphFactory);
+            _heatMapService = new HeatMapService(
+                _mockDialogService,
+                _mockGraphFactory,
+                _mockDisplayOperation
+            );
         }
 
         [Test]
@@ -112,6 +118,7 @@ namespace CudaHelioCommanderLight.Tests
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning
             );
+            _mockDisplayOperation.DidNotReceive().Operate(Arg.Any<DisplayAmsHeatmapModel>());
         }
 
     }

@@ -35,6 +35,7 @@ namespace CudaHelioCommanderLight
             services.AddTransient<RenderingService>();
             services.AddTransient<HeatMapService>();
             services.AddTransient<IHeatMapGraphFactory, HeatMapGraphFactory>();
+            services.AddTransient<IDisplayAmsHeatmapWindowOperation, DisplayAmsHeatmapWindowOperation>();
             services.AddTransient<CompareService>();
 
             services.AddTransient<MainWindow>(provider => new MainWindow(
@@ -49,6 +50,7 @@ namespace CudaHelioCommanderLight
                 provider.GetRequiredService<IMetricsConfig>()
             ));
         }
+
 
 
         protected override void OnStartup(StartupEventArgs e)

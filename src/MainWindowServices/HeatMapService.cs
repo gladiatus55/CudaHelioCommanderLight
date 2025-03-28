@@ -11,11 +11,15 @@ public class HeatMapService
 {
     private readonly IDialogService _dialogService;
     private readonly IHeatMapGraphFactory _heatMapGraphFactory;
+    private readonly IDisplayAmsHeatmapWindowOperation _displayAmsHeatmapWindowOperation;
 
-    public HeatMapService(IDialogService dialogService, IHeatMapGraphFactory heatMapGraphFactory)
+    public HeatMapService(IDialogService dialogService,
+                        IHeatMapGraphFactory heatMapGraphFactory,
+                        IDisplayAmsHeatmapWindowOperation displayAmsHeatmapWindowOperation)
     {
         _dialogService = dialogService;
         _heatMapGraphFactory = heatMapGraphFactory;
+        _displayAmsHeatmapWindowOperation = displayAmsHeatmapWindowOperation;
     }
 
     public void DrawHeatmapBtn(ObservableCollection<ExecutionDetail> executionDetailList, int executionDetailSelectedIdx)
@@ -65,7 +69,7 @@ public class HeatMapService
             return;
         }
 
-        DisplayAmsHeatmapWindowOperation.Operate(new DisplayAmsHeatmapModel
+        _displayAmsHeatmapWindowOperation.Operate(new DisplayAmsHeatmapModel
         {
             GraphName = currentDisplayedAmsInvestigation,
             Errors = amsComputedErrors,
