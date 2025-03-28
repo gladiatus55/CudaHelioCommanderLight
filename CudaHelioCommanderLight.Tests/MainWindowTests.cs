@@ -41,7 +41,7 @@ public class MainWindowTests
         _buttonService = new ButtonService(_dialogService);
         _renderingService = Substitute.For<RenderingService>(_mainHelper, _dialogService);
         _heatMapService = new HeatMapService(_dialogService, _heatMapGraphFactory);
-        _compareService = new CompareService();
+        _compareService = new CompareService(_dialogService);
         _fileWriter = Substitute.For<IFileWriter>();
         _metricsConfig = Substitute.For<IMetricsConfig>();
 
