@@ -587,7 +587,6 @@ namespace CudaHelioCommanderLight
 
                 foreach (Execution execution in executionDetail.Executions)
                 {
-                    //Here is the fix, IMainHelper is injected in the constructor
                     ExecutionHelper.InitializeOutput1e3BinDataFromOnlineDir(execution, _mainHelper);
 
                     if (execution.StandardDeviatons != null)
