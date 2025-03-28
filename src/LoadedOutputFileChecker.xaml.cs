@@ -217,7 +217,7 @@ namespace CudaHelioCommanderLight
             this.Close();
         }
 
-        private void DivideSpectraCb_Checked(object sender, RoutedEventArgs e)
+        internal void DivideSpectraCb_Checked(object sender, RoutedEventArgs e)
         {
             if (outputFileContent.Spe1e3List.Count == 0 || outputFileContent.Spe1e3NList.Count == 0)
             {
